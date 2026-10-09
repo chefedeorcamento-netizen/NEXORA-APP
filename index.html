@@ -100,6 +100,9 @@ tr:last-child td{border-bottom:none}
 .empty{text-align:center;color:var(--txt-3);padding:34px 16px;font-size:13px}
 .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--line);color:#fff;padding:12px 18px;border-radius:11px;box-shadow:var(--shadow);font-size:13.5px;font-weight:500;z-index:50;opacity:0;transition:.25s}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+.prev-banner{position:fixed;bottom:0;left:0;right:0;z-index:95;background:linear-gradient(90deg,#8575ff,#6d5ef6);color:#fff;padding:10px 18px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;font-size:13.5px;box-shadow:0 -6px 20px rgba(0,0,0,.4)}
+.prev-banner .btn{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.35);color:#fff}
+.prev-banner .btn:hover{background:rgba(255,255,255,.32)}
 .muted{color:var(--txt-3);font-size:12.5px}
 .spin{width:18px;height:18px;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;display:inline-block}
 @keyframes sp{to{transform:rotate(360deg)}}
@@ -451,13 +454,15 @@ function renderPreviewInto(elId){
     </div>`;
 }
 let AMBP=null;
-function entrarAmbientePreview(){
-  AMBP={cor:($('at-cor')&&$('at-cor').value)||'#6D5EF6',nome:($('at-nome')&&$('at-nome').value.trim())||'Empresa',emoji:($('at-emoji')&&$('at-emoji').value)||'🏢',mods:previewModules(),tab:'dashboard'};
-  const d=document.createElement('div');d.className='amb-ov';d.id='ambPrevOv';
-  d.innerHTML=`<div class="amb-ov-bar"><div style="display:flex;align-items:center;gap:9px"><span style="font-size:20px">${esc(AMBP.emoji)}</span><b>${esc(AMBP.nome)}</b><span class="pill" style="font-size:11px">Prévia do CRM do cliente</span></div><button class="btn btn-ghost btn-sm" onclick="document.getElementById('ambPrevOv').remove()">Fechar</button></div>
-    <div class="amb-ov-shell"><aside class="amb-ov-side" id="ambPrevSide"></aside><main class="amb-ov-main" id="ambPrevMain"></main></div>`;
-  document.body.appendChild(d);ambPrevRender();
+async function entrarAmbientePreview(){
+  const {data:demo}=await sb.from('empresas').select('id').eq('is_demo',true).limit(1).maybeSingle();
+  if(!demo){toast('Rode o SQL do ambiente demo (nexora-06) primeiro.');return;}
+  PREVIEW_EID=demo.id;
+  EMP_INFO={nome:($('at-nome')&&$('at-nome').value.trim())||'Empresa Demo',emoji:($('at-emoji')&&$('at-emoji').value)||'🏢',cor:($('at-cor')&&$('at-cor').value)||'#6D5EF6',segmento:($('at-seg')&&$('at-seg').value)||'',recursos:atendCurrentRecs()};
+  empTab='dashboard';renderEmpresa();
+  if(!document.getElementById('prevBanner')){const b=document.createElement('div');b.id='prevBanner';b.className='prev-banner';b.innerHTML='🎬 <b>Modo demonstração</b> — CRM real com dados de exemplo. Adicione, edite e arraste à vontade. <button class="btn btn-primary btn-sm" onclick="sairPreview()">Sair da demonstração</button>';document.body.appendChild(b);}
 }
+function sairPreview(){PREVIEW_EID=null;EMP_INFO=null;const b=document.getElementById('prevBanner');if(b)b.remove();if(atendConfigId)admAtendConfig(atendConfigId);else admGo('atendimentos');}
 function ambPrevGo(t){AMBP.tab=t;ambPrevRender();}
 function ambPrevRender(){
   if(!document.getElementById('ambPrevSide'))return;
@@ -499,7 +504,7 @@ async function converterAtend(id){
   admAtendConfig(id);
 }
 async function admPainel(){
-  const {data,error}=await sb.from('empresas').select('*');
+  const {data,error}=await sb.from('empresas').select('*').eq('is_demo',false);
   if(error){$('adm-body').innerHTML=`<div class="empty">Erro: ${esc(error.message)}</div>`;return;}
   const emp=data||[];
   const mrr=emp.filter(e=>e.ativo!==false).reduce((s,e)=>s+Number(e.mensalidade||0),0);
@@ -545,7 +550,7 @@ async function admEmpresas(){
       <div class="card-h"><h3>Empresas cadastradas</h3><button class="btn btn-ghost btn-sm" onclick="admEmpresas()">Atualizar</button></div>
       <div class="card-b" id="emp-list"><div class="empty"><span class="spin"></span></div></div>
     </div>`;
-  const {data,error}=await sb.from('empresas').select('*').order('criada_em',{ascending:false});
+  const {data,error}=await sb.from('empresas').select('*').eq('is_demo',false).order('criada_em',{ascending:false});
   if(error){$('emp-list').innerHTML=`<div class="empty">Erro: ${esc(error.message)}</div>`;return;}
   if(!data.length){$('emp-list').innerHTML='<div class="empty">Nenhuma empresa ainda. Crie a primeira acima. 👆</div>';return;}
   admEmp=data;
@@ -678,7 +683,8 @@ function empMods(){const r=(EMP_INFO&&EMP_INFO.recursos)||{};return EMP_MODS.fil
 function empRender(){if(!empMods().some(([id])=>id===empTab))empTab='dashboard';if(typeof destroyCharts==='function')destroyCharts();const m={dashboard:empDash,clientes:empClientes,leads:empLeads,prospeccao:empProsp,funil:empFunil,oportunidades:empOpps,propostas:empProps,produtos:empProdutos,vendas:empVendas,posvenda:empPosvenda,tarefas:empTarefas,config:empConfig};(m[empTab]||empDash)();}
 function cmain(h){$('crm-main').innerHTML=h;}
 const phead=(t,p)=>`<div class="phead"><h1>${t}</h1>${p?`<p>${p}</p>`:''}</div>`;
-const EID=()=>PERFIL.empresa_id;
+let PREVIEW_EID=null;
+const EID=()=>PREVIEW_EID||PERFIL.empresa_id;
 async function ins(table,obj){if(!EID()){toast('Usuário sem empresa vinculada.');return {error:true};}const r=await sb.from(table).insert(Object.assign({empresa_id:EID()},obj));if(r.error)toast('Erro: '+r.error.message);return r;}
 
 /* ---- editar / excluir (genérico) ---- */
@@ -725,13 +731,13 @@ async function empDash(){
       <div class="card"><div class="card-h"><h3>Origem dos leads</h3></div><div class="card-b"><div class="chartbox"><canvas id="chLeads"></canvas></div></div></div>
     </div>`);
   const [cCli,cLead,cVend]=await Promise.all([
-    sb.from('clientes').select('*',{count:'exact',head:true}),
-    sb.from('leads').select('*',{count:'exact',head:true}),
-    sb.from('vendas').select('*',{count:'exact',head:true})]);
+    sb.from('clientes').select('*',{count:'exact',head:true}).eq('empresa_id',EID()),
+    sb.from('leads').select('*',{count:'exact',head:true}).eq('empresa_id',EID()),
+    sb.from('vendas').select('*',{count:'exact',head:true}).eq('empresa_id',EID())]);
   $('k-cli').textContent=cCli.count??0;$('k-lead').textContent=cLead.count??0;$('k-vend').textContent=cVend.count??0;
-  const {data:vd}=await sb.from('vendas').select('total,criado_em');
+  const {data:vd}=await sb.from('vendas').select('total,criado_em').eq('empresa_id',EID());
   $('k-fat').textContent=BRL((vd||[]).reduce((s,v)=>s+Number(v.total||0),0));
-  const {data:ld}=await sb.from('leads').select('origem');
+  const {data:ld}=await sb.from('leads').select('origem').eq('empresa_id',EID());
   drawDash(vd||[],ld||[]);
 }
 function chartBase(){return {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#6b7390',font:{size:11}},grid:{display:false}},y:{ticks:{color:'#6b7390',font:{size:11}},grid:{color:'#1a2236'},beginAtZero:true}}};}
@@ -758,7 +764,7 @@ async function empClientes(){
       <button class="btn btn-primary" style="width:auto" onclick="addCliente()">Adicionar</button>
     </div></div></div>
     <div class="card"><div class="card-h"><h3>Meus clientes</h3><button class="btn btn-ghost btn-sm" onclick="empClientes()">Atualizar</button></div><div class="card-b" id="lst"><div class="empty"><span class="spin"></span></div></div></div>`);
-  const {data,error}=await sb.from('clientes').select('*').order('criado_em',{ascending:false});
+  const {data,error}=await sb.from('clientes').select('*').eq('empresa_id',EID()).order('criado_em',{ascending:false});
   if(error)return $('lst').innerHTML=`<div class="empty">Erro: ${esc(error.message)}</div>`;
   if(!data.length)return $('lst').innerHTML='<div class="empty">Nenhum cliente ainda. Cadastre o primeiro acima. 🚀</div>';
   empLast.clientes=data;
@@ -776,7 +782,7 @@ async function empLeads(){
       <button class="btn btn-primary" style="width:auto" onclick="addLead()">Adicionar</button>
     </div></div></div>
     <div class="card"><div class="card-h"><h3>Meus leads</h3><button class="btn btn-ghost btn-sm" onclick="empLeads()">Atualizar</button></div><div class="card-b" id="lst"><div class="empty"><span class="spin"></span></div></div></div>`);
-  const {data,error}=await sb.from('leads').select('*').order('criado_em',{ascending:false});
+  const {data,error}=await sb.from('leads').select('*').eq('empresa_id',EID()).order('criado_em',{ascending:false});
   if(error)return $('lst').innerHTML=`<div class="empty">Erro: ${esc(error.message)}</div>`;
   if(!data.length)return $('lst').innerHTML='<div class="empty">Nenhum lead ainda. Adicione o primeiro acima.</div>';
   empLast.leads=data;
@@ -795,7 +801,7 @@ async function empProdutos(){
       <button class="btn btn-primary" style="width:auto" onclick="addProduto()">Adicionar</button>
     </div></div></div>
     <div class="card"><div class="card-h"><h3>Itens do catálogo</h3><button class="btn btn-ghost btn-sm" onclick="empProdutos()">Atualizar</button></div><div class="card-b" id="lst"><div class="empty"><span class="spin"></span></div></div></div>`);
-  const {data,error}=await sb.from('produtos').select('*').order('criado_em',{ascending:false});
+  const {data,error}=await sb.from('produtos').select('*').eq('empresa_id',EID()).order('criado_em',{ascending:false});
   if(error)return $('lst').innerHTML=`<div class="empty">Erro: ${esc(error.message)}</div>`;
   if(!data.length)return $('lst').innerHTML='<div class="empty">Catálogo vazio. Cadastre o primeiro item.</div>';
   empLast.produtos=data;
@@ -812,7 +818,7 @@ async function empVendas(){
       <button class="btn btn-primary" style="width:auto" onclick="addVenda()">Registrar</button>
     </div></div></div>
     <div class="card"><div class="card-h"><h3>Minhas vendas</h3><button class="btn btn-ghost btn-sm" onclick="empVendas()">Atualizar</button></div><div class="card-b" id="lst"><div class="empty"><span class="spin"></span></div></div></div>`);
-  const {data,error}=await sb.from('vendas').select('*').order('criado_em',{ascending:false});
+  const {data,error}=await sb.from('vendas').select('*').eq('empresa_id',EID()).order('criado_em',{ascending:false});
   if(error)return $('lst').innerHTML=`<div class="empty">Erro: ${esc(error.message)}</div>`;
   if(!data.length)return $('lst').innerHTML='<div class="empty">Nenhuma venda registrada ainda.</div>';
   empLast.vendas=data;
@@ -829,7 +835,7 @@ async function empTarefas(){
       <button class="btn btn-primary" style="width:auto" onclick="addTarefa()">Adicionar</button>
     </div></div></div>
     <div class="card"><div class="card-h"><h3>Minhas tarefas</h3><button class="btn btn-ghost btn-sm" onclick="empTarefas()">Atualizar</button></div><div class="card-b" id="lst"><div class="empty"><span class="spin"></span></div></div></div>`);
-  const {data,error}=await sb.from('tarefas').select('*').order('criado_em',{ascending:false});
+  const {data,error}=await sb.from('tarefas').select('*').eq('empresa_id',EID()).order('criado_em',{ascending:false});
   if(error)return $('lst').innerHTML=`<div class="empty">Erro: ${esc(error.message)}</div>`;
   if(!data.length)return $('lst').innerHTML='<div class="empty">Nenhuma tarefa ainda.</div>';
   empLast.tarefas=data;
@@ -843,14 +849,14 @@ async function empPosvenda(){
   cmain(phead('Pós-venda','Acompanhe a satisfação e o retorno dos seus clientes.')+`
     <div class="card"><div class="card-h"><h3>Registrar pós-venda</h3></div><div class="card-b" id="pvform"><div class="muted">Carregando…</div></div></div>
     <div class="card"><div class="card-h"><h3>Histórico de pós-venda</h3><button class="btn btn-ghost btn-sm" onclick="empPosvenda()">Atualizar</button></div><div class="card-b" id="lst"><div class="empty"><span class="spin"></span></div></div></div>`);
-  const {data:cls}=await sb.from('clientes').select('id,nome').order('nome');
+  const {data:cls}=await sb.from('clientes').select('id,nome').eq('empresa_id',EID()).order('nome');
   if(!cls||!cls.length){$('pvform').innerHTML='<div class="muted">Cadastre um cliente primeiro.</div>';}
   else $('pvform').innerHTML=`<div class="row">
     <div><label>Cliente</label><select class="inp" id="pv-cli">${cls.map(c=>`<option value="${c.id}">${esc(c.nome)}</option>`).join('')}</select></div>
     <div><label>Assunto</label><input class="inp" id="pv-ass" placeholder="Ex.: Retorno pós-compra"></div>
     <div><label>Resultado</label><select class="inp" id="pv-res"><option>Satisfeito</option><option>Muito satisfeito</option><option>Neutro</option><option>Insatisfeito</option><option>Vai recomprar</option></select></div>
     <button class="btn btn-primary" style="width:auto" onclick="addPosvenda()">Registrar</button></div>`;
-  const {data,error}=await sb.from('interacoes').select('*').eq('tipo','Pós-venda').order('criado_em',{ascending:false});
+  const {data,error}=await sb.from('interacoes').select('*').eq('empresa_id',EID()).eq('tipo','Pós-venda').order('criado_em',{ascending:false});
   const cmap={};(cls||[]).forEach(c=>cmap[c.id]=c.nome);
   if(error)return $('lst').innerHTML=`<div class="empty">Erro: ${esc(error.message)}</div>`;
   if(!data.length)return $('lst').innerHTML='<div class="empty">Nenhum registro de pós-venda ainda.</div>';
@@ -879,11 +885,11 @@ async function trocarMinhaSenha(){const s=$('cf-senha').value;if(!s||s.length<6)
 
 /* -- Funil (kanban) -- */
 async function ensureEtapas(){
-  const {data}=await sb.from('funil_etapas').select('*').order('ordem');
+  const {data}=await sb.from('funil_etapas').select('*').eq('empresa_id',EID()).order('ordem');
   if(data&&data.length)return data;
   const defs=[['Novo contato',1,10],['Qualificação',2,30],['Proposta',3,55],['Negociação',4,75],['Fechado',5,95]];
   await sb.from('funil_etapas').insert(defs.map(([nome,ordem,prob])=>({empresa_id:EID(),nome,ordem,prob})));
-  const {data:d2}=await sb.from('funil_etapas').select('*').order('ordem');return d2||[];
+  const {data:d2}=await sb.from('funil_etapas').select('*').eq('empresa_id',EID()).order('ordem');return d2||[];
 }
 let kanbanId=null;
 function kanbanDrag(e,id){kanbanId=id;e.dataTransfer.effectAllowed='move';}
@@ -891,8 +897,8 @@ async function kanbanDrop(e,etapa){e.preventDefault();document.querySelectorAll(
 async function empFunil(){
   cmain(phead('Funil de vendas','Arraste os cards entre as etapas.')+`<div id="kwrap"><div class="empty"><span class="spin"></span></div></div>`);
   const etapas=await ensureEtapas();
-  const {data:opps}=await sb.from('oportunidades').select('*').eq('status','Aberta');
-  const {data:cls}=await sb.from('clientes').select('id,nome');
+  const {data:opps}=await sb.from('oportunidades').select('*').eq('empresa_id',EID()).eq('status','Aberta');
+  const {data:cls}=await sb.from('clientes').select('id,nome').eq('empresa_id',EID());
   const cmap={};(cls||[]).forEach(c=>cmap[c.id]=c.nome);
   $('kwrap').innerHTML=`<div class="kanban">${etapas.map(e=>{
     const items=(opps||[]).filter(o=>o.etapa===e.nome);
@@ -911,7 +917,7 @@ async function empOpps(){
     <div class="card"><div class="card-h"><h3>Nova oportunidade</h3></div><div class="card-b" id="opform"><div class="muted">Carregando…</div></div></div>
     <div class="card"><div class="card-h"><h3>Minhas oportunidades</h3><button class="btn btn-ghost btn-sm" onclick="empOpps()">Atualizar</button></div><div class="card-b" id="lst"><div class="empty"><span class="spin"></span></div></div></div>`);
   const etapas=await ensureEtapas();
-  const {data:cls}=await sb.from('clientes').select('id,nome').order('nome');
+  const {data:cls}=await sb.from('clientes').select('id,nome').eq('empresa_id',EID()).order('nome');
   if(!cls||!cls.length){$('opform').innerHTML='<div class="muted">Cadastre um cliente primeiro (menu <b>Clientes</b>) para criar oportunidades.</div>';}
   else $('opform').innerHTML=`<div class="row">
       <div><label>Cliente</label><select class="inp" id="o-cli">${cls.map(c=>`<option value="${c.id}">${esc(c.nome)}</option>`).join('')}</select></div>
@@ -920,7 +926,7 @@ async function empOpps(){
       <div><label>Etapa</label><select class="inp" id="o-eta">${etapas.map(e=>`<option>${esc(e.nome)}</option>`).join('')}</select></div>
       <button class="btn btn-primary" style="width:auto" onclick="addOpp()">Adicionar</button>
     </div>`;
-  const {data,error}=await sb.from('oportunidades').select('*').order('criado_em',{ascending:false});
+  const {data,error}=await sb.from('oportunidades').select('*').eq('empresa_id',EID()).order('criado_em',{ascending:false});
   const cmap={};(cls||[]).forEach(c=>cmap[c.id]=c.nome);
   if(error)return $('lst').innerHTML=`<div class="empty">Erro: ${esc(error.message)}</div>`;
   if(!data.length)return $('lst').innerHTML='<div class="empty">Nenhuma oportunidade ainda.</div>';
@@ -934,14 +940,14 @@ async function empProps(){
   cmain(phead('Propostas','Propostas comerciais.')+`
     <div class="card"><div class="card-h"><h3>Nova proposta</h3></div><div class="card-b" id="ppform"><div class="muted">Carregando…</div></div></div>
     <div class="card"><div class="card-h"><h3>Minhas propostas</h3><button class="btn btn-ghost btn-sm" onclick="empProps()">Atualizar</button></div><div class="card-b" id="lst"><div class="empty"><span class="spin"></span></div></div></div>`);
-  const {data:cls}=await sb.from('clientes').select('id,nome').order('nome');
+  const {data:cls}=await sb.from('clientes').select('id,nome').eq('empresa_id',EID()).order('nome');
   if(!cls||!cls.length){$('ppform').innerHTML='<div class="muted">Cadastre um cliente primeiro (menu <b>Clientes</b>).</div>';}
   else $('ppform').innerHTML=`<div class="row">
     <div><label>Cliente</label><select class="inp" id="p-cli">${cls.map(c=>`<option value="${c.id}">${esc(c.nome)}</option>`).join('')}</select></div>
     <div style="max-width:170px"><label>Total (R$)</label><input class="inp" id="p-tot" type="number"></div>
     <div><label>Status</label><select class="inp" id="p-sta"><option>Rascunho</option><option>Enviada</option><option>Em negociação</option><option>Aprovada</option><option>Recusada</option></select></div>
     <button class="btn btn-primary" style="width:auto" onclick="addProp()">Criar proposta</button></div>`;
-  const {data,error}=await sb.from('propostas').select('*').order('criado_em',{ascending:false});
+  const {data,error}=await sb.from('propostas').select('*').eq('empresa_id',EID()).order('criado_em',{ascending:false});
   const cmap={};(cls||[]).forEach(c=>cmap[c.id]=c.nome);
   if(error)return $('lst').innerHTML=`<div class="empty">Erro: ${esc(error.message)}</div>`;
   if(!data.length)return $('lst').innerHTML='<div class="empty">Nenhuma proposta ainda.</div>';
