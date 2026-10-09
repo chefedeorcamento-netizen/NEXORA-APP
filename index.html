@@ -282,6 +282,10 @@ async function entrar(user){
   const {data:perfil,error}=await sb.from('perfis').select('nome,papel,empresa_id').eq('id',user.id).maybeSingle();
   if(error){hideEl($('boot'));showLogin();lmsg('Erro ao carregar perfil: '+error.message,true);return;}
   PERFIL=perfil||{nome:user.email,papel:'empresa',empresa_id:null};
+  if(PERFIL.papel!=='superadmin'&&PERFIL.empresa_id){
+    const {data:emp}=await sb.from('empresas').select('ativo').eq('id',PERFIL.empresa_id).maybeSingle();
+    if(emp&&emp.ativo===false){await sb.auth.signOut();hideEl($('boot'));showLogin();lmsg('Sua conta está desativada. Fale com a NEXORA.',true);return;}
+  }
   hideEl($('boot'));hideEl($('login'));show($('app'));
   const nome=PERFIL.nome||user.email;
   $('avatar').textContent=(nome[0]||'U').toUpperCase();
@@ -333,10 +337,14 @@ async function admEmpresas(){
   const {data,error}=await sb.from('empresas').select('*').order('criada_em',{ascending:false});
   if(error){$('emp-list').innerHTML=`<div class="empty">Erro: ${esc(error.message)}</div>`;return;}
   if(!data.length){$('emp-list').innerHTML='<div class="empty">Nenhuma empresa ainda. Crie a primeira acima. 👆</div>';return;}
-  $('emp-list').innerHTML=`<table><thead><tr><th>Empresa</th><th>Segmento</th><th>Cidade</th><th>Status</th></tr></thead><tbody>${
-    data.map(e=>`<tr><td><b>${e.emoji||'🏢'} ${esc(e.nome)}</b></td><td>${esc(e.segmento||'—')}</td><td>${esc(e.cidade||'—')}${e.uf?'/'+esc(e.uf):''}</td><td>${e.ativo?'🟢 Ativa':'⚪ Inativa'}</td></tr>`).join('')
+  $('emp-list').innerHTML=`<table><thead><tr><th>Empresa</th><th>Segmento</th><th>Cidade</th><th>Status</th><th></th></tr></thead><tbody>${
+    data.map(e=>{const at=e.ativo!==false;const nm=esc(e.nome).replace(/'/g,"\\'");return `<tr><td><b>${e.emoji||'🏢'} ${esc(e.nome)}</b></td><td>${esc(e.segmento||'—')}</td><td>${esc(e.cidade||'—')}${e.uf?'/'+esc(e.uf):''}</td><td>${at?'🟢 Ativa':'⚪ Inativa'}</td><td class="acts"><button class="btn btn-ghost btn-sm" onclick="admToggle('${e.id}',${at})">${at?'Desativar':'Ativar'}</button><button class="btn btn-ghost btn-sm" onclick="admReset('${e.id}','${nm}')">Resetar senha</button></td></tr>`;}).join('')
   }</tbody></table>`;
 }
+async function admToggle(id,ativo){const {error}=await sb.from('empresas').update({ativo:!ativo}).eq('id',id);if(error)return toast('Erro: '+error.message);toast(ativo?'Empresa desativada':'Empresa ativada ✓');admEmpresas();}
+async function admReset(id,nome){if(!confirm('Gerar uma nova senha para '+nome+'?'))return;const {data,error}=await sb.functions.invoke('criar-cliente',{body:{action:'reset_senha',empresa_id:id}});if(error){let m=error.message;try{const j=await error.context.json();if(j&&j.error)m=j.error;}catch(_){}return toast('Erro: '+m);}if(data&&data.error)return toast('Erro: '+data.error);showResetSenha(nome,data.senha);}
+function showResetSenha(nome,senha){const d=document.createElement('div');d.className='creds-ov';d.innerHTML=`<div class="creds-card"><h3>🔑 Nova senha gerada</h3><p class="muted">Nova senha de acesso para <b>${esc(nome)}</b>. Entregue ao cliente:</p><div class="creds-box"><div class="cr"><span>Senha</span><b>${esc(senha)}</b></div></div><div class="row" style="margin-top:16px;justify-content:flex-end"><button class="btn btn-ghost" onclick="copySenhaReset('${esc(senha)}')">Copiar</button><button class="btn btn-primary" onclick="this.closest('.creds-ov').remove()">Fechar</button></div></div>`;document.body.appendChild(d);}
+function copySenhaReset(s){if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(s).then(()=>toast('Senha copiada ✓')).catch(()=>toast('Copie manualmente'));else toast('Copie manualmente');}
 
 /* -- Prospecção IA da NEXORA (acha empresas que precisam dos SEUS serviços) -- */
 const NBIZ={clinica:['Clínica','Instituto','Centro Médico','Espaço Saúde'],petshop:['Pet Shop','Mundo Pet','Cão & Cia','Reino Animal'],barbearia:['Barbearia','Barber','Navalha'],estetica:['Studio','Espaço','Belle'],academia:['Academia','Fit','Box','Studio'],restaurante:['Restaurante','Cantina','Sabor'],odonto:['Odonto','Sorriso','OdontoCenter'],salao:['Salão','Beleza','Studio'],loja:['Loja','Store','Boutique'],advocacia:['Advocacia','Escritório'],default:['Grupo','Centro','Studio','Espaço','Casa']};
