@@ -32,7 +32,17 @@ a{color:var(--brand)}
 .hide{display:none!important}
 
 /* LOGIN */
-#login{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:20px}
+#login{position:fixed;inset:0;display:flex}
+.login-art{flex:1;position:relative;overflow:hidden;display:none}
+@media(min-width:900px){.login-art{display:block}}
+.login-art::before{content:"";position:absolute;inset:0;background:radial-gradient(600px 500px at 20% 20%,rgba(124,107,255,.38),transparent 60%),radial-gradient(700px 600px at 90% 80%,rgba(45,212,160,.18),transparent 55%),linear-gradient(160deg,#0a0d17,#141a2c)}
+.art-grid{position:absolute;inset:0;opacity:.3;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:44px 44px}
+.art-brand{position:absolute;top:48px;left:56px;z-index:1}
+.art-q{position:absolute;bottom:56px;left:56px;right:56px;color:#fff;z-index:1}
+.art-q h2{font-family:Sora;font-size:clamp(24px,2.4vw,32px);font-weight:800;line-height:1.22;letter-spacing:-.5px;text-wrap:balance}
+.art-q p{color:var(--txt-2);margin-top:14px;max-width:440px;font-size:15px}
+.login-panel{width:100%;display:flex;align-items:center;justify-content:center;padding:20px}
+@media(min-width:900px){.login-panel{width:500px;flex:none}}
 .lcard{width:100%;max-width:400px;background:linear-gradient(180deg,rgba(255,255,255,.03),transparent 40%),var(--surface);border:1px solid rgba(255,255,255,.08);border-radius:20px;box-shadow:var(--shadow);padding:32px}
 .lcard .mark{margin-bottom:6px}
 .lcard .sub{color:var(--txt-2);font-size:13.5px;margin-bottom:24px}
@@ -180,6 +190,12 @@ tr:last-child td{border-bottom:none}
 
 <!-- LOGIN -->
 <div id="login" class="hide">
+  <div class="login-art">
+    <div class="art-grid"></div>
+    <div class="art-brand"><div class="mark"><svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#7c6bff"/><path d="M9.6 21.6V10.4l12.8 11.2V10.4" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="22.4" cy="10.4" r="2.1" fill="#2DD4BF"/></svg><b style="font-size:20px">NEXORA</b></div></div>
+    <div class="art-q"><h2>O CRM que organiza suas vendas e faz seu negócio crescer.</h2><p>Clientes, funil, propostas e uma IA que encontra novos clientes — tudo num lugar só.</p></div>
+  </div>
+  <div class="login-panel">
   <form class="lcard" id="f-login" onsubmit="doLogin(event)">
     <div class="mark">
       <svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#7c6bff"/><path d="M9.6 21.6V10.4l12.8 11.2V10.4" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="22.4" cy="10.4" r="2.1" fill="#2DD4BF"/></svg>
@@ -208,6 +224,7 @@ tr:last-child td{border-bottom:none}
     <button class="btn btn-primary" id="npBtn" type="submit">Salvar nova senha</button>
     <div class="lmsg" id="npmsg"></div>
   </form>
+  </div>
 </div>
 
 <!-- APP -->
