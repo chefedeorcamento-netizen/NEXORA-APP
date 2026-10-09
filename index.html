@@ -52,6 +52,9 @@ a{color:var(--brand)}
 .lmsg{margin-top:14px;font-size:13px;padding:10px 12px;border-radius:10px;display:none}
 .lmsg.err{display:block;background:var(--danger-soft);color:#ff9a9e;border:1px solid rgba(240,102,107,.3)}
 .lmsg.ok{display:block;background:var(--teal-soft);color:#7dffcf;border:1px solid rgba(45,212,160,.3)}
+.forgot{text-align:center;margin-top:14px;font-size:13px}
+.forgot a{color:var(--brand);cursor:pointer}
+.forgot a:hover{text-decoration:underline}
 
 /* APP SHELL */
 #app{min-height:100vh;display:flex;flex-direction:column}
@@ -171,7 +174,7 @@ tr:last-child td{border-bottom:none}
 
 <!-- LOGIN -->
 <div id="login" class="hide">
-  <form class="lcard" onsubmit="doLogin(event)">
+  <form class="lcard" id="f-login" onsubmit="doLogin(event)">
     <div class="mark">
       <svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#7c6bff"/><path d="M9 23V9l14 14V9" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <b>NEXORA</b>
@@ -181,7 +184,23 @@ tr:last-child td{border-bottom:none}
     <div class="field"><label>E-mail</label><input type="email" id="email" required autocomplete="email" placeholder="voce@email.com"></div>
     <div class="field"><label>Senha</label><input type="password" id="senha" required autocomplete="current-password" placeholder="••••••••"></div>
     <button class="btn btn-primary" id="loginBtn" type="submit">Entrar</button>
+    <div class="forgot"><a onclick="showReset(event)">Esqueci minha senha</a></div>
     <div class="lmsg" id="lmsg"></div>
+  </form>
+  <form class="lcard hide" id="f-reset" onsubmit="enviarReset(event)">
+    <div class="mark"><svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#7c6bff"/><path d="M9 23V9l14 14V9" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><b>NEXORA</b></div>
+    <div class="sub">Recuperar senha</div>
+    <div class="field"><label>Seu e-mail</label><input type="email" id="r-email" required placeholder="voce@email.com"></div>
+    <button class="btn btn-primary" id="resetBtn" type="submit">Enviar link de recuperação</button>
+    <div class="forgot"><a onclick="showLogin(event)">Voltar ao login</a></div>
+    <div class="lmsg" id="rmsg"></div>
+  </form>
+  <form class="lcard hide" id="f-newpass" onsubmit="salvarNovaSenha(event)">
+    <div class="mark"><svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#7c6bff"/><path d="M9 23V9l14 14V9" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><b>NEXORA</b></div>
+    <div class="sub">Defina sua nova senha</div>
+    <div class="field"><label>Nova senha</label><input type="password" id="np-senha" required minlength="6" placeholder="mínimo 6 caracteres"></div>
+    <button class="btn btn-primary" id="npBtn" type="submit">Salvar nova senha</button>
+    <div class="lmsg" id="npmsg"></div>
   </form>
 </div>
 
@@ -221,13 +240,22 @@ function show(el){el.classList.remove('hide');}
 function hideEl(el){el.classList.add('hide');}
 
 /* ===== BOOT: já tem sessão? ===== */
+function showLogin(e){if(e)e.preventDefault();show($('login'));$('f-login').classList.remove('hide');$('f-reset').classList.add('hide');$('f-newpass').classList.add('hide');}
+function showReset(e){if(e)e.preventDefault();show($('login'));$('f-login').classList.add('hide');$('f-reset').classList.remove('hide');$('f-newpass').classList.add('hide');}
+function showNewPass(){show($('login'));$('f-login').classList.add('hide');$('f-reset').classList.add('hide');$('f-newpass').classList.remove('hide');}
+let RECOVERING=false;
+sb.auth.onAuthStateChange((event)=>{if(event==='PASSWORD_RECOVERY'){RECOVERING=true;hideEl($('boot'));showNewPass();}});
 (async function boot(){
+  if(location.hash.indexOf('type=recovery')>=0){RECOVERING=true;hideEl($('boot'));showNewPass();return;}
   try{
     const {data:{session}}=await sb.auth.getSession();
+    if(RECOVERING)return;
     if(session){await entrar(session.user);}
-    else{hideEl($('boot'));show($('login'));}
-  }catch(e){hideEl($('boot'));show($('login'));lmsg('Falha ao conectar. Verifique a internet.',true);}
+    else{hideEl($('boot'));showLogin();}
+  }catch(e){hideEl($('boot'));showLogin();lmsg('Falha ao conectar. Verifique a internet.',true);}
 })();
+async function enviarReset(ev){ev.preventDefault();const btn=$('resetBtn');btn.disabled=true;const old=btn.textContent;btn.innerHTML='<span class="spin"></span>';const email=$('r-email').value.trim();const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin});btn.disabled=false;btn.textContent=old;const m=$('rmsg');if(error){m.className='lmsg err';m.textContent=error.message;}else{m.className='lmsg ok';m.textContent='Link enviado! Confira seu e-mail (e a caixa de spam).';}}
+async function salvarNovaSenha(ev){ev.preventDefault();const btn=$('npBtn');btn.disabled=true;const old=btn.textContent;btn.innerHTML='<span class="spin"></span>';const senha=$('np-senha').value;const {error}=await sb.auth.updateUser({password:senha});btn.disabled=false;btn.textContent=old;const m=$('npmsg');if(error){m.className='lmsg err';m.textContent=error.message;}else{m.className='lmsg ok';m.textContent='Senha alterada! Entrando…';try{history.replaceState(null,'',location.pathname);}catch(_){}RECOVERING=false;setTimeout(async()=>{const {data:{session}}=await sb.auth.getSession();if(session)entrar(session.user);else showLogin();},1300);}}
 
 function lmsg(m,err){const el=$('lmsg');el.textContent=m;el.className='lmsg '+(err?'err':'ok');}
 
@@ -252,7 +280,7 @@ async function doLogin(ev){
 async function entrar(user){
   USER=user;
   const {data:perfil,error}=await sb.from('perfis').select('nome,papel,empresa_id').eq('id',user.id).maybeSingle();
-  if(error){hideEl($('boot'));show($('login'));lmsg('Erro ao carregar perfil: '+error.message,true);return;}
+  if(error){hideEl($('boot'));showLogin();lmsg('Erro ao carregar perfil: '+error.message,true);return;}
   PERFIL=perfil||{nome:user.email,papel:'empresa',empresa_id:null};
   hideEl($('boot'));hideEl($('login'));show($('app'));
   const nome=PERFIL.nome||user.email;
