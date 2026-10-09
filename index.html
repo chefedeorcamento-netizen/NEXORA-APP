@@ -152,6 +152,36 @@ tr:last-child td{border-bottom:none}
 @media(max-width:480px){.rec-list{grid-template-columns:1fr}}
 .rec-item{display:flex;align-items:center;gap:9px;padding:9px 11px;border:1px solid var(--line);border-radius:9px;cursor:pointer;font-size:13px}
 .rec-item input{width:16px;height:16px;accent-color:var(--brand)}
+/* Modo Reunião */
+.reuniao{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:18px;align-items:start}
+@media(max-width:860px){.reuniao{grid-template-columns:1fr}}
+.reuniao-prev{position:sticky;top:88px}
+.reuniao-actions{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.pv{width:100%;background:var(--surface);border:1px solid rgba(255,255,255,.08);border-radius:14px;box-shadow:var(--shadow-lg);overflow:hidden;--pv:#6D5EF6}
+.pv-chrome{display:flex;align-items:center;gap:6px;padding:9px 13px;background:var(--surface-2);border-bottom:1px solid var(--line)}
+.pv-chrome .dot{width:9px;height:9px;border-radius:50%}
+.pv-chrome .url{margin-left:10px;font-size:11px;color:var(--txt-3);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:2px 10px;flex:1}
+.pv-app{display:flex;min-height:380px}
+.pv-side{width:150px;background:#0e1322;padding:14px 10px;flex:none}
+.pv-brand{display:flex;align-items:center;gap:8px;padding:0 4px 14px}
+.pv-brand .lg{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:15px;flex:none}
+.pv-brand .bn{color:#fff;font-family:Sora;font-weight:700;font-size:12px;line-height:1.1}
+.pv-menu a{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:7px;color:#9aa4c4;font-size:11.5px;font-weight:500;margin-bottom:1px}
+.pv-menu a svg{width:14px;height:14px}
+.pv-menu a.on{background:color-mix(in srgb,var(--pv) 28%,transparent);color:#fff}
+.pv-main{flex:1;padding:16px;background:var(--surface);overflow:hidden;min-width:0}
+.pv-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.pv-h h4{font-family:Sora;font-size:15px}
+.pv-h .u{width:24px;height:24px;border-radius:6px;color:#fff;display:grid;place-items:center;font-size:10px;font-weight:700}
+.pv-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.pv-kpi{background:var(--surface-2);border:1px solid var(--line);border-radius:9px;padding:9px}
+.pv-kpi .l{font-size:9.5px;color:var(--txt-3)}.pv-kpi .v{font-family:Sora;font-weight:700;font-size:15px;margin-top:2px}
+.pv-kpi .v.accent{color:var(--pv)}
+.pv-bars{display:flex;align-items:flex-end;gap:6px;height:90px;padding:8px;background:var(--surface-2);border:1px solid var(--line);border-radius:9px}
+.pv-bars i{flex:1;background:var(--pv);border-radius:3px 3px 0 0;opacity:.85}
+.amb-ov{position:fixed;inset:0;background:var(--bg);z-index:100;display:flex;flex-direction:column}
+.amb-ov-bar{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid var(--line);background:var(--surface);font-family:Sora}
+.amb-ov-body{flex:1;overflow:auto;padding:24px;display:flex;justify-content:center;align-items:flex-start}
 .pc-add{margin-top:auto;justify-content:center;width:100%}
 .pc-added{text-align:center;font-weight:700;font-size:12.5px;color:var(--teal);background:var(--teal-soft);border-radius:9px;padding:9px;margin-top:auto}
 .prosp-loading svg{animation:prospin 1.1s linear infinite}
@@ -341,7 +371,7 @@ function renderAdmin(){
     <main class="crm-main" id="adm-body"><div class="empty"><span class="spin"></span></div></main>
   </div>`;
   if(adminTab==='painel')admPainel();
-  else if(adminTab==='atendimentos'){atendConfigId?admAtendConfig(atendConfigId):admAtendimentos();}
+  else if(adminTab==='atendimentos')admAtendimentos();
   else if(adminTab==='prospeccao')admProsp();
   else admEmpresas();
 }
@@ -357,40 +387,66 @@ async function admAtendimentos(){
 }
 function novoAtend(){const d=document.createElement('div');d.className='creds-ov';d.innerHTML=`<div class="creds-card"><h3>Novo atendimento</h3><div class="efield"><label>Empresa / prospect</label><input class="inp" id="na-nome" placeholder="Ex.: Barbearia do Zé"></div><div class="efield"><label>Contato</label><input class="inp" id="na-contato" placeholder="Nome do responsável"></div><div class="efield"><label>Segmento</label><input class="inp" id="na-seg" placeholder="Ex.: Barbearia"></div><div class="row" style="margin-top:14px;justify-content:flex-end"><button class="btn btn-ghost" onclick="this.closest('.creds-ov').remove()">Cancelar</button><button class="btn btn-primary" id="na-save">Criar e configurar</button></div></div>`;document.body.appendChild(d);d.querySelector('#na-save').onclick=async()=>{const nome=$('na-nome').value.trim();if(!nome)return toast('Informe o nome');const {data,error}=await sb.from('atendimentos').insert({empresa_nome:nome,contato:$('na-contato').value.trim()||null,segmento:$('na-seg').value.trim()||null}).select().single();if(error)return toast('Erro: '+error.message);d.remove();toast('Atendimento criado ✓');abrirAtend(data.id);};}
 function abrirAtend(id){atendConfigId=id;admAtendConfig(id);}
-function voltarAtend(){atendConfigId=null;admAtendimentos();}
+function voltarAtend(){atendConfigId=null;admGo('atendimentos');}
 async function delAtendimento(id){if(!confirm('Excluir este atendimento?'))return;const {error}=await sb.from('atendimentos').delete().eq('id',id);if(error)return toast('Erro: '+error.message);toast('Excluído ✓');voltarAtend();}
 async function admAtendConfig(id){
   const {data:a,error}=await sb.from('atendimentos').select('*').eq('id',id).maybeSingle();
-  if(error||!a){$('adm-body').innerHTML=`<div class="empty">Atendimento não encontrado.</div>`;return;}
+  if(error||!a){$('view').innerHTML=`<div class="empty">Atendimento não encontrado.</div>`;return;}
   const recs=a.recursos||{};const toggles=EMP_MODS.filter(([mid])=>mid!=='dashboard'&&mid!=='config');
-  $('adm-body').innerHTML=phead('Atendimento — '+esc(a.empresa_nome),'Modo Reunião: configure o CRM e converta em cliente.')+`
-    <button class="btn btn-ghost btn-sm" style="margin-bottom:14px" onclick="voltarAtend()">← Voltar</button>
-    <div class="card"><div class="card-h"><h3>Identidade</h3></div><div class="card-b">
-      <div class="row" style="margin-bottom:12px">
-        <div><label>Empresa</label><input class="inp" id="at-nome" value="${esc(a.empresa_nome||'')}"></div>
-        <div><label>Segmento</label><input class="inp" id="at-seg" value="${esc(a.segmento||'')}"></div>
-        <div style="max-width:100px"><label>Emoji</label><input class="inp" id="at-emoji" value="${esc(a.emoji||'🏢')}" maxlength="2"></div>
-        <div style="max-width:100px"><label>Cor</label><input class="inp" id="at-cor" type="color" value="${a.cor||'#6D5EF6'}" style="padding:4px;height:42px"></div>
-      </div>
-      <div class="row">
-        <div><label>Contato</label><input class="inp" id="at-contato" value="${esc(a.contato||'')}"></div>
-        <div><label>Telefone</label><input class="inp" id="at-tel" value="${esc(a.telefone||'')}"></div>
-        <div><label>E-mail (vira o login)</label><input class="inp" id="at-email" value="${esc(a.email||'')}" placeholder="cliente@email.com"></div>
-        <div style="max-width:170px"><label>Status</label><select class="inp" id="at-status">${['Novo','Em simulação','Proposta','Aprovado','Recusado'].map(s=>`<option ${a.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
-      </div>
-    </div></div>
-    <div class="card"><div class="card-h"><h3>Recursos do CRM</h3></div><div class="card-b"><div class="muted" style="margin-bottom:10px">O que esse cliente vai ter no CRM dele.</div><div class="rec-list">${toggles.map(([mid,l])=>`<label class="rec-item"><input type="checkbox" data-r="${mid}" ${recs[mid]!==false?'checked':''}><span>${l}</span></label>`).join('')}</div></div></div>
-    <div class="card"><div class="card-b">
-      <label>Observações</label><textarea class="inp" id="at-obs" rows="3" style="resize:vertical">${esc(a.observacoes||'')}</textarea>
-      <div class="row" style="margin-top:14px;justify-content:space-between;gap:10px">
-        <button class="btn btn-ghost" onclick="delAtendimento('${a.id}')">Excluir</button>
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-ghost" onclick="salvarAtend('${a.id}')">Salvar</button>
-          ${a.convertido_empresa_id?'<span class="cob ok" style="align-self:center">✓ Convertido em cliente</span>':`<button class="btn btn-primary" onclick="converterAtend('${a.id}')">Converter em cliente</button>`}
+  $('view').innerHTML=`
+    <div class="phead" style="display:flex;align-items:center;gap:12px"><button class="btn btn-ghost btn-sm" onclick="voltarAtend()">← Voltar</button><div><h1 style="font-size:20px">Modo Reunião — ${esc(a.empresa_nome)}</h1><p>Configure o CRM e veja a prévia ao vivo.</p></div></div>
+    <div class="reuniao">
+      <div class="reuniao-cfg">
+        <div class="card"><div class="card-h"><h3>Identidade</h3></div><div class="card-b">
+          <div class="row" style="margin-bottom:12px">
+            <div><label>Empresa</label><input class="inp" id="at-nome" value="${esc(a.empresa_nome||'')}" oninput="renderPreviewInto('pv-device')"></div>
+            <div style="max-width:84px"><label>Emoji</label><input class="inp" id="at-emoji" value="${esc(a.emoji||'🏢')}" maxlength="2" oninput="renderPreviewInto('pv-device')"></div>
+            <div style="max-width:84px"><label>Cor</label><input class="inp" id="at-cor" type="color" value="${a.cor||'#6D5EF6'}" style="padding:4px;height:42px" oninput="renderPreviewInto('pv-device')"></div>
+          </div>
+          <div class="row" style="margin-bottom:12px">
+            <div><label>Segmento</label><input class="inp" id="at-seg" value="${esc(a.segmento||'')}"></div>
+            <div><label>Contato</label><input class="inp" id="at-contato" value="${esc(a.contato||'')}"></div>
+          </div>
+          <div class="row">
+            <div><label>Telefone</label><input class="inp" id="at-tel" value="${esc(a.telefone||'')}"></div>
+            <div><label>E-mail (login)</label><input class="inp" id="at-email" value="${esc(a.email||'')}" placeholder="cliente@email.com"></div>
+            <div style="max-width:150px"><label>Status</label><select class="inp" id="at-status">${['Novo','Em simulação','Proposta','Aprovado','Recusado'].map(s=>`<option ${a.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+          </div>
+        </div></div>
+        <div class="card"><div class="card-h"><h3>Recursos do CRM</h3></div><div class="card-b"><div class="rec-list">${toggles.map(([mid,l])=>`<label class="rec-item"><input type="checkbox" data-r="${mid}" ${recs[mid]!==false?'checked':''} onchange="renderPreviewInto('pv-device')"><span>${l}</span></label>`).join('')}</div></div></div>
+        <div class="card"><div class="card-b"><label>Observações</label><textarea class="inp" id="at-obs" rows="2" style="resize:vertical">${esc(a.observacoes||'')}</textarea></div></div>
+        <div class="reuniao-actions">
+          <button class="btn btn-ghost" onclick="delAtendimento('${a.id}')">Excluir</button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-ghost" onclick="salvarAtend('${a.id}')">Salvar</button>
+            <button class="btn btn-ghost" onclick="entrarAmbientePreview()">Entrar no ambiente</button>
+            ${a.convertido_empresa_id?'<span class="cob ok" style="align-self:center">✓ Convertido</span>':`<button class="btn btn-primary" onclick="converterAtend('${a.id}')">Converter em projeto</button>`}
+          </div>
         </div>
       </div>
-    </div></div>`;
+      <div class="reuniao-prev"><div class="pv" id="pv-device"></div><div class="muted" style="text-align:center;margin-top:10px">Prévia ao vivo do CRM do cliente</div></div>
+    </div>`;
+  renderPreviewInto('pv-device');
 }
+function previewModules(){const recs=atendCurrentRecs();return EMP_MODS.filter(([id])=>id==='dashboard'||id==='config'||recs[id]!==false);}
+function atendCurrentRecs(){const r={};document.querySelectorAll('.rec-list [data-r]').forEach(el=>r[el.getAttribute('data-r')]=el.checked);return r;}
+function renderPreviewInto(elId){
+  const el=document.getElementById(elId);if(!el)return;
+  const cor=($('at-cor')&&$('at-cor').value)||'#6D5EF6';
+  const nome=($('at-nome')&&$('at-nome').value.trim())||'Empresa';
+  const emoji=($('at-emoji')&&$('at-emoji').value)||'🏢';
+  const mods=previewModules();
+  el.style.setProperty('--pv',cor);
+  el.innerHTML=`<div class="pv-chrome"><span class="dot" style="background:#ff5f57"></span><span class="dot" style="background:#febc2e"></span><span class="dot" style="background:#28c840"></span><span class="url">app.solnexora.com.br</span></div>
+    <div class="pv-app">
+      <div class="pv-side"><div class="pv-brand"><span class="lg" style="background:${cor}">${esc(emoji)}</span><span class="bn">${esc(nome)}</span></div><div class="pv-menu">${mods.map(([id,l,d])=>`<a class="${id==='dashboard'?'on':''}">${mi(d)}<span>${esc(l)}</span></a>`).join('')}</div></div>
+      <div class="pv-main"><div class="pv-h"><h4>Painel</h4><div class="u" style="background:${cor}">${esc((nome[0]||'E').toUpperCase())}</div></div>
+        <div class="pv-kpis"><div class="pv-kpi"><div class="l">Clientes</div><div class="v accent">128</div></div><div class="pv-kpi"><div class="l">Em negociação</div><div class="v">R$ 24k</div></div><div class="pv-kpi"><div class="l">Conversão</div><div class="v">32%</div></div></div>
+        <div class="pv-bars">${[40,65,50,80,60,90,72,85].map(h=>`<i style="height:${h}%"></i>`).join('')}</div>
+      </div>
+    </div>`;
+}
+function entrarAmbientePreview(){const d=document.createElement('div');d.className='amb-ov';d.innerHTML=`<div class="amb-ov-bar"><b>Prévia do ambiente do cliente</b><button class="btn btn-ghost btn-sm" onclick="this.closest('.amb-ov').remove()">Fechar</button></div><div class="amb-ov-body"><div class="pv" id="pv-device-big" style="max-width:920px;width:100%"></div></div>`;document.body.appendChild(d);renderPreviewInto('pv-device-big');}
 function atendForm(){const recs={};document.querySelectorAll('.rec-list [data-r]').forEach(el=>recs[el.getAttribute('data-r')]=el.checked);return {empresa_nome:$('at-nome').value.trim(),segmento:$('at-seg').value.trim()||null,emoji:$('at-emoji').value||'🏢',cor:$('at-cor').value,contato:$('at-contato').value.trim()||null,telefone:$('at-tel').value.trim()||null,email:$('at-email').value.trim()||null,status:$('at-status').value,recursos:recs,observacoes:$('at-obs').value.trim()||null};}
 async function salvarAtend(id){const f=atendForm();if(!f.empresa_nome)return toast('Informe o nome da empresa');const {error}=await sb.from('atendimentos').update(f).eq('id',id);if(error)return toast('Erro: '+error.message);toast('Salvo ✓');}
 async function converterAtend(id){
