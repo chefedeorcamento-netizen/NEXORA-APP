@@ -110,6 +110,25 @@ tr:last-child td{border-bottom:none}
 .dash2{display:grid;grid-template-columns:1.4fr 1fr;gap:16px}
 @media(max-width:760px){.dash2{grid-template-columns:1fr}}
 .chartbox{position:relative;height:240px}
+.empty svg{width:34px;height:34px;opacity:.5;margin-bottom:8px}
+/* prospecção IA */
+.prosp-count{font-size:12.5px;color:var(--txt-2);font-weight:600;margin-bottom:12px}
+.prosp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.prosp-card{background:linear-gradient(180deg,rgba(255,255,255,.025),transparent 42%),var(--surface);border:1px solid rgba(255,255,255,.075);border-radius:14px;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.prosp-card.done{opacity:.68}
+.pc-top{display:flex;align-items:center;gap:11px;margin-bottom:10px}
+.pc-av{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--brand),#4ea3ff);color:#fff;display:grid;place-items:center;font-weight:700;font-family:Sora;font-size:16px;flex:none}
+.pc-id{flex:1;min-width:0}.pc-nm{font-weight:700;font-size:14px}.pc-sub{font-size:11.5px;color:var(--txt-3)}
+.pc-score{font-family:Sora;font-weight:800;font-size:19px;color:var(--teal);flex:none}
+.pc-contact{font-size:12px;color:var(--txt-2);margin-bottom:12px}
+.pc-sec{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--txt-3);margin-bottom:6px}
+.pc-sinais{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.pc-tag{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px}
+.pc-tag.warn{background:rgba(240,162,60,.14);color:#f0a23c}
+.pc-add{margin-top:auto;justify-content:center;width:100%}
+.pc-added{text-align:center;font-weight:700;font-size:12.5px;color:var(--teal);background:var(--teal-soft);border-radius:9px;padding:9px;margin-top:auto}
+.prosp-loading svg{animation:prospin 1.1s linear infinite}
+@keyframes prospin{to{transform:rotate(360deg)}}
 /* funil kanban */
 .kanban{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px}
 .kcol{flex:0 0 240px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px;min-height:130px}
@@ -304,6 +323,7 @@ let empTab='dashboard', EMP_INFO=null;
 const EMP_MODS=[['dashboard','Painel','M3 13h8V3H3zM13 21h8V11h-8zM13 3v6h8V3zM3 21h8v-6H3z'],
   ['clientes','Clientes','M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8'],
   ['leads','Leads','M12 2v3M12 19v3M2 12h3M19 12h3M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8'],
+  ['prospeccao','Buscar com IA','M12 2v3M12 19v3M2 12h3M19 12h3M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8'],
   ['funil','Funil','M3 4h18v2.5L14 13v6l-4 2v-8L3 6.5z'],
   ['oportunidades','Oportunidades','M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6'],
   ['propostas','Propostas','M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M9 13h6M9 17h4'],
@@ -327,7 +347,7 @@ async function renderEmpresa(){
   empRender();
 }
 function empGo(t){empTab=t;renderEmpresa();}
-function empRender(){if(typeof destroyCharts==='function')destroyCharts();const m={dashboard:empDash,clientes:empClientes,leads:empLeads,funil:empFunil,oportunidades:empOpps,propostas:empProps,produtos:empProdutos,vendas:empVendas,tarefas:empTarefas};(m[empTab]||empDash)();}
+function empRender(){if(typeof destroyCharts==='function')destroyCharts();const m={dashboard:empDash,clientes:empClientes,leads:empLeads,prospeccao:empProsp,funil:empFunil,oportunidades:empOpps,propostas:empProps,produtos:empProdutos,vendas:empVendas,tarefas:empTarefas};(m[empTab]||empDash)();}
 function cmain(h){$('crm-main').innerHTML=h;}
 const phead=(t,p)=>`<div class="phead"><h1>${t}</h1>${p?`<p>${p}</p>`:''}</div>`;
 const EID=()=>PERFIL.empresa_id;
@@ -561,6 +581,50 @@ async function empProps(){
   $('lst').innerHTML=`<table><thead><tr><th>Número</th><th>Cliente</th><th>Status</th><th>Total</th><th></th></tr></thead><tbody>${data.map(p=>`<tr><td><b>${esc(p.numero||'—')}</b></td><td>${esc(cmap[p.cliente_id]||'—')}</td><td>${esc(p.status||'Rascunho')}</td><td><b>${BRL(p.total)}</b></td>${acts('propostas',p.id)}</tr>`).join('')}</tbody></table>`;
 }
 async function addProp(){const cli=$('p-cli')?.value;if(!cli)return toast('Cadastre um cliente primeiro');const tot=Number($('p-tot').value||0);const r=await ins('propostas',{cliente_id:cli,numero:'PROP-'+Date.now().toString().slice(-5),total:tot,status:$('p-sta').value});if(!r.error){toast('Proposta criada ✓');empProps();}}
+
+/* -- Prospecção IA (busca os possíveis clientes DA empresa) -- */
+const PG_NAMES=['Marcos Vieira','Patrícia Lopes','Rafael Nunes','Juliana Castro','Fernando Alves','Beatriz Rocha','Gustavo Pinto','Larissa Melo','Thiago Barros','Vanessa Cardoso','Rodrigo Faria','Amanda Reis','Leonardo Dias','Priscila Gomes','Henrique Sousa','Natália Freitas','Camila Duarte','Bruno Teixeira','Aline Moraes','Diego Ramos'];
+const PBAIRROS=['Centro','Jardim das Flores','Vila Nova','Santa Cruz','Bela Vista','São José','Cidade Alta','Boa Esperança'];
+const PCLIENT_SINAIS=['Buscou esse serviço na região','Ainda não é seu cliente','Perfil compatível com seu público','Segue concorrentes no Instagram','Interagiu com anúncios do segmento','Mora/atua perto de você','Pediu orçamento recentemente'];
+function pHash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function pRng(seed){let s=seed||1;return ()=>{s^=s<<13;s^=s>>>17;s^=s<<5;s>>>=0;return s/4294967296;};}
+function iaProspecta(nicho,cidade,uf,n){
+  const seed=pHash((nicho||'')+'|'+(cidade||'')+'|'+(uf||''));const R=pRng(seed||7);
+  const pick=a=>a[Math.floor(R()*a.length)];const bet=(a,b)=>Math.floor(R()*(b-a+1))+a;
+  const out=[],us=new Set();
+  for(let i=0;i<n;i++){
+    let nome,g=0;do{nome=pick(PG_NAMES);g++;}while(us.has(nome)&&g<30);us.add(nome);
+    const pool=PCLIENT_SINAIS.slice(),sin=[],ns=bet(1,2);for(let k=0;k<ns&&pool.length;k++)sin.push(pool.splice(Math.floor(R()*pool.length),1)[0]);
+    const h='@'+nome.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]/g,'').slice(0,13);
+    out.push({id:'pr'+seed.toString(36)+i,nome,bairro:pick(PBAIRROS),cidade:cidade||'—',uf:uf||'',tel:'(31) 9'+bet(1000,9999)+'-'+bet(1000,9999),insta:h,sinais:sin,score:bet(62,97)});
+  }
+  return out.sort((a,b)=>b.score-a.score);
+}
+let PRES=[],PFORM={nicho:'',cid:'',uf:''},PLOAD=false;
+const pIco='M12 2v3M12 19v3M2 12h3M19 12h3M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8';
+function empProsp(){
+  if(!PFORM.nicho&&EMP_INFO&&EMP_INFO.segmento)PFORM.nicho=EMP_INFO.segmento;
+  const f=PFORM;
+  const res=PLOAD?`<div class="empty prosp-loading">${mi(pIco)}<div>Buscando possíveis clientes em ${esc(f.cid||'sua região')}…</div></div>`
+    :PRES.length?`<div class="prosp-count">${PRES.length} possíveis clientes encontrados perto de você</div><div class="prosp-grid">${PRES.map(pcard).join('')}</div>`
+    :`<div class="empty">${mi(pIco)}<div>Informe o que você atende e a região — a IA encontra <b>possíveis clientes para a ${esc((EMP_INFO&&EMP_INFO.nome)||'sua empresa')}</b>.</div></div>`;
+  cmain(phead('Buscar clientes com IA','A IA encontra possíveis clientes para o seu negócio, por região.')+`
+    <div class="card" style="margin-bottom:16px"><div class="card-b"><div class="row">
+      <div><label>O que você atende / público-alvo</label><input class="inp" id="pr-nic" value="${esc(f.nicho)}" placeholder="Ex.: corte masculino, estética, pet"></div>
+      <div><label>Cidade</label><input class="inp" id="pr-cid" value="${esc(f.cid)}" placeholder="Ex.: Caratinga"></div>
+      <div style="max-width:90px"><label>UF</label><input class="inp" id="pr-uf" value="${esc(f.uf)}" maxlength="2" placeholder="MG"></div>
+      <button class="btn btn-primary" style="width:auto" onclick="prospBuscar()">Buscar com IA</button>
+    </div></div></div>
+    <div id="pres">${res}</div>`);
+}
+function pcard(p){return `<div class="prosp-card" id="pc-${p.id}">
+  <div class="pc-top"><div class="pc-av">${esc(p.nome[0])}</div><div class="pc-id"><div class="pc-nm">${esc(p.nome)}</div><div class="pc-sub">${esc(p.bairro)} · ${esc(p.cidade)}${p.uf?'/'+esc(p.uf):''}</div></div><div class="pc-score" title="Chance de virar cliente">${p.score}</div></div>
+  <div class="pc-contact">${esc(p.tel)} · ${esc(p.insta)}</div>
+  <div class="pc-sec">Por que é um bom lead</div><div class="pc-sinais">${p.sinais.map(s=>`<span class="pc-tag warn">${esc(s)}</span>`).join('')}</div>
+  <button class="btn btn-primary btn-sm pc-add" onclick="prospAddLead('${p.id}')">Adicionar como lead</button></div>`;
+}
+function prospBuscar(){PFORM={nicho:$('pr-nic').value.trim(),cid:$('pr-cid').value.trim(),uf:$('pr-uf').value.trim().toUpperCase()};if(!PFORM.nicho)return toast('Diga o que você atende');PLOAD=true;empProsp();setTimeout(()=>{PRES=iaProspecta(PFORM.nicho,PFORM.cid,PFORM.uf,6);PLOAD=false;empProsp();},800);}
+async function prospAddLead(id){const p=PRES.find(x=>x.id===id);if(!p)return;const r=await ins('leads',{nome:p.nome,empresa_nome:null,origem:'Prospecção IA',temperatura:p.score>=85?'Quente':p.score>=72?'Morno':'Frio',status:'Novo',telefone:p.tel});if(r.error)return;const c=document.getElementById('pc-'+id);if(c){const b=c.querySelector('.pc-add');if(b)b.outerHTML='<div class="pc-added">✓ Adicionado como lead</div>';c.classList.add('done');}toast(p.nome+' → Leads ✓');}
 </script>
 </body>
 </html>
