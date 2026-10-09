@@ -125,6 +125,10 @@ tr:last-child td{border-bottom:none}
 .pc-sinais{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
 .pc-tag{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px}
 .pc-tag.warn{background:rgba(240,162,60,.14);color:#f0a23c}
+.pc-tag.serv{background:rgba(124,107,255,.16);color:#c3b9ff}
+.admtabs{display:flex;gap:8px;margin-bottom:18px}
+.atab{padding:8px 16px;border-radius:10px;font-weight:600;font-size:13.5px;background:var(--surface);border:1px solid var(--line);color:var(--txt-2)}
+.atab.on{background:linear-gradient(135deg,#8575ff,#6d5ef6);color:#fff;border-color:transparent}
 .pc-add{margin-top:auto;justify-content:center;width:100%}
 .pc-added{text-align:center;font-weight:700;font-size:12.5px;color:var(--teal);background:var(--teal-soft);border-radius:9px;padding:9px;margin-top:auto}
 .prosp-loading svg{animation:prospin 1.1s linear infinite}
@@ -262,9 +266,20 @@ async function entrar(user){
 async function doLogout(){await sb.auth.signOut();location.reload();}
 
 /* ===== ÁREA ADMIN (NEXORA / superadmin) ===== */
-async function renderAdmin(){
+let adminTab='empresas';
+function admGo(t){adminTab=t;renderAdmin();}
+function renderAdmin(){
   $('view').innerHTML=`
-    <div class="phead"><h1>Administração NEXORA</h1><p>Gerencie as empresas clientes da plataforma.</p></div>
+    <div class="phead"><h1>Administração NEXORA</h1><p>Gerencie suas empresas clientes e encontre novos clientes pra vender.</p></div>
+    <div class="admtabs">
+      <button class="atab ${adminTab==='empresas'?'on':''}" onclick="admGo('empresas')">Empresas</button>
+      <button class="atab ${adminTab==='prospeccao'?'on':''}" onclick="admGo('prospeccao')">Prospecção IA</button>
+    </div>
+    <div id="adm-body"><div class="empty"><span class="spin"></span></div></div>`;
+  if(adminTab==='prospeccao')admProsp();else admEmpresas();
+}
+async function admEmpresas(){
+  $('adm-body').innerHTML=`
     <div class="card">
       <div class="card-h"><h3>Nova empresa cliente</h3></div>
       <div class="card-b">
@@ -284,7 +299,7 @@ async function renderAdmin(){
       </div>
     </div>
     <div class="card">
-      <div class="card-h"><h3>Empresas cadastradas</h3><button class="btn btn-ghost btn-sm" onclick="renderAdmin()">Atualizar</button></div>
+      <div class="card-h"><h3>Empresas cadastradas</h3><button class="btn btn-ghost btn-sm" onclick="admEmpresas()">Atualizar</button></div>
       <div class="card-b" id="emp-list"><div class="empty"><span class="spin"></span></div></div>
     </div>`;
   const {data,error}=await sb.from('empresas').select('*').order('criada_em',{ascending:false});
@@ -294,6 +309,37 @@ async function renderAdmin(){
     data.map(e=>`<tr><td><b>${e.emoji||'🏢'} ${esc(e.nome)}</b></td><td>${esc(e.segmento||'—')}</td><td>${esc(e.cidade||'—')}${e.uf?'/'+esc(e.uf):''}</td><td>${e.ativo?'🟢 Ativa':'⚪ Inativa'}</td></tr>`).join('')
   }</tbody></table>`;
 }
+
+/* -- Prospecção IA da NEXORA (acha empresas que precisam dos SEUS serviços) -- */
+const NBIZ={clinica:['Clínica','Instituto','Centro Médico','Espaço Saúde'],petshop:['Pet Shop','Mundo Pet','Cão & Cia','Reino Animal'],barbearia:['Barbearia','Barber','Navalha'],estetica:['Studio','Espaço','Belle'],academia:['Academia','Fit','Box','Studio'],restaurante:['Restaurante','Cantina','Sabor'],odonto:['Odonto','Sorriso','OdontoCenter'],salao:['Salão','Beleza','Studio'],loja:['Loja','Store','Boutique'],advocacia:['Advocacia','Escritório'],default:['Grupo','Centro','Studio','Espaço','Casa']};
+const NSOBR=['Vida','Prime','Bella','Nova','Central','Premium','Dom','Vitória','Aurora','Master','Real','Ouro','Horizonte','Vitale','Mais','Elite'];
+const NSINAIS=[{s:'Sem site próprio',serv:'Site'},{s:'Controle em caderno (sem CRM)',serv:'CRM'},{s:'Demora pra responder no WhatsApp',serv:'Follow-up'},{s:'Não investe em tráfego pago',serv:'Tráfego'},{s:'Poucas avaliações no Google',serv:'Consultoria'},{s:'Instagram parado',serv:'Tráfego'},{s:'Agendamento manual',serv:'CRM'}];
+function nSegKey(seg){const s=(seg||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');if(s.includes('pet'))return'petshop';if(s.includes('barb'))return'barbearia';if(s.includes('estet')||s.includes('belez'))return'estetica';if(s.includes('odont')||s.includes('dent'))return'odonto';if(s.includes('acad')||s.includes('fit')||s.includes('gym'))return'academia';if(s.includes('rest')||s.includes('lanch')||s.includes('pizz'))return'restaurante';if(s.includes('salao')||s.includes('cabel'))return'salao';if(s.includes('clin')||s.includes('saude')||s.includes('medic'))return'clinica';if(s.includes('adv')||s.includes('jurid'))return'advocacia';if(s.includes('loja')||s.includes('stor')||s.includes('moda')||s.includes('roupa'))return'loja';return'default';}
+function iaProspBiz(seg,cidade,uf,n){const seed=pHash('biz|'+(seg||'')+'|'+(cidade||'')+'|'+(uf||''));const R=pRng(seed||7);const key=nSegKey(seg);const pick=a=>a[Math.floor(R()*a.length)];const bet=(a,b)=>Math.floor(R()*(b-a+1))+a;const seg2=seg&&seg.trim()?seg.trim():'Empresas';const out=[],us=new Set();for(let i=0;i<n;i++){let nome,g=0;do{nome=pick(NBIZ[key])+' '+pick(NSOBR);g++;}while(us.has(nome)&&g<14);us.add(nome);const pool=NSINAIS.slice(),sin=[],ns=bet(2,3);for(let k=0;k<ns&&pool.length;k++)sin.push(pool.splice(Math.floor(R()*pool.length),1)[0]);const serv=[...new Set(sin.map(x=>x.serv))];const h='@'+nome.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]/g,'');out.push({id:'nb'+seed.toString(36)+i,nome,segmento:seg2,cidade:cidade||'—',uf:uf||'',tel:'(31) 9'+bet(1000,9999)+'-'+bet(1000,9999),insta:h,sinais:sin.map(x=>x.s),servicos:serv,score:bet(62,97)});}return out.sort((a,b)=>b.score-a.score);}
+let NRES=[],NFORM={seg:'',cid:'',uf:''},NLOAD=false;
+function admProsp(){
+  const f=NFORM;
+  const res=NLOAD?`<div class="empty prosp-loading">${mi(pIco)}<div>Varrendo ${esc(f.seg||'empresas')} em ${esc(f.cid||'sua região')}…</div></div>`
+    :NRES.length?`<div class="prosp-count">${NRES.length} empresas que precisam dos seus serviços</div><div class="prosp-grid">${NRES.map(nbcard).join('')}</div>`
+    :`<div class="empty">${mi(pIco)}<div>Escolha o <b>segmento</b> e a <b>região</b> — a IA acha empresas que precisam de <b>CRM, site, tráfego</b> pra você vender.</div></div>`;
+  $('adm-body').innerHTML=`
+    <div class="card" style="margin-bottom:16px"><div class="card-b"><div class="row">
+      <div><label>Segmento</label><input class="inp" id="nb-seg" value="${esc(f.seg)}" placeholder="Ex.: clínica, petshop, barbearia"></div>
+      <div><label>Cidade</label><input class="inp" id="nb-cid" value="${esc(f.cid)}" placeholder="Ex.: Caratinga"></div>
+      <div style="max-width:90px"><label>UF</label><input class="inp" id="nb-uf" value="${esc(f.uf)}" maxlength="2" placeholder="MG"></div>
+      <button class="btn btn-primary" style="width:auto" onclick="admBuscar()">Buscar com IA</button>
+    </div></div></div>
+    <div id="nres">${res}</div>`;
+}
+function nbcard(p){return `<div class="prosp-card" id="nb-${p.id}">
+  <div class="pc-top"><div class="pc-av">${esc(p.nome[0])}</div><div class="pc-id"><div class="pc-nm">${esc(p.nome)}</div><div class="pc-sub">${esc(p.segmento)} · ${esc(p.cidade)}${p.uf?'/'+esc(p.uf):''}</div></div><div class="pc-score" title="Potencial">${p.score}</div></div>
+  <div class="pc-contact">${esc(p.tel)} · ${esc(p.insta)}</div>
+  <div class="pc-sec">Sinais</div><div class="pc-sinais">${p.sinais.map(s=>`<span class="pc-tag warn">${esc(s)}</span>`).join('')}</div>
+  <div class="pc-sec">Serviços pra oferecer</div><div class="pc-sinais">${p.servicos.map(s=>`<span class="pc-tag serv">${esc(s)}</span>`).join('')}</div>
+  <button class="btn btn-primary btn-sm pc-add" onclick="nbCopy('${p.id}')">Copiar contato</button></div>`;
+}
+function admBuscar(){NFORM={seg:$('nb-seg').value.trim(),cid:$('nb-cid').value.trim(),uf:$('nb-uf').value.trim().toUpperCase()};if(!NFORM.seg)return toast('Digite um segmento');NLOAD=true;admProsp();setTimeout(()=>{NRES=iaProspBiz(NFORM.seg,NFORM.cid,NFORM.uf,6);NLOAD=false;admProsp();},800);}
+function nbCopy(id){const p=NRES.find(x=>x.id===id);if(!p)return;const t=`${p.nome} — ${p.segmento} (${p.cidade}${p.uf?'/'+p.uf:''})\nTel: ${p.tel}\nInsta: ${p.insta}\nOferecer: ${p.servicos.join(', ')}`;if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(()=>toast('Contato copiado ✓')).catch(()=>toast('Copie manualmente'));else toast('Copie manualmente');}
 let LAST_CREDS=null;
 async function criarEmpresa(){
   const nome=$('ne-nome').value.trim();
