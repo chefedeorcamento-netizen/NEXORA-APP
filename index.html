@@ -182,7 +182,7 @@ tr:last-child td{border-bottom:none}
 <div id="login" class="hide">
   <form class="lcard" id="f-login" onsubmit="doLogin(event)">
     <div class="mark">
-      <svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#7c6bff"/><path d="M9 23V9l14 14V9" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#7c6bff"/><path d="M9.6 21.6V10.4l12.8 11.2V10.4" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="22.4" cy="10.4" r="2.1" fill="#2DD4BF"/></svg>
       <b>NEXORA</b>
     </div>
     <div class="sub">Acesse sua conta</div>
@@ -194,7 +194,7 @@ tr:last-child td{border-bottom:none}
     <div class="lmsg" id="lmsg"></div>
   </form>
   <form class="lcard hide" id="f-reset" onsubmit="enviarReset(event)">
-    <div class="mark"><svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#7c6bff"/><path d="M9 23V9l14 14V9" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><b>NEXORA</b></div>
+    <div class="mark"><svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#7c6bff"/><path d="M9.6 21.6V10.4l12.8 11.2V10.4" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="22.4" cy="10.4" r="2.1" fill="#2DD4BF"/></svg><b>NEXORA</b></div>
     <div class="sub">Recuperar senha</div>
     <div class="field"><label>Seu e-mail</label><input type="email" id="r-email" required placeholder="voce@email.com"></div>
     <button class="btn btn-primary" id="resetBtn" type="submit">Enviar link de recuperação</button>
@@ -202,7 +202,7 @@ tr:last-child td{border-bottom:none}
     <div class="lmsg" id="rmsg"></div>
   </form>
   <form class="lcard hide" id="f-newpass" onsubmit="salvarNovaSenha(event)">
-    <div class="mark"><svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#7c6bff"/><path d="M9 23V9l14 14V9" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><b>NEXORA</b></div>
+    <div class="mark"><svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#7c6bff"/><path d="M9.6 21.6V10.4l12.8 11.2V10.4" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="22.4" cy="10.4" r="2.1" fill="#2DD4BF"/></svg><b>NEXORA</b></div>
     <div class="sub">Defina sua nova senha</div>
     <div class="field"><label>Nova senha</label><input type="password" id="np-senha" required minlength="6" placeholder="mínimo 6 caracteres"></div>
     <button class="btn btn-primary" id="npBtn" type="submit">Salvar nova senha</button>
@@ -214,7 +214,7 @@ tr:last-child td{border-bottom:none}
 <div id="app" class="hide">
   <div class="topbar">
     <div class="mark">
-      <svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#7c6bff"/><path d="M9 23V9l14 14V9" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#7c6bff"/><path d="M9.6 21.6V10.4l12.8 11.2V10.4" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="22.4" cy="10.4" r="2.1" fill="#2DD4BF"/></svg>
       <b>NEXORA</b>
     </div>
     <span class="pill" id="rolePill"></span>
@@ -304,17 +304,37 @@ async function entrar(user){
 async function doLogout(){await sb.auth.signOut();location.reload();}
 
 /* ===== ÁREA ADMIN (NEXORA / superadmin) ===== */
-let adminTab='empresas';
+let adminTab='painel';
 function admGo(t){adminTab=t;renderAdmin();}
 function renderAdmin(){
   $('view').innerHTML=`
-    <div class="phead"><h1>Administração NEXORA</h1><p>Gerencie suas empresas clientes e encontre novos clientes pra vender.</p></div>
+    <div class="phead"><h1>Administração NEXORA</h1><p>Seu negócio num relance: faturamento, clientes e prospecção.</p></div>
     <div class="admtabs">
+      <button class="atab ${adminTab==='painel'?'on':''}" onclick="admGo('painel')">Painel</button>
       <button class="atab ${adminTab==='empresas'?'on':''}" onclick="admGo('empresas')">Empresas</button>
       <button class="atab ${adminTab==='prospeccao'?'on':''}" onclick="admGo('prospeccao')">Prospecção IA</button>
     </div>
     <div id="adm-body"><div class="empty"><span class="spin"></span></div></div>`;
-  if(adminTab==='prospeccao')admProsp();else admEmpresas();
+  if(adminTab==='painel')admPainel();else if(adminTab==='prospeccao')admProsp();else admEmpresas();
+}
+async function admPainel(){
+  const {data,error}=await sb.from('empresas').select('*');
+  if(error){$('adm-body').innerHTML=`<div class="empty">Erro: ${esc(error.message)}</div>`;return;}
+  const emp=data||[];
+  const mrr=emp.filter(e=>e.ativo!==false).reduce((s,e)=>s+Number(e.mensalidade||0),0);
+  const hoje=new Date();hoje.setHours(0,0,0,0);
+  const comCob=emp.filter(e=>e.vencimento);
+  const vencidos=comCob.filter(e=>new Date(e.vencimento+'T00:00:00')<hoje);
+  const emDia=comCob.filter(e=>new Date(e.vencimento+'T00:00:00')>=hoje);
+  $('adm-body').innerHTML=`
+    <div class="kpis">
+      <div class="kpi feat"><div class="lab">Receita recorrente (MRR)</div><div class="val">${BRL(mrr)}<span style="font-size:13px;color:var(--txt-3)">/mês</span></div></div>
+      <div class="kpi"><div class="lab">Empresas</div><div class="val">${emp.length}</div></div>
+      <div class="kpi"><div class="lab">Em dia</div><div class="val" style="color:var(--teal)">${emDia.length}</div></div>
+      <div class="kpi"><div class="lab">Vencidos</div><div class="val" style="color:${vencidos.length?'var(--danger)':'var(--txt)'}">${vencidos.length}</div></div>
+    </div>
+    ${vencidos.length?`<div class="card"><div class="card-h"><h3>⚠️ Clientes vencidos</h3></div><div class="card-b"><div style="overflow-x:auto"><table><thead><tr><th>Empresa</th><th>Mensalidade</th><th>Venceu em</th><th></th></tr></thead><tbody>${vencidos.map(e=>`<tr><td><b>${e.emoji||'🏢'} ${esc(e.nome)}</b></td><td>${e.mensalidade?BRL(e.mensalidade):'—'}</td><td style="color:var(--danger)">${fmtData(e.vencimento)}</td><td class="admacts"><button class="btn btn-ghost btn-sm" onclick="admGo('empresas')">Gerenciar</button></td></tr>`).join('')}</tbody></table></div></div></div>`:''}
+    <div class="card"><div class="card-b"><div class="muted">💡 Quando um cliente pagar no Pix, vá em <b>Empresas</b> → <b>Cobrança</b> → <b>✓ Pago + 1 mês</b>. Os vencidos aparecem aqui pra você cobrar.</div></div></div>`;
 }
 async function admEmpresas(){
   $('adm-body').innerHTML=`
@@ -444,12 +464,14 @@ const EMP_MODS=[['dashboard','Painel','M3 13h8V3H3zM13 21h8V11h-8zM13 3v6h8V3zM3
   ['propostas','Propostas','M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M9 13h6M9 17h4'],
   ['produtos','Catálogo','M3 7l9-4 9 4-9 4zM3 7v10l9 4 9-4V7M12 11v10'],
   ['vendas','Vendas','M3 3v18h18M7 14l4-4 3 3 5-6'],
-  ['tarefas','Tarefas','M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11']];
+  ['posvenda','Pós-venda','M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.5 1-1a5.5 5.5 0 0 0 0-7.9z'],
+  ['tarefas','Tarefas','M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11'],
+  ['config','Configurações','M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 13a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 0 1-4 0v-.2a1.6 1.6 0 0 0-2.7-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7H3a2 2 0 0 1 0-4h.2a1.6 1.6 0 0 0 1.1-2.7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 2.7-1.1V3a2 2 0 0 1 4 0v.2a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8z']];
 const mi=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${d}"/></svg>`;
 
 async function renderEmpresa(){
   if(!EMP_INFO){
-    if(PERFIL.empresa_id){const {data:emp}=await sb.from('empresas').select('nome,emoji,segmento').eq('id',PERFIL.empresa_id).maybeSingle();EMP_INFO=emp||{nome:'Meu CRM',emoji:'🏢'};}
+    if(PERFIL.empresa_id){const {data:emp}=await sb.from('empresas').select('nome,emoji,segmento,cor').eq('id',PERFIL.empresa_id).maybeSingle();EMP_INFO=emp||{nome:'Meu CRM',emoji:'🏢'};}
     else EMP_INFO={nome:'Meu CRM',emoji:'🏢'};
   }
   $('view').innerHTML=`<div class="crm">
@@ -462,7 +484,7 @@ async function renderEmpresa(){
   empRender();
 }
 function empGo(t){empTab=t;renderEmpresa();}
-function empRender(){if(typeof destroyCharts==='function')destroyCharts();const m={dashboard:empDash,clientes:empClientes,leads:empLeads,prospeccao:empProsp,funil:empFunil,oportunidades:empOpps,propostas:empProps,produtos:empProdutos,vendas:empVendas,tarefas:empTarefas};(m[empTab]||empDash)();}
+function empRender(){if(typeof destroyCharts==='function')destroyCharts();const m={dashboard:empDash,clientes:empClientes,leads:empLeads,prospeccao:empProsp,funil:empFunil,oportunidades:empOpps,propostas:empProps,produtos:empProdutos,vendas:empVendas,posvenda:empPosvenda,tarefas:empTarefas,config:empConfig};(m[empTab]||empDash)();}
 function cmain(h){$('crm-main').innerHTML=h;}
 const phead=(t,p)=>`<div class="phead"><h1>${t}</h1>${p?`<p>${p}</p>`:''}</div>`;
 const EID=()=>PERFIL.empresa_id;
@@ -472,7 +494,7 @@ async function ins(table,obj){if(!EID()){toast('Usuário sem empresa vinculada.'
 const empLast={};
 const EMP_REFRESH={clientes:()=>empClientes(),leads:()=>empLeads(),produtos:()=>empProdutos(),vendas:()=>empVendas(),tarefas:()=>empTarefas(),oportunidades:()=>empOpps(),propostas:()=>empProps()};
 const EDIT_FIELDS={
-  clientes:[['nome','Nome','text'],['telefone','Telefone','text'],['cidade','Cidade','text'],['uf','UF','text'],['status','Status','select:Prospect,Ativo,Inativo'],['valor','Valor (R$)','number']],
+  clientes:[['nome','Nome','text'],['telefone','Telefone','text'],['email','E-mail','text'],['cidade','Cidade','text'],['uf','UF','text'],['status','Status','select:Prospect,Ativo,Inativo'],['valor','Valor (R$)','number']],
   leads:[['nome','Nome','text'],['empresa_nome','Empresa','text'],['origem','Origem','text'],['temperatura','Temperatura','select:Frio,Morno,Quente'],['status','Status','select:Novo,Primeiro contato,Em qualificação,Qualificado,Convertido']],
   produtos:[['nome','Nome','text'],['categoria','Categoria','text'],['valor','Valor (R$)','number'],['estoque','Estoque','number']],
   vendas:[['status','Descrição','text'],['total','Valor (R$)','number'],['pagamento','Pagamento','select:Pix,Cartão,Dinheiro,Boleto']],
@@ -539,6 +561,7 @@ async function empClientes(){
     <div class="card"><div class="card-h"><h3>Novo cliente</h3></div><div class="card-b"><div class="row">
       <div><label>Nome</label><input class="inp" id="f-nome" placeholder="Nome do cliente"></div>
       <div><label>Telefone</label><input class="inp" id="f-tel" placeholder="(31) 9...."></div>
+      <div><label>E-mail</label><input class="inp" id="f-mail" placeholder="cliente@email.com"></div>
       <div><label>Cidade</label><input class="inp" id="f-cid"></div>
       <div style="max-width:90px"><label>UF</label><input class="inp" id="f-uf" maxlength="2"></div>
       <button class="btn btn-primary" style="width:auto" onclick="addCliente()">Adicionar</button>
@@ -550,7 +573,7 @@ async function empClientes(){
   empLast.clientes=data;
   $('lst').innerHTML=`<table><thead><tr><th>Cliente</th><th>Telefone</th><th>Cidade</th><th>Status</th><th></th></tr></thead><tbody>${data.map(c=>`<tr><td><b>${esc(c.nome)}</b></td><td>${esc(c.telefone||'—')}</td><td>${esc(c.cidade||'—')}${c.uf?'/'+esc(c.uf):''}</td><td>${esc(c.status||'Prospect')}</td>${acts('clientes',c.id)}</tr>`).join('')}</tbody></table>`;
 }
-async function addCliente(){const nome=$('f-nome').value.trim();if(!nome)return toast('Informe o nome');const r=await ins('clientes',{nome,telefone:$('f-tel').value.trim()||null,cidade:$('f-cid').value.trim()||null,uf:$('f-uf').value.trim().toUpperCase()||null});if(!r.error){toast('Cliente cadastrado ✓');empClientes();}}
+async function addCliente(){const nome=$('f-nome').value.trim();if(!nome)return toast('Informe o nome');const r=await ins('clientes',{nome,telefone:$('f-tel').value.trim()||null,email:$('f-mail').value.trim()||null,cidade:$('f-cid').value.trim()||null,uf:$('f-uf').value.trim().toUpperCase()||null});if(!r.error){toast('Cliente cadastrado ✓');empClientes();}}
 /* -- Leads -- */
 async function empLeads(){
   cmain(phead('Leads','Potenciais clientes a trabalhar.')+`
@@ -623,6 +646,45 @@ async function empTarefas(){
 }
 async function addTarefa(){const tit=$('f-tit').value.trim();if(!tit)return toast('Informe o título');const r=await ins('tarefas',{titulo:tit,prioridade:$('f-prio').value,vence_em:$('f-venc').value||null});if(!r.error){toast('Tarefa adicionada ✓');empTarefas();}}
 async function toggleTarefa(id,done){const {error}=await sb.from('tarefas').update({status:done?'Concluída':'Pendente'}).eq('id',id);if(error)toast('Erro: '+error.message);else toast(done?'Concluída ✓':'Reaberta');}
+
+/* -- Pós-venda (usa interacoes) -- */
+async function empPosvenda(){
+  cmain(phead('Pós-venda','Acompanhe a satisfação e o retorno dos seus clientes.')+`
+    <div class="card"><div class="card-h"><h3>Registrar pós-venda</h3></div><div class="card-b" id="pvform"><div class="muted">Carregando…</div></div></div>
+    <div class="card"><div class="card-h"><h3>Histórico de pós-venda</h3><button class="btn btn-ghost btn-sm" onclick="empPosvenda()">Atualizar</button></div><div class="card-b" id="lst"><div class="empty"><span class="spin"></span></div></div></div>`);
+  const {data:cls}=await sb.from('clientes').select('id,nome').order('nome');
+  if(!cls||!cls.length){$('pvform').innerHTML='<div class="muted">Cadastre um cliente primeiro.</div>';}
+  else $('pvform').innerHTML=`<div class="row">
+    <div><label>Cliente</label><select class="inp" id="pv-cli">${cls.map(c=>`<option value="${c.id}">${esc(c.nome)}</option>`).join('')}</select></div>
+    <div><label>Assunto</label><input class="inp" id="pv-ass" placeholder="Ex.: Retorno pós-compra"></div>
+    <div><label>Resultado</label><select class="inp" id="pv-res"><option>Satisfeito</option><option>Muito satisfeito</option><option>Neutro</option><option>Insatisfeito</option><option>Vai recomprar</option></select></div>
+    <button class="btn btn-primary" style="width:auto" onclick="addPosvenda()">Registrar</button></div>`;
+  const {data,error}=await sb.from('interacoes').select('*').eq('tipo','Pós-venda').order('criado_em',{ascending:false});
+  const cmap={};(cls||[]).forEach(c=>cmap[c.id]=c.nome);
+  if(error)return $('lst').innerHTML=`<div class="empty">Erro: ${esc(error.message)}</div>`;
+  if(!data.length)return $('lst').innerHTML='<div class="empty">Nenhum registro de pós-venda ainda.</div>';
+  empLast.interacoes=data;
+  $('lst').innerHTML=`<table><thead><tr><th>Cliente</th><th>Assunto</th><th>Resultado</th><th></th></tr></thead><tbody>${data.map(i=>`<tr><td><b>${esc(cmap[i.cliente_id]||'—')}</b></td><td>${esc(i.assunto||'—')}</td><td>${esc(i.resultado||'—')}</td><td class="admacts"><button class="btn btn-ghost btn-sm" onclick="delPosvenda('${i.id}')">Excluir</button></td></tr>`).join('')}</tbody></table>`;
+}
+async function addPosvenda(){const cli=$('pv-cli')?.value;if(!cli)return toast('Cadastre um cliente primeiro');const r=await ins('interacoes',{cliente_id:cli,tipo:'Pós-venda',assunto:$('pv-ass').value.trim()||'Pós-venda',resultado:$('pv-res').value});if(!r.error){toast('Pós-venda registrado ✓');empPosvenda();}}
+async function delPosvenda(id){if(!confirm('Excluir este registro?'))return;const {error}=await sb.from('interacoes').delete().eq('id',id);if(error)return toast('Erro: '+error.message);toast('Excluído ✓');empPosvenda();}
+
+/* -- Configurações do cliente -- */
+async function empConfig(){
+  cmain(phead('Configurações','Personalize seu CRM e troque sua senha.')+`
+    <div class="card"><div class="card-h"><h3>Minha empresa</h3></div><div class="card-b"><div class="row">
+      <div><label>Nome da empresa</label><input class="inp" id="cf-nome" value="${esc(EMP_INFO.nome||'')}"></div>
+      <div style="max-width:110px"><label>Emoji</label><input class="inp" id="cf-emoji" value="${esc(EMP_INFO.emoji||'🏢')}" maxlength="2"></div>
+      <div style="max-width:110px"><label>Cor</label><input class="inp" id="cf-cor" type="color" value="${EMP_INFO.cor||'#6D5EF6'}" style="padding:4px;height:42px"></div>
+      <button class="btn btn-primary" style="width:auto" onclick="salvarEmpresaCfg()">Salvar</button>
+    </div></div></div>
+    <div class="card"><div class="card-h"><h3>Minha senha</h3></div><div class="card-b"><div class="row">
+      <div><label>Nova senha</label><input class="inp" id="cf-senha" type="password" placeholder="mínimo 6 caracteres"></div>
+      <button class="btn btn-primary" style="width:auto" onclick="trocarMinhaSenha()">Alterar senha</button>
+    </div></div></div>`);
+}
+async function salvarEmpresaCfg(){const nome=$('cf-nome').value.trim();if(!nome)return toast('Informe o nome');const upd={nome,emoji:$('cf-emoji').value||'🏢',cor:$('cf-cor').value};const {error}=await sb.from('empresas').update(upd).eq('id',EID());if(error)return toast('Erro: '+error.message);EMP_INFO=Object.assign({},EMP_INFO,upd);toast('Salvo ✓');renderEmpresa();}
+async function trocarMinhaSenha(){const s=$('cf-senha').value;if(!s||s.length<6)return toast('Senha de no mínimo 6 caracteres');const {error}=await sb.auth.updateUser({password:s});if(error)return toast('Erro: '+error.message);$('cf-senha').value='';toast('Senha alterada ✓');}
 
 /* -- Funil (kanban) -- */
 async function ensureEtapas(){
