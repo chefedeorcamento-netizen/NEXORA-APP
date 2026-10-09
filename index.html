@@ -182,6 +182,10 @@ tr:last-child td{border-bottom:none}
 .amb-ov{position:fixed;inset:0;background:var(--bg);z-index:100;display:flex;flex-direction:column}
 .amb-ov-bar{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid var(--line);background:var(--surface);font-family:Sora}
 .amb-ov-body{flex:1;overflow:auto;padding:24px;display:flex;justify-content:center;align-items:flex-start}
+.amb-ov-shell{flex:1;display:flex;overflow:hidden}
+.amb-ov-side{width:210px;flex:none;background:var(--surface);border-right:1px solid var(--line);padding:14px;overflow-y:auto}
+@media(max-width:700px){.amb-ov-side{width:160px}}
+.amb-ov-main{flex:1;overflow-y:auto;padding:24px;min-width:0}
 .pc-add{margin-top:auto;justify-content:center;width:100%}
 .pc-added{text-align:center;font-weight:700;font-size:12.5px;color:var(--teal);background:var(--teal-soft);border-radius:9px;padding:9px;margin-top:auto}
 .prosp-loading svg{animation:prospin 1.1s linear infinite}
@@ -446,7 +450,39 @@ function renderPreviewInto(elId){
       </div>
     </div>`;
 }
-function entrarAmbientePreview(){const d=document.createElement('div');d.className='amb-ov';d.innerHTML=`<div class="amb-ov-bar"><b>Prévia do ambiente do cliente</b><button class="btn btn-ghost btn-sm" onclick="this.closest('.amb-ov').remove()">Fechar</button></div><div class="amb-ov-body"><div class="pv" id="pv-device-big" style="max-width:920px;width:100%"></div></div>`;document.body.appendChild(d);renderPreviewInto('pv-device-big');}
+let AMBP=null;
+function entrarAmbientePreview(){
+  AMBP={cor:($('at-cor')&&$('at-cor').value)||'#6D5EF6',nome:($('at-nome')&&$('at-nome').value.trim())||'Empresa',emoji:($('at-emoji')&&$('at-emoji').value)||'🏢',mods:previewModules(),tab:'dashboard'};
+  const d=document.createElement('div');d.className='amb-ov';d.id='ambPrevOv';
+  d.innerHTML=`<div class="amb-ov-bar"><div style="display:flex;align-items:center;gap:9px"><span style="font-size:20px">${esc(AMBP.emoji)}</span><b>${esc(AMBP.nome)}</b><span class="pill" style="font-size:11px">Prévia do CRM do cliente</span></div><button class="btn btn-ghost btn-sm" onclick="document.getElementById('ambPrevOv').remove()">Fechar</button></div>
+    <div class="amb-ov-shell"><aside class="amb-ov-side" id="ambPrevSide"></aside><main class="amb-ov-main" id="ambPrevMain"></main></div>`;
+  document.body.appendChild(d);ambPrevRender();
+}
+function ambPrevGo(t){AMBP.tab=t;ambPrevRender();}
+function ambPrevRender(){
+  if(!document.getElementById('ambPrevSide'))return;
+  $('ambPrevSide').innerHTML=`<div class="crm-emp"><span class="crm-emoji">${esc(AMBP.emoji)}</span><div><div class="crm-empn">${esc(AMBP.nome)}</div></div></div><nav class="crm-nav">${AMBP.mods.map(([id,l,d])=>`<a class="${AMBP.tab===id?'on':''}" onclick="ambPrevGo('${id}')">${mi(d)}<span>${esc(l)}</span></a>`).join('')}</nav>`;
+  $('ambPrevMain').innerHTML=ambPrevContent(AMBP.tab);
+}
+function ambPrevContent(t){
+  const cor=AMBP.cor;
+  const kpi=(l,v,acc)=>`<div class="kpi"><div class="lab">${l}</div><div class="val"${acc?` style="color:${cor}"`:''}>${v}</div></div>`;
+  const tbl=(head,rows)=>`<div class="card"><div class="card-b"><div style="overflow-x:auto"><table><thead><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div></div>`;
+  const ph=(a,b)=>`<div class="phead"><h1>${a}</h1><p>${b}</p></div>`;
+  if(t==='dashboard')return ph('Painel','Visão geral do comercial')+`<div class="kpis">${kpi('Clientes','128')}${kpi('Em negociação','R$ 24k',1)}${kpi('Vendas','87')}${kpi('Conversão','32%')}</div><div class="card"><div class="card-h"><h3>Vendas por mês</h3></div><div class="card-b"><div class="pv-bars" style="--pv:${cor};height:130px">${[40,65,50,80,60,90,72,85,70,95].map(h=>`<i style="height:${h}%"></i>`).join('')}</div></div></div>`;
+  if(t==='clientes')return ph('Clientes','Sua carteira')+tbl(['Cliente','Telefone','Status','Valor'],[['Marcos Vieira','(31) 9••••','🟢 Ativo','R$ 4.200'],['Patrícia Lopes','(31) 9••••','🟢 Ativo','R$ 1.800'],['Rafael Nunes','(31) 9••••','Prospect','—'],['Juliana Castro','(31) 9••••','🟢 Ativo','R$ 9.500']]);
+  if(t==='leads')return ph('Leads','Potenciais clientes')+tbl(['Lead','Origem','Temperatura','Status'],[['Fernando Alves','Instagram','🔥 Quente','Novo'],['Beatriz Rocha','Indicação','🌡️ Morno','Em qualificação'],['Gustavo Pinto','Prospecção IA','❄️ Frio','Novo']]);
+  if(t==='funil')return ph('Funil de vendas','Negociações por etapa')+`<div class="kanban">${['Novo contato','Qualificação','Proposta','Negociação','Fechado'].map((e,i)=>`<div class="kcol"><div class="kcol-h"><span>${e}</span><span class="kcount">${[3,2,2,1,4][i]}</span></div><div class="kcol-sum" style="color:${cor}">R$ ${[12,24,38,15,60][i]}k</div>${Array.from({length:[2,1,1,1,2][i]}).map((_,k)=>`<div class="kcard"><div class="kc-t">Cliente ${k+1}</div><div class="kc-v" style="color:${cor}">R$ ${(8+i*6+k*4)}k</div></div>`).join('')}</div>`).join('')}</div>`;
+  if(t==='oportunidades')return ph('Oportunidades','Em andamento')+tbl(['Título','Cliente','Etapa','Valor'],[['Plano mensal','Marcos Vieira','Proposta','R$ 12k'],['Projeto novo','Juliana Castro','Negociação','R$ 28k']]);
+  if(t==='propostas')return ph('Propostas','Comerciais')+tbl(['Número','Cliente','Status','Total'],[['PROP-301','Marcos Vieira','Enviada','R$ 12k'],['PROP-302','Rafael Nunes','Rascunho','R$ 8k']]);
+  if(t==='produtos')return ph('Catálogo','Itens e serviços')+tbl(['Item','Categoria','Valor','Estoque'],[['Corte masculino','Serviço','R$ 45','∞'],['Barba','Serviço','R$ 35','∞'],['Pomada','Produto','R$ 40','24']]);
+  if(t==='vendas')return ph('Vendas','Registradas')+tbl(['Nº','Descrição','Pagamento','Valor'],[['VND-5001','Corte + barba','Pix','R$ 80'],['VND-5002','Combo completo','Cartão','R$ 120']]);
+  if(t==='tarefas')return ph('Tarefas','Pendências')+tbl(['Tarefa','Prioridade','Status'],[['Ligar para cliente','Alta','Pendente'],['Enviar proposta','Média','Em andamento']]);
+  if(t==='posvenda')return ph('Pós-venda','Satisfação e retorno')+tbl(['Cliente','Assunto','Resultado'],[['Marcos Vieira','Retorno pós-compra','Muito satisfeito'],['Juliana Castro','Acompanhamento','Vai recomprar']]);
+  if(t==='prospeccao')return ph('Buscar com IA','Possíveis clientes na região')+tbl(['Nome','Bairro','Por que é um bom lead','Nota'],[['Camila Duarte','Centro','Buscou esse serviço na região','94'],['Bruno Teixeira','Vila Nova','Ainda não é seu cliente','88'],['Aline Moraes','Santa Cruz','Perfil compatível','81']]);
+  if(t==='config')return ph('Configurações','Personalização')+`<div class="card"><div class="card-b"><div class="muted">Aqui o cliente ajusta o nome, a cor e troca a própria senha.</div></div></div>`;
+  return ph(t,'Módulo do CRM')+`<div class="empty">Prévia do módulo.</div>`;
+}
 function atendForm(){const recs={};document.querySelectorAll('.rec-list [data-r]').forEach(el=>recs[el.getAttribute('data-r')]=el.checked);return {empresa_nome:$('at-nome').value.trim(),segmento:$('at-seg').value.trim()||null,emoji:$('at-emoji').value||'🏢',cor:$('at-cor').value,contato:$('at-contato').value.trim()||null,telefone:$('at-tel').value.trim()||null,email:$('at-email').value.trim()||null,status:$('at-status').value,recursos:recs,observacoes:$('at-obs').value.trim()||null};}
 async function salvarAtend(id){const f=atendForm();if(!f.empresa_nome)return toast('Informe o nome da empresa');const {error}=await sb.from('atendimentos').update(f).eq('id',id);if(error)return toast('Erro: '+error.message);toast('Salvo ✓');}
 async function converterAtend(id){
