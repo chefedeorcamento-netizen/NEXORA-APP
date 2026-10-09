@@ -110,6 +110,13 @@ tr:last-child td{border-bottom:none}
 .dash2{display:grid;grid-template-columns:1.4fr 1fr;gap:16px}
 @media(max-width:760px){.dash2{grid-template-columns:1fr}}
 .chartbox{position:relative;height:240px}
+/* ações de linha (editar/excluir) */
+.acts{white-space:nowrap;text-align:right}
+.acts button{width:30px;height:30px;border-radius:8px;color:var(--txt-3);background:var(--surface-2);margin-left:6px;vertical-align:middle}
+.acts button:hover{color:var(--txt);background:var(--line)}
+.acts button svg{width:15px;height:15px}
+.efield{margin-bottom:12px}
+.efield label{display:block;font-size:12px;color:var(--txt-2);margin-bottom:5px}
 /* credenciais do cliente criado */
 .creds-ov{position:fixed;inset:0;background:rgba(5,8,15,.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px;z-index:100}
 .creds-card{width:100%;max-width:440px;background:var(--surface);border:1px solid rgba(255,255,255,.1);border-radius:18px;box-shadow:var(--shadow);padding:26px;animation:cpop .2s ease}
@@ -310,6 +317,32 @@ const phead=(t,p)=>`<div class="phead"><h1>${t}</h1>${p?`<p>${p}</p>`:''}</div>`
 const EID=()=>PERFIL.empresa_id;
 async function ins(table,obj){if(!EID()){toast('Usuário sem empresa vinculada.');return {error:true};}const r=await sb.from(table).insert(Object.assign({empresa_id:EID()},obj));if(r.error)toast('Erro: '+r.error.message);return r;}
 
+/* ---- editar / excluir (genérico) ---- */
+const empLast={};
+const EMP_REFRESH={clientes:()=>empClientes(),leads:()=>empLeads(),produtos:()=>empProdutos(),vendas:()=>empVendas(),tarefas:()=>empTarefas()};
+const EDIT_FIELDS={
+  clientes:[['nome','Nome','text'],['telefone','Telefone','text'],['cidade','Cidade','text'],['uf','UF','text'],['status','Status','select:Prospect,Ativo,Inativo'],['valor','Valor (R$)','number']],
+  leads:[['nome','Nome','text'],['empresa_nome','Empresa','text'],['origem','Origem','text'],['temperatura','Temperatura','select:Frio,Morno,Quente'],['status','Status','select:Novo,Primeiro contato,Em qualificação,Qualificado,Convertido']],
+  produtos:[['nome','Nome','text'],['categoria','Categoria','text'],['valor','Valor (R$)','number'],['estoque','Estoque','number']],
+  vendas:[['status','Descrição','text'],['total','Valor (R$)','number'],['pagamento','Pagamento','select:Pix,Cartão,Dinheiro,Boleto']],
+  tarefas:[['titulo','Título','text'],['prioridade','Prioridade','select:Alta,Média,Baixa'],['status','Status','select:Pendente,Em andamento,Concluída'],['vence_em','Vence em','date']]
+};
+const acts=(t,id)=>`<td class="acts"><button title="Editar" onclick="editRow('${t}','${id}')">${mi('M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z')}</button><button title="Excluir" onclick="delRow2('${t}','${id}')">${mi('M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6')}</button></td>`;
+function editRow(t,id){const rec=(empLast[t]||[]).find(x=>String(x.id)===String(id));if(rec)openEdit(t,rec,EMP_REFRESH[t]);}
+function delRow2(t,id){delRow(t,id,EMP_REFRESH[t]);}
+async function delRow(table,id,after){if(!confirm('Excluir este registro? Não dá pra desfazer.'))return;const {error}=await sb.from(table).delete().eq('id',id);if(error)return toast('Erro: '+error.message);toast('Excluído ✓');if(after)after();}
+function openEdit(table,rec,after){
+  const fields=EDIT_FIELDS[table]||[];
+  const body=fields.map(([k,lbl,type])=>{const val=rec[k]==null?'':rec[k];
+    if(type&&type.indexOf('select:')===0){const opts=type.slice(7).split(',');return `<div class="efield"><label>${lbl}</label><select class="inp" data-k="${k}">${opts.map(o=>`<option ${String(val)===o?'selected':''}>${esc(o)}</option>`).join('')}</select></div>`;}
+    const it=type==='number'?'number':type==='date'?'date':'text';
+    return `<div class="efield"><label>${lbl}</label><input class="inp" data-k="${k}" type="${it}" value="${esc(val)}"></div>`;}).join('');
+  const d=document.createElement('div');d.className='creds-ov';
+  d.innerHTML=`<div class="creds-card"><h3>Editar</h3><div class="eform">${body}</div><div class="row" style="margin-top:16px;justify-content:flex-end"><button class="btn btn-ghost" onclick="this.closest('.creds-ov').remove()">Cancelar</button><button class="btn btn-primary" id="e-save">Salvar</button></div></div>`;
+  document.body.appendChild(d);
+  d.querySelector('#e-save').onclick=async()=>{const upd={};d.querySelectorAll('[data-k]').forEach(el=>{let v=el.value;if(el.type==='number')v=Number(v||0);if(v==='')v=null;upd[el.getAttribute('data-k')]=v;});const {error}=await sb.from(table).update(upd).eq('id',rec.id);if(error)return toast('Erro: '+error.message);d.remove();toast('Salvo ✓');if(after)after();};
+}
+
 /* -- Painel -- */
 let empCharts=[];
 function destroyCharts(){empCharts.forEach(c=>{try{c.destroy();}catch(e){}});empCharts=[];}
@@ -361,7 +394,8 @@ async function empClientes(){
   const {data,error}=await sb.from('clientes').select('*').order('criado_em',{ascending:false});
   if(error)return $('lst').innerHTML=`<div class="empty">Erro: ${esc(error.message)}</div>`;
   if(!data.length)return $('lst').innerHTML='<div class="empty">Nenhum cliente ainda. Cadastre o primeiro acima. 🚀</div>';
-  $('lst').innerHTML=`<table><thead><tr><th>Cliente</th><th>Telefone</th><th>Cidade</th><th>Status</th></tr></thead><tbody>${data.map(c=>`<tr><td><b>${esc(c.nome)}</b></td><td>${esc(c.telefone||'—')}</td><td>${esc(c.cidade||'—')}${c.uf?'/'+esc(c.uf):''}</td><td>${esc(c.status||'Prospect')}</td></tr>`).join('')}</tbody></table>`;
+  empLast.clientes=data;
+  $('lst').innerHTML=`<table><thead><tr><th>Cliente</th><th>Telefone</th><th>Cidade</th><th>Status</th><th></th></tr></thead><tbody>${data.map(c=>`<tr><td><b>${esc(c.nome)}</b></td><td>${esc(c.telefone||'—')}</td><td>${esc(c.cidade||'—')}${c.uf?'/'+esc(c.uf):''}</td><td>${esc(c.status||'Prospect')}</td>${acts('clientes',c.id)}</tr>`).join('')}</tbody></table>`;
 }
 async function addCliente(){const nome=$('f-nome').value.trim();if(!nome)return toast('Informe o nome');const r=await ins('clientes',{nome,telefone:$('f-tel').value.trim()||null,cidade:$('f-cid').value.trim()||null,uf:$('f-uf').value.trim().toUpperCase()||null});if(!r.error){toast('Cliente cadastrado ✓');empClientes();}}
 /* -- Leads -- */
@@ -378,8 +412,9 @@ async function empLeads(){
   const {data,error}=await sb.from('leads').select('*').order('criado_em',{ascending:false});
   if(error)return $('lst').innerHTML=`<div class="empty">Erro: ${esc(error.message)}</div>`;
   if(!data.length)return $('lst').innerHTML='<div class="empty">Nenhum lead ainda. Adicione o primeiro acima.</div>';
+  empLast.leads=data;
   const t={Quente:'🔥',Morno:'🌡️',Frio:'❄️'};
-  $('lst').innerHTML=`<table><thead><tr><th>Lead</th><th>Empresa</th><th>Origem</th><th>Temp.</th><th>Status</th></tr></thead><tbody>${data.map(l=>`<tr><td><b>${esc(l.nome)}</b></td><td>${esc(l.empresa_nome||'—')}</td><td>${esc(l.origem||'—')}</td><td>${t[l.temperatura]||''} ${esc(l.temperatura||'')}</td><td>${esc(l.status||'Novo')}</td></tr>`).join('')}</tbody></table>`;
+  $('lst').innerHTML=`<table><thead><tr><th>Lead</th><th>Empresa</th><th>Origem</th><th>Temp.</th><th>Status</th><th></th></tr></thead><tbody>${data.map(l=>`<tr><td><b>${esc(l.nome)}</b></td><td>${esc(l.empresa_nome||'—')}</td><td>${esc(l.origem||'—')}</td><td>${t[l.temperatura]||''} ${esc(l.temperatura||'')}</td><td>${esc(l.status||'Novo')}</td>${acts('leads',l.id)}</tr>`).join('')}</tbody></table>`;
 }
 async function addLead(){const nome=$('f-nome').value.trim();if(!nome)return toast('Informe o nome');const r=await ins('leads',{nome,empresa_nome:$('f-emp').value.trim()||null,origem:$('f-ori').value.trim()||null,temperatura:$('f-temp').value});if(!r.error){toast('Lead adicionado ✓');empLeads();}}
 /* -- Catálogo -- */
@@ -396,7 +431,8 @@ async function empProdutos(){
   const {data,error}=await sb.from('produtos').select('*').order('criado_em',{ascending:false});
   if(error)return $('lst').innerHTML=`<div class="empty">Erro: ${esc(error.message)}</div>`;
   if(!data.length)return $('lst').innerHTML='<div class="empty">Catálogo vazio. Cadastre o primeiro item.</div>';
-  $('lst').innerHTML=`<table><thead><tr><th>Item</th><th>Categoria</th><th>Valor</th><th>Estoque</th></tr></thead><tbody>${data.map(p=>`<tr><td><b>${esc(p.nome)}</b></td><td>${esc(p.categoria||'—')}</td><td>${BRL(p.valor)}</td><td>${p.estoque??0}</td></tr>`).join('')}</tbody></table>`;
+  empLast.produtos=data;
+  $('lst').innerHTML=`<table><thead><tr><th>Item</th><th>Categoria</th><th>Valor</th><th>Estoque</th><th></th></tr></thead><tbody>${data.map(p=>`<tr><td><b>${esc(p.nome)}</b></td><td>${esc(p.categoria||'—')}</td><td>${BRL(p.valor)}</td><td>${p.estoque??0}</td>${acts('produtos',p.id)}</tr>`).join('')}</tbody></table>`;
 }
 async function addProduto(){const nome=$('f-nome').value.trim();if(!nome)return toast('Informe o nome');const r=await ins('produtos',{nome,categoria:$('f-cat').value.trim()||null,valor:Number($('f-val').value||0),estoque:parseInt($('f-est').value||0)});if(!r.error){toast('Item cadastrado ✓');empProdutos();}}
 /* -- Vendas -- */
@@ -412,7 +448,8 @@ async function empVendas(){
   const {data,error}=await sb.from('vendas').select('*').order('criado_em',{ascending:false});
   if(error)return $('lst').innerHTML=`<div class="empty">Erro: ${esc(error.message)}</div>`;
   if(!data.length)return $('lst').innerHTML='<div class="empty">Nenhuma venda registrada ainda.</div>';
-  $('lst').innerHTML=`<table><thead><tr><th>Nº</th><th>Descrição</th><th>Pagamento</th><th>Valor</th></tr></thead><tbody>${data.map(v=>`<tr><td>${esc(v.numero||'—')}</td><td>${esc(v.status||'')}</td><td>${esc(v.pagamento||'—')}</td><td><b>${BRL(v.total)}</b></td></tr>`).join('')}</tbody></table>`;
+  empLast.vendas=data;
+  $('lst').innerHTML=`<table><thead><tr><th>Nº</th><th>Descrição</th><th>Pagamento</th><th>Valor</th><th></th></tr></thead><tbody>${data.map(v=>`<tr><td>${esc(v.numero||'—')}</td><td>${esc(v.status||'')}</td><td>${esc(v.pagamento||'—')}</td><td><b>${BRL(v.total)}</b></td>${acts('vendas',v.id)}</tr>`).join('')}</tbody></table>`;
 }
 async function addVenda(){const desc=$('f-desc').value.trim();const val=Number($('f-val').value||0);if(!val)return toast('Informe o valor');const r=await ins('vendas',{numero:'VND-'+Date.now().toString().slice(-5),total:val,pagamento:$('f-pag').value,status:desc||'Venda'});if(!r.error){toast('Venda registrada ✓');empVendas();}}
 /* -- Tarefas -- */
@@ -428,7 +465,8 @@ async function empTarefas(){
   const {data,error}=await sb.from('tarefas').select('*').order('criado_em',{ascending:false});
   if(error)return $('lst').innerHTML=`<div class="empty">Erro: ${esc(error.message)}</div>`;
   if(!data.length)return $('lst').innerHTML='<div class="empty">Nenhuma tarefa ainda.</div>';
-  $('lst').innerHTML=`<table><thead><tr><th></th><th>Tarefa</th><th>Prioridade</th><th>Vence</th><th>Status</th></tr></thead><tbody>${data.map(t=>`<tr><td><input type="checkbox" ${t.status==='Concluída'?'checked':''} onchange="toggleTarefa('${t.id}',this.checked)"></td><td><b>${esc(t.titulo)}</b></td><td>${esc(t.prioridade||'Média')}</td><td>${t.vence_em||'—'}</td><td>${esc(t.status||'Pendente')}</td></tr>`).join('')}</tbody></table>`;
+  empLast.tarefas=data;
+  $('lst').innerHTML=`<table><thead><tr><th></th><th>Tarefa</th><th>Prioridade</th><th>Vence</th><th>Status</th><th></th></tr></thead><tbody>${data.map(t=>`<tr><td><input type="checkbox" ${t.status==='Concluída'?'checked':''} onchange="toggleTarefa('${t.id}',this.checked)"></td><td><b>${esc(t.titulo)}</b></td><td>${esc(t.prioridade||'Média')}</td><td>${t.vence_em||'—'}</td><td>${esc(t.status||'Pendente')}</td>${acts('tarefas',t.id)}</tr>`).join('')}</tbody></table>`;
 }
 async function addTarefa(){const tit=$('f-tit').value.trim();if(!tit)return toast('Informe o título');const r=await ins('tarefas',{titulo:tit,prioridade:$('f-prio').value,vence_em:$('f-venc').value||null});if(!r.error){toast('Tarefa adicionada ✓');empTarefas();}}
 async function toggleTarefa(id,done){const {error}=await sb.from('tarefas').update({status:done?'Concluída':'Pendente'}).eq('id',id);if(error)toast('Erro: '+error.message);else toast(done?'Concluída ✓':'Reaberta');}
