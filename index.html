@@ -325,21 +325,86 @@ async function entrar(user){
 async function doLogout(){await sb.auth.signOut();location.reload();}
 
 /* ===== ÁREA ADMIN (NEXORA / superadmin) ===== */
-let adminTab='painel';
-function admGo(t){adminTab=t;renderAdmin();}
+let adminTab='painel', atendConfigId=null;
+function admGo(t){adminTab=t;atendConfigId=null;renderAdmin();}
 function renderAdmin(){
   $('view').innerHTML=`<div class="crm">
     <aside class="crm-side">
       <div class="crm-emp"><span class="crm-emoji">🛠️</span><div><div class="crm-empn">Administração</div><div class="muted">NEXORA</div></div></div>
       <nav class="crm-nav">
         <a class="${adminTab==='painel'?'on':''}" onclick="admGo('painel')">${mi('M3 13h8V3H3zM13 21h8V11h-8zM13 3v6h8V3zM3 21h8v-6H3z')}<span>Painel</span></a>
+        <a class="${adminTab==='atendimentos'?'on':''}" onclick="admGo('atendimentos')">${mi('M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z')}<span>Atendimentos</span></a>
         <a class="${adminTab==='empresas'?'on':''}" onclick="admGo('empresas')">${mi('M3 21h18M5 21V5l7-2v18M19 21V9l-7-4M8.5 9h.01M8.5 12h.01M8.5 15h.01')}<span>Empresas</span></a>
         <a class="${adminTab==='prospeccao'?'on':''}" onclick="admGo('prospeccao')">${mi(pIco)}<span>Prospecção IA</span></a>
       </nav>
     </aside>
     <main class="crm-main" id="adm-body"><div class="empty"><span class="spin"></span></div></main>
   </div>`;
-  if(adminTab==='painel')admPainel();else if(adminTab==='prospeccao')admProsp();else admEmpresas();
+  if(adminTab==='painel')admPainel();
+  else if(adminTab==='atendimentos'){atendConfigId?admAtendConfig(atendConfigId):admAtendimentos();}
+  else if(adminTab==='prospeccao')admProsp();
+  else admEmpresas();
+}
+/* ===== ATENDIMENTOS (pipeline NEXORA / Modo Reunião) ===== */
+async function admAtendimentos(){
+  $('adm-body').innerHTML=phead('Atendimentos','Seus prospects — configure o CRM e converta em cliente.')+`
+    <div style="margin-bottom:16px"><button class="btn btn-primary" onclick="novoAtend()">${mi('M12 5v14M5 12h14')}Novo atendimento</button></div>
+    <div class="card"><div class="card-h"><h3>Prospects</h3><button class="btn btn-ghost btn-sm" onclick="admAtendimentos()">Atualizar</button></div><div class="card-b" id="at-list"><div class="empty"><span class="spin"></span></div></div></div>`;
+  const {data,error}=await sb.from('atendimentos').select('*').order('criado_em',{ascending:false});
+  if(error)return $('at-list').innerHTML=`<div class="empty">Erro: ${esc(error.message)}</div>`;
+  if(!data||!data.length)return $('at-list').innerHTML='<div class="empty">Nenhum atendimento ainda. Crie o primeiro acima. 👆</div>';
+  $('at-list').innerHTML=`<div style="overflow-x:auto"><table><thead><tr><th>Empresa</th><th>Contato</th><th>Segmento</th><th>Status</th><th></th></tr></thead><tbody>${data.map(a=>`<tr style="cursor:pointer" onclick="abrirAtend('${a.id}')"><td><b>${a.emoji||'🏢'} ${esc(a.empresa_nome)}</b></td><td>${esc(a.contato||'—')}</td><td>${esc(a.segmento||'—')}</td><td>${a.convertido_empresa_id?'<span class="cob ok">✓ Convertido</span>':esc(a.status||'Novo')}</td><td class="admacts"><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();abrirAtend('${a.id}')">Abrir</button></td></tr>`).join('')}</tbody></table></div>`;
+}
+function novoAtend(){const d=document.createElement('div');d.className='creds-ov';d.innerHTML=`<div class="creds-card"><h3>Novo atendimento</h3><div class="efield"><label>Empresa / prospect</label><input class="inp" id="na-nome" placeholder="Ex.: Barbearia do Zé"></div><div class="efield"><label>Contato</label><input class="inp" id="na-contato" placeholder="Nome do responsável"></div><div class="efield"><label>Segmento</label><input class="inp" id="na-seg" placeholder="Ex.: Barbearia"></div><div class="row" style="margin-top:14px;justify-content:flex-end"><button class="btn btn-ghost" onclick="this.closest('.creds-ov').remove()">Cancelar</button><button class="btn btn-primary" id="na-save">Criar e configurar</button></div></div>`;document.body.appendChild(d);d.querySelector('#na-save').onclick=async()=>{const nome=$('na-nome').value.trim();if(!nome)return toast('Informe o nome');const {data,error}=await sb.from('atendimentos').insert({empresa_nome:nome,contato:$('na-contato').value.trim()||null,segmento:$('na-seg').value.trim()||null}).select().single();if(error)return toast('Erro: '+error.message);d.remove();toast('Atendimento criado ✓');abrirAtend(data.id);};}
+function abrirAtend(id){atendConfigId=id;admAtendConfig(id);}
+function voltarAtend(){atendConfigId=null;admAtendimentos();}
+async function delAtendimento(id){if(!confirm('Excluir este atendimento?'))return;const {error}=await sb.from('atendimentos').delete().eq('id',id);if(error)return toast('Erro: '+error.message);toast('Excluído ✓');voltarAtend();}
+async function admAtendConfig(id){
+  const {data:a,error}=await sb.from('atendimentos').select('*').eq('id',id).maybeSingle();
+  if(error||!a){$('adm-body').innerHTML=`<div class="empty">Atendimento não encontrado.</div>`;return;}
+  const recs=a.recursos||{};const toggles=EMP_MODS.filter(([mid])=>mid!=='dashboard'&&mid!=='config');
+  $('adm-body').innerHTML=phead('Atendimento — '+esc(a.empresa_nome),'Modo Reunião: configure o CRM e converta em cliente.')+`
+    <button class="btn btn-ghost btn-sm" style="margin-bottom:14px" onclick="voltarAtend()">← Voltar</button>
+    <div class="card"><div class="card-h"><h3>Identidade</h3></div><div class="card-b">
+      <div class="row" style="margin-bottom:12px">
+        <div><label>Empresa</label><input class="inp" id="at-nome" value="${esc(a.empresa_nome||'')}"></div>
+        <div><label>Segmento</label><input class="inp" id="at-seg" value="${esc(a.segmento||'')}"></div>
+        <div style="max-width:100px"><label>Emoji</label><input class="inp" id="at-emoji" value="${esc(a.emoji||'🏢')}" maxlength="2"></div>
+        <div style="max-width:100px"><label>Cor</label><input class="inp" id="at-cor" type="color" value="${a.cor||'#6D5EF6'}" style="padding:4px;height:42px"></div>
+      </div>
+      <div class="row">
+        <div><label>Contato</label><input class="inp" id="at-contato" value="${esc(a.contato||'')}"></div>
+        <div><label>Telefone</label><input class="inp" id="at-tel" value="${esc(a.telefone||'')}"></div>
+        <div><label>E-mail (vira o login)</label><input class="inp" id="at-email" value="${esc(a.email||'')}" placeholder="cliente@email.com"></div>
+        <div style="max-width:170px"><label>Status</label><select class="inp" id="at-status">${['Novo','Em simulação','Proposta','Aprovado','Recusado'].map(s=>`<option ${a.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+      </div>
+    </div></div>
+    <div class="card"><div class="card-h"><h3>Recursos do CRM</h3></div><div class="card-b"><div class="muted" style="margin-bottom:10px">O que esse cliente vai ter no CRM dele.</div><div class="rec-list">${toggles.map(([mid,l])=>`<label class="rec-item"><input type="checkbox" data-r="${mid}" ${recs[mid]!==false?'checked':''}><span>${l}</span></label>`).join('')}</div></div></div>
+    <div class="card"><div class="card-b">
+      <label>Observações</label><textarea class="inp" id="at-obs" rows="3" style="resize:vertical">${esc(a.observacoes||'')}</textarea>
+      <div class="row" style="margin-top:14px;justify-content:space-between;gap:10px">
+        <button class="btn btn-ghost" onclick="delAtendimento('${a.id}')">Excluir</button>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost" onclick="salvarAtend('${a.id}')">Salvar</button>
+          ${a.convertido_empresa_id?'<span class="cob ok" style="align-self:center">✓ Convertido em cliente</span>':`<button class="btn btn-primary" onclick="converterAtend('${a.id}')">Converter em cliente</button>`}
+        </div>
+      </div>
+    </div></div>`;
+}
+function atendForm(){const recs={};document.querySelectorAll('.rec-list [data-r]').forEach(el=>recs[el.getAttribute('data-r')]=el.checked);return {empresa_nome:$('at-nome').value.trim(),segmento:$('at-seg').value.trim()||null,emoji:$('at-emoji').value||'🏢',cor:$('at-cor').value,contato:$('at-contato').value.trim()||null,telefone:$('at-tel').value.trim()||null,email:$('at-email').value.trim()||null,status:$('at-status').value,recursos:recs,observacoes:$('at-obs').value.trim()||null};}
+async function salvarAtend(id){const f=atendForm();if(!f.empresa_nome)return toast('Informe o nome da empresa');const {error}=await sb.from('atendimentos').update(f).eq('id',id);if(error)return toast('Erro: '+error.message);toast('Salvo ✓');}
+async function converterAtend(id){
+  const f=atendForm();if(!f.empresa_nome)return toast('Informe o nome da empresa');
+  if(!f.email)return toast('Informe o e-mail do cliente (vira o login)');
+  if(!confirm('Converter "'+f.empresa_nome+'" em cliente? Isso cria o acesso dele.'))return;
+  await sb.from('atendimentos').update(f).eq('id',id);
+  const payload={empresa:{nome:f.empresa_nome,segmento:f.segmento,emoji:f.emoji,cor:f.cor,recursos:f.recursos},cliente:{nome:f.contato,email:f.email}};
+  const {data,error}=await sb.functions.invoke('criar-cliente',{body:payload});
+  if(error){let m=error.message;try{const j=await error.context.json();if(j&&j.error)m=j.error;}catch(_){}return toast('Erro: '+m);}
+  if(data&&data.error)return toast('Erro: '+data.error);
+  await sb.from('atendimentos').update({status:'Aprovado',convertido_empresa_id:data.empresa.id}).eq('id',id);
+  LAST_CREDS={email:data.login.email,senha:data.login.senha,empresa:data.empresa.nome};showCreds();
+  admAtendConfig(id);
 }
 async function admPainel(){
   const {data,error}=await sb.from('empresas').select('*');
