@@ -870,6 +870,7 @@ function calcProposta(c){
   if(o.crm){
     unicas.push({nome:'CRM — Plano básico + implementação inicial',det:'Dashboard · Clientes · Leads · Atendimentos',valor:OFERTAS.crm.planoBasico});
     Object.keys(c.recursos||{}).filter(k=>c.recursos[k]&&!CRM_INCL.includes(k)).forEach(k=>unicas.push({nome:'Recurso adicional: '+recNome(k),valor:OFERTAS.crm.recursoExtra,rid:k}));
+    if(c.recursos&&c.recursos.prospeccao)mensais.push({nome:'Prospecção IA — manutenção (busca ilimitada)',valor:30,det:'Mantém a busca de empresas reais ativa',cond:'Inicia após a entrega do CRM'});
     mensais.push({nome:'Licenciamento + suporte (CRM)',valor:OFERTAS.crm.mensal,cond:'Inicia após a entrega do CRM'});
   }
   if(o.trafego){const t=OFERTAS.trafego.find(x=>x.id===o.trafego);if(t)mensais.push({nome:t.nome,valor:t.mensal,det:t.desc});}
@@ -1095,7 +1096,8 @@ function prospCardsHTML(list,mode){
       <div class="pc-top"><div class="pc-av">${esc(p.nome[0])}</div>
         <div class="pc-id"><div class="pc-nm">${esc(p.nome)}</div><div class="pc-sub">${esc(p.segmento)} · ${esc(p.cidade)}${p.uf?'/'+esc(p.uf):''}</div></div>
         <div class="pc-score" title="Potencial de oportunidade">${p.score}</div></div>
-      <div class="pc-contact">${svgI(IC.atend)}<span>${esc(p.tel)}</span><span style="color:var(--txt-3)">·</span><span>${esc(p.insta)}</span></div>
+      <div class="pc-contact">${svgI(IC.atend)}<span>${esc(p.tel||'sem telefone')}</span>${p.insta?`<span style="color:var(--txt-3)">·</span><span>${esc(p.insta)}</span>`:(p.site?`<span style="color:var(--txt-3)">·</span><a href="${esc(p.site)}" target="_blank" rel="noopener" style="color:var(--brand)">site</a>`:'')}${(p.rating!=null)?`<span style="color:var(--txt-3)">·</span><span>⭐ ${esc(p.rating)}${p.reviews?' ('+esc(p.reviews)+')':''}</span>`:''}</div>
+      ${p.endereco?`<div class="pc-contact" style="color:var(--txt-3);font-size:12px">${esc(p.endereco)}</div>`:''}
       <div class="pc-sec">Sinais detectados</div>
       <div class="pc-sinais">${p.sinais.map(s=>`<span class="pc-tag warn">${esc(s)}</span>`).join('')}</div>
       <div class="pc-sec">${mode==='nexora'?'Serviços que você pode oferecer':'Encaixe para sua empresa'}</div>
@@ -1119,11 +1121,19 @@ function vProspeccao(){
   </div></div></div>
   <div id="prosp-results">${results}</div>`;
 }
-function prospBuscar(){
+async function prospBuscar(){
   PROSP_FORM={seg:document.getElementById('pr-seg').value.trim(),cidade:document.getElementById('pr-cid').value.trim(),uf:document.getElementById('pr-uf').value.trim().toUpperCase()};
   if(!PROSP_FORM.seg){toast('Digite um segmento (ex.: clínica)');return;}
-  PROSP_LOADING=true;vProspeccao();
-  setTimeout(()=>{PROSP_RES=iaProspecta(PROSP_FORM.seg,PROSP_FORM.cidade,PROSP_FORM.uf,6);PROSP_LOADING=false;vProspeccao();},900);
+  PROSP_LOADING=true;PROSP_RES=[];vProspeccao();
+  try{
+    const {data,error}=await sb.functions.invoke('prospectar',{body:{segmento:PROSP_FORM.seg,cidade:PROSP_FORM.cidade,uf:PROSP_FORM.uf,qtd:12}});
+    let msg=null;if(error){try{const j=await error.context.json();msg=j&&j.error;}catch(_){msg=error.message;}}
+    if(!msg&&data&&data.error)msg=data.error;
+    if(msg){PROSP_LOADING=false;vProspeccao();toast('Erro: '+msg);return;}
+    PROSP_RES=(data&&data.empresas)||[];
+    if(!PROSP_RES.length)toast('Nenhuma empresa encontrada — tente outro segmento/cidade');
+  }catch(e){toast('Falha na busca: '+((e&&e.message)||e));}
+  PROSP_LOADING=false;vProspeccao();
 }
 function prospAddAtend(id){
   const p=PROSP_RES.find(x=>x.id===id);if(!p)return;
@@ -1132,7 +1142,7 @@ function prospAddAtend(id){
     identidade:{emoji:'🎯',cor:'#6D5EF6',cor2:'#2DD4BF'},recursos:o,
     funil:[{nome:'Novo contato',prob:10},{nome:'Qualificação',prob:30},{nome:'Proposta',prob:55},{nome:'Negociação',prob:75},{nome:'Fechamento',prob:95}],
     campos:[],automacoes:[],desenvolvimentos:[],orcamento:{implantacao:0,desenvolvimento:0,configuracao:0,outros:0,licenca:0,suporte:0},
-    observacoes:'Captado via Prospecção IA ('+p.cidade+(p.uf?'/'+p.uf:'')+'). Sinais: '+p.sinais.join('; ')+'. Serviços recomendados: '+p.servicos.join(', ')+'.',
+    observacoes:'Captado via Prospecção IA ('+(p.cidade||'')+(p.uf?'/'+p.uf:'')+').'+(p.endereco?' Endereço: '+p.endereco+'.':'')+(p.site?' Site: '+p.site+'.':'')+(p.rating!=null?' Nota Google: '+p.rating+(p.reviews?' ('+p.reviews+' avaliações)':'')+'.':'')+' Sinais: '+p.sinais.join('; ')+'. Serviços recomendados: '+p.servicos.join(', ')+'.',
     ofertas:defOfertas(),verbaAnuncios:0,propObs:''};
   STORE.atendimentos.unshift(a);save();buildNav();
   const card=document.getElementById('pc-'+id);if(card){const b=card.querySelector('.pc-add');if(b)b.outerHTML='<div class="pc-added">✓ Adicionado aos atendimentos</div>';card.classList.add('done');}
@@ -1184,7 +1194,7 @@ const SERV_APRES=[
   {id:'crm',icon:IC.dashboard,nome:'CRM NEXORA',tag:'Todo o comercial da empresa em um só lugar',
    desc:'Um sistema de gestão comercial montado com a cara da empresa — só com os módulos que ela precisa. Organiza clientes, leads, funil, propostas e vendas, e mostra o que precisa ser feito hoje para vender mais. Ninguém perde venda por desorganização ou falta de retorno.',
    inclui:['Painel com indicadores em tempo real','Cadastro de clientes e histórico completo','Captação e qualificação de leads','Funil de vendas visual (arrastar e soltar)','Propostas, vendas e tarefas','Relatórios e automações'],
-   precos:[{l:'Plano básico + implementação',s:'Dashboard · Clientes · Leads · Atendimentos',v:'R$ 1.500',t:'única'},{l:'Licenciamento + suporte',s:'Começa após a entrega do CRM',v:'R$ 299,90',t:'mensal'},{l:'Recurso adicional (cada)',s:'Ex.: Funil, Relatórios, Catálogo',v:'R$ 80',t:'única'},{l:'Alteração após a entrega (cada)',s:'+ R$ 80 por recurso novo',v:'R$ 800',t:'única'}]},
+   precos:[{l:'Plano básico + implementação',s:'Dashboard · Clientes · Leads · Atendimentos',v:'R$ 1.500',t:'única'},{l:'Licenciamento + suporte',s:'Começa após a entrega do CRM',v:'R$ 299,90',t:'mensal'},{l:'Recurso adicional (cada)',s:'Ex.: Funil, Relatórios, Catálogo',v:'R$ 80',t:'única'},{l:'Prospecção IA — ativação',s:'Libera a busca de empresas reais por segmento/região',v:'R$ 80',t:'única'},{l:'Prospecção IA — manutenção',s:'Mantém a busca ilimitada ativa (cobre o custo da IA)',v:'R$ 30',t:'mensal'},{l:'Alteração após a entrega (cada)',s:'+ R$ 80 por recurso novo',v:'R$ 800',t:'única'}]},
   {id:'trafego',icon:'M3 11l18-5v12L3 14v-3zM11.6 16.8a3 3 0 1 1-5.8-1.6',nome:'Gestão de tráfego',tag:'Anúncios que trazem cliente, geridos por quem entende',
    desc:'A NEXORA cuida das campanhas de anúncios (Instagram, Facebook e Google): criação, otimização e acompanhamento dos resultados, transformando investimento em clientes de verdade.',
    inclui:['Configuração e gestão das campanhas','Otimização contínua por resultado','Acompanhamento e relatório de desempenho'],
@@ -2409,12 +2419,25 @@ function empProsp(){
     <div id="pres">${res}</div>`);
 }
 function pcard(p){return `<div class="prosp-card" id="pc-${p.id}">
-  <div class="pc-top"><div class="pc-av">${esc(p.nome[0])}</div><div class="pc-id"><div class="pc-nm">${esc(p.nome)}</div><div class="pc-sub">${esc(p.bairro)} · ${esc(p.cidade)}${p.uf?'/'+esc(p.uf):''}</div></div><div class="pc-score" title="Chance de virar cliente">${p.score}</div></div>
-  <div class="pc-contact">${esc(p.tel)} · ${esc(p.insta)}</div>
+  <div class="pc-top"><div class="pc-av">${esc(p.nome[0])}</div><div class="pc-id"><div class="pc-nm">${esc(p.nome)}</div><div class="pc-sub">${esc(p.endereco||p.bairro||p.segmento||'')}${p.cidade?' · '+esc(p.cidade)+(p.uf?'/'+esc(p.uf):''):''}</div></div><div class="pc-score" title="Chance de virar cliente">${p.score}</div></div>
+  <div class="pc-contact">${esc(p.tel||'sem telefone')}${p.insta?' · '+esc(p.insta):(p.site?` · <a href="${esc(p.site)}" target="_blank" rel="noopener" style="color:var(--brand)">site</a>`:'')}${(p.rating!=null)?' · ⭐ '+esc(p.rating)+(p.reviews?' ('+esc(p.reviews)+')':''):''}</div>
   <div class="pc-sec">Por que é um bom lead</div><div class="pc-sinais">${p.sinais.map(s=>`<span class="pc-tag warn">${esc(s)}</span>`).join('')}</div>
   <button class="btn btn-primary btn-sm pc-add" onclick="empProspAddLead('${p.id}')">Adicionar como lead</button></div>`;
 }
-function empProspBuscar(){PFORM={nicho:$('pr-nic').value.trim(),cid:$('pr-cid').value.trim(),uf:$('pr-uf').value.trim().toUpperCase()};if(!PFORM.nicho)return toast('Diga o que você atende');PLOAD=true;empProsp();setTimeout(()=>{PRES=empIaProspecta(PFORM.nicho,PFORM.cid,PFORM.uf,6);PLOAD=false;empProsp();},800);}
+async function empProspBuscar(){
+  PFORM={nicho:$('pr-nic').value.trim(),cid:$('pr-cid').value.trim(),uf:$('pr-uf').value.trim().toUpperCase()};
+  if(!PFORM.nicho)return toast('Diga o que você atende');
+  PLOAD=true;PRES=[];empProsp();
+  try{
+    const {data,error}=await sb.functions.invoke('prospectar',{body:{segmento:PFORM.nicho,cidade:PFORM.cid,uf:PFORM.uf,qtd:12}});
+    let msg=null;if(error){try{const j=await error.context.json();msg=j&&j.error;}catch(_){msg=error.message;}}
+    if(!msg&&data&&data.error)msg=data.error;
+    if(msg){PLOAD=false;empProsp();toast('Erro: '+msg);return;}
+    PRES=(data&&data.empresas)||[];
+    if(!PRES.length)toast('Nenhuma empresa encontrada — tente outro termo/cidade');
+  }catch(e){toast('Falha na busca: '+((e&&e.message)||e));}
+  PLOAD=false;empProsp();
+}
 async function empProspAddLead(id){const p=PRES.find(x=>x.id===id);if(!p)return;const r=await ins('leads',{nome:p.nome,empresa_nome:null,origem:'Prospecção IA',temperatura:p.score>=85?'Quente':p.score>=72?'Morno':'Frio',status:'Novo',telefone:p.tel});if(r.error)return;const c=document.getElementById('pc-'+id);if(c){const b=c.querySelector('.pc-add');if(b)b.outerHTML='<div class="pc-added">✓ Adicionado como lead</div>';c.classList.add('done');}toast(p.nome+' → Leads ✓');}
 
 /* ============================================================ BOOT (sessão / recuperação de senha) ============================================================ */
