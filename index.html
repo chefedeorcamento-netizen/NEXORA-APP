@@ -577,6 +577,8 @@ label.fl{display:block;font-size:12px;color:var(--txt-2);font-weight:500;margin:
 
 /* ===== utilitários / boot / login real ===== */
 .hide{display:none!important}
+.prev-banner{position:fixed;bottom:0;left:0;right:0;z-index:95;background:linear-gradient(90deg,#8575ff,#6d5ef6);color:#fff;padding:10px 18px;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;font-size:13.5px;box-shadow:0 -6px 20px rgba(0,0,0,.4)}
+.prev-banner .btn{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.35);color:#fff}
 #boot{position:fixed;inset:0;z-index:120;display:grid;place-items:center;background:#0E1526}
 .spin{width:22px;height:22px;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:nxspin .7s linear infinite;display:inline-block}
 @keyframes nxspin{to{transform:rotate(360deg)}}
@@ -1619,7 +1621,21 @@ function genData(company){
 }
 
 /* entrada/saída */
-function entrarAmbiente(id,mode){AMB=STORE.atendimentos.find(a=>a.id===id);if(!AMB)return;ambMode=mode||'admin';const menu=previewMenuOrder.filter(k=>AMB.recursos[k]);ambTab=menu.includes('dashboard')?'dashboard':(menu[0]||'dashboard');ambState={cliQ:'',taskF:'todas'};document.getElementById('ambiente').classList.add('open');ambienteRender();}
+async function entrarAmbiente(id,mode){
+  const a=STORE.atendimentos.find(x=>x.id===id);if(!a)return;
+  const {data:demo,error}=await sb.from('empresas').select('id').eq('is_demo',true).limit(1).maybeSingle();
+  if(error||!demo){toast('Rode o SQL do ambiente demo (nexora-06) no Supabase primeiro.');return;}
+  PREVIEW_EID=demo.id;
+  EMP_INFO={nome:a.empresa||'Empresa Demo',emoji:(a.identidade&&a.identidade.emoji)||'🏢',cor:(a.identidade&&a.identidade.cor)||'#6D5EF6',segmento:a.segmento||'',recursos:a.recursos||{}};
+  document.getElementById('app').style.display='none';
+  const amb=document.getElementById('ambiente');if(amb){amb.classList.remove('open');amb.innerHTML='';}
+  document.getElementById('empapp').style.display='flex';
+  const av=document.getElementById('empAvatar');if(av)av.textContent=((a.empresa&&a.empresa[0])||'D').toUpperCase();
+  empTab='dashboard';await renderEmpresa();
+  if(!document.getElementById('prevBanner')){const b=document.createElement('div');b.id='prevBanner';b.className='prev-banner';b.innerHTML='🎬 <b>Modo demonstração</b> — este é o CRM real com dados de exemplo. Cadastre, edite e exclua à vontade. <button class="btn btn-primary btn-sm" onclick="sairAmbiente()">Sair da demonstração</button>';document.body.appendChild(b);}
+}
+function sairAmbiente(){PREVIEW_EID=null;EMP_INFO=null;const b=document.getElementById('prevBanner');if(b)b.remove();document.getElementById('empapp').style.display='none';document.getElementById('app').style.display='block';}
+function entrarAmbienteFicticio(id,mode){AMB=STORE.atendimentos.find(a=>a.id===id);if(!AMB)return;ambMode=mode||'admin';const menu=previewMenuOrder.filter(k=>AMB.recursos[k]);ambTab=menu.includes('dashboard')?'dashboard':(menu[0]||'dashboard');ambState={cliQ:'',taskF:'todas'};document.getElementById('ambiente').classList.add('open');ambienteRender();}
 function sairAmbiente(){ambChartList.forEach(c=>c.destroy());ambChartList=[];document.getElementById('ambiente').classList.remove('open');}
 function sairParaLogin(){ambChartList.forEach(c=>c.destroy());ambChartList=[];document.getElementById('ambiente').classList.remove('open');document.getElementById('app').style.display='none';document.getElementById('login').style.display='flex';}
 function trocarEmpresa(id){AMB=STORE.atendimentos.find(a=>a.id===id);const menu=previewMenuOrder.filter(k=>AMB.recursos[k]);if(!menu.includes(ambTab))ambTab=menu[0]||'dashboard';ambState={cliQ:'',taskF:'todas'};ambienteRender();}
@@ -2087,6 +2103,11 @@ const EMP_MODS=[['dashboard','Painel','M3 13h8V3H3zM13 21h8V11h-8zM13 3v6h8V3zM3
   ['vendas','Vendas','M3 3v18h18M7 14l4-4 3 3 5-6'],
   ['posvenda','Pós-venda','M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.5 1-1a5.5 5.5 0 0 0 0-7.9z'],
   ['tarefas','Tarefas','M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11'],
+  ['servicos','Serviços','M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.94-7.94l-3.76 3.76z'],
+  ['atendimentos','Atendimentos','M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'],
+  ['followup','Follow-up','M12 8v4l3 3M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z'],
+  ['relatorios','Relatórios','M3 3v18h18M18 17V9M13 17V5M8 17v-3'],
+  ['importacao','Importação','M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3'],
   ['config','Configurações','M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 13a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 0 1-4 0v-.2a1.6 1.6 0 0 0-2.7-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7H3a2 2 0 0 1 0-4h.2a1.6 1.6 0 0 0 1.1-2.7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 2.7-1.1V3a2 2 0 0 1 4 0v.2a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8z']];
 const mi=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${d}"/></svg>`;
 
@@ -2107,7 +2128,7 @@ async function renderEmpresa(){
 }
 function empGo(t){empTab=t;renderEmpresa();}
 function empMods(){const r=(EMP_INFO&&EMP_INFO.recursos)||{};return EMP_MODS.filter(([id])=>id==='dashboard'||id==='config'||r[id]!==false);}
-function empRender(){if(!empMods().some(([id])=>id===empTab))empTab='dashboard';if(typeof destroyCharts==='function')destroyCharts();const m={dashboard:empDash,clientes:empClientes,leads:empLeads,prospeccao:empProsp,funil:empFunil,oportunidades:empOpps,propostas:empProps,produtos:empProdutos,vendas:empVendas,posvenda:empPosvenda,tarefas:empTarefas,config:empConfig};(m[empTab]||empDash)();}
+function empRender(){if(!empMods().some(([id])=>id===empTab))empTab='dashboard';if(typeof destroyCharts==='function')destroyCharts();const m={dashboard:empDash,clientes:empClientes,leads:empLeads,prospeccao:empProsp,funil:empFunil,oportunidades:empOpps,propostas:empProps,produtos:empProdutos,vendas:empVendas,posvenda:empPosvenda,tarefas:empTarefas,servicos:empServicos,atendimentos:empAtend,followup:empFollow,relatorios:empRelatorios,importacao:empImport,config:empConfig};(m[empTab]||empDash)();}
 function cmain(h){$('crm-main').innerHTML=h;}
 const phead=(t,p)=>`<div class="phead"><h1>${t}</h1>${p?`<p>${p}</p>`:''}</div>`;
 let PREVIEW_EID=null;
@@ -2116,7 +2137,7 @@ async function ins(table,obj){if(!EID()){toast('Usuário sem empresa vinculada.'
 
 /* ---- editar / excluir (genérico) ---- */
 const empLast={};
-const EMP_REFRESH={clientes:()=>empClientes(),leads:()=>empLeads(),produtos:()=>empProdutos(),vendas:()=>empVendas(),tarefas:()=>empTarefas(),oportunidades:()=>empOpps(),propostas:()=>empProps()};
+const EMP_REFRESH={clientes:()=>empClientes(),leads:()=>empLeads(),produtos:()=>empProdutos(),vendas:()=>empVendas(),tarefas:()=>empTarefas(),oportunidades:()=>empOpps(),propostas:()=>empProps(),servicos:()=>empServicos(),followups:()=>empFollow(),interacoes:()=>empAtend()};
 const EDIT_FIELDS={
   clientes:[['nome','Nome','text'],['telefone','Telefone','text'],['email','E-mail','text'],['cidade','Cidade','text'],['uf','UF','text'],['status','Status','select:Prospect,Ativo,Inativo'],['valor','Valor (R$)','number']],
   leads:[['nome','Nome','text'],['empresa_nome','Empresa','text'],['origem','Origem','text'],['temperatura','Temperatura','select:Frio,Morno,Quente'],['status','Status','select:Novo,Primeiro contato,Em qualificação,Qualificado,Convertido']],
@@ -2124,7 +2145,10 @@ const EDIT_FIELDS={
   vendas:[['status','Descrição','text'],['total','Valor (R$)','number'],['pagamento','Pagamento','select:Pix,Cartão,Dinheiro,Boleto']],
   tarefas:[['titulo','Título','text'],['prioridade','Prioridade','select:Alta,Média,Baixa'],['status','Status','select:Pendente,Em andamento,Concluída'],['vence_em','Vence em','date']],
   oportunidades:[['titulo','Título','text'],['valor','Valor (R$)','number'],['etapa','Etapa','text'],['status','Status','select:Aberta,Ganha,Perdida']],
-  propostas:[['numero','Número','text'],['total','Total (R$)','number'],['status','Status','select:Rascunho,Enviada,Em negociação,Aprovada,Recusada']]
+  propostas:[['numero','Número','text'],['total','Total (R$)','number'],['status','Status','select:Rascunho,Enviada,Em negociação,Aprovada,Recusada']],
+  servicos:[['nome','Nome','text'],['descricao','Descrição','text'],['valor','Valor (R$)','number']],
+  followups:[['titulo','Assunto','text'],['canal','Canal','select:WhatsApp,Ligação,E-mail,Presencial'],['data_prevista','Data','date'],['status','Status','select:Pendente,Feito,Cancelado'],['obs','Observação','text']],
+  interacoes:[['tipo','Tipo','select:Ligação,WhatsApp,Reunião,E-mail,Visita'],['assunto','Assunto','text'],['resultado','Resultado','text']]
 };
 const acts=(t,id)=>`<td class="acts"><button title="Editar" onclick="editRow('${t}','${id}')">${mi('M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z')}</button><button title="Excluir" onclick="delRow2('${t}','${id}')">${mi('M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6')}</button></td>`;
 function editRow(t,id){const rec=(empLast[t]||[]).find(x=>String(x.id)===String(id));if(rec)openEdit(t,rec,EMP_REFRESH[t]);}
@@ -2225,6 +2249,7 @@ async function empProdutos(){
       <div><label>Categoria</label><input class="inp" id="f-cat"></div>
       <div style="max-width:130px"><label>Valor (R$)</label><input class="inp" id="f-val" type="number" step="0.01"></div>
       <div style="max-width:110px"><label>Estoque</label><input class="inp" id="f-est" type="number"></div>
+      <div><label>Foto</label><input class="inp" id="f-foto" type="file" accept="image/*"></div>
       <button class="btn btn-primary" style="width:auto" onclick="addProduto()">Adicionar</button>
     </div></div></div>
     <div class="card"><div class="card-h"><h3>Itens do catálogo</h3><button class="btn btn-ghost btn-sm" onclick="empProdutos()">Atualizar</button></div><div class="card-b" id="lst"><div class="empty"><span class="spin"></span></div></div></div>`);
@@ -2232,9 +2257,10 @@ async function empProdutos(){
   if(error)return $('lst').innerHTML=`<div class="empty">Erro: ${esc(error.message)}</div>`;
   if(!data.length)return $('lst').innerHTML='<div class="empty">Catálogo vazio. Cadastre o primeiro item.</div>';
   empLast.produtos=data;
-  $('lst').innerHTML=`<table><thead><tr><th>Item</th><th>Categoria</th><th>Valor</th><th>Estoque</th><th></th></tr></thead><tbody>${data.map(p=>`<tr><td><b>${esc(p.nome)}</b></td><td>${esc(p.categoria||'—')}</td><td>${BRL(p.valor)}</td><td>${p.estoque??0}</td>${acts('produtos',p.id)}</tr>`).join('')}</tbody></table>`;
+  $('lst').innerHTML=`<table><thead><tr><th>Foto</th><th>Item</th><th>Categoria</th><th>Valor</th><th>Estoque</th><th></th></tr></thead><tbody>${data.map(p=>`<tr><td>${p.foto?`<img src="${esc(p.foto)}" alt="" style="width:40px;height:40px;border-radius:8px;object-fit:cover">`:`<div style="width:40px;height:40px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;color:var(--txt-3)">📦</div>`}</td><td><b>${esc(p.nome)}</b></td><td>${esc(p.categoria||'—')}</td><td>${BRL(p.valor)}</td><td>${p.estoque??0}</td>${acts('produtos',p.id)}</tr>`).join('')}</tbody></table>`;
 }
-async function addProduto(){const nome=$('f-nome').value.trim();if(!nome)return toast('Informe o nome');const r=await ins('produtos',{nome,categoria:$('f-cat').value.trim()||null,valor:Number($('f-val').value||0),estoque:parseInt($('f-est').value||0)});if(!r.error){toast('Item cadastrado ✓');empProdutos();}}
+function fileToThumb(file,max){return new Promise((res)=>{if(!file)return res(null);const r=new FileReader();r.onload=e=>{const img=new Image();img.onload=()=>{try{const c=document.createElement('canvas');let w=img.width,h=img.height;if(w>h){if(w>max){h=h*max/w;w=max;}}else{if(h>max){w=w*max/h;h=max;}}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);res(c.toDataURL('image/jpeg',0.7));}catch(_){res(null);}};img.onerror=()=>res(null);img.src=e.target.result;};r.onerror=()=>res(null);r.readAsDataURL(file);});}
+async function addProduto(){const nome=$('f-nome').value.trim();if(!nome)return toast('Informe o nome');const foto=await fileToThumb(($('f-foto').files||[])[0],400);const r=await ins('produtos',{nome,categoria:$('f-cat').value.trim()||null,valor:Number($('f-val').value||0),estoque:parseInt($('f-est').value||0),foto});if(!r.error){toast('Item cadastrado ✓');empProdutos();}}
 /* -- Vendas -- */
 async function empVendas(){
   cmain(phead('Vendas','Vendas registradas.')+`
@@ -2401,6 +2427,138 @@ function empIaProspecta(nicho,cidade,uf,n){
   }
   return out.sort((a,b)=>b.score-a.score);
 }
+/* -- Serviços -- */
+async function empServicos(){
+  cmain(phead('Serviços','Cadastro dos serviços que você oferece.')+`
+    <div class="card"><div class="card-h"><h3>Novo serviço</h3></div><div class="card-b"><div class="row">
+      <div><label>Nome</label><input class="inp" id="s-nome" placeholder="Ex.: Corte masculino"></div>
+      <div><label>Descrição</label><input class="inp" id="s-desc" placeholder="Opcional"></div>
+      <div style="max-width:150px"><label>Valor (R$)</label><input class="inp" id="s-val" type="number" step="0.01"></div>
+      <button class="btn btn-primary" style="width:auto" onclick="addServico()">Adicionar</button>
+    </div></div></div>
+    <div class="card"><div class="card-h"><h3>Meus serviços</h3><button class="btn btn-ghost btn-sm" onclick="empServicos()">Atualizar</button></div><div class="card-b" id="lst"><div class="empty"><span class="spin"></span></div></div></div>`);
+  const {data,error}=await sb.from('servicos').select('*').eq('empresa_id',EID()).order('criado_em',{ascending:false});
+  if(error)return $('lst').innerHTML=`<div class="empty">Erro: ${esc(error.message)}</div>`;
+  if(!data.length)return $('lst').innerHTML='<div class="empty">Nenhum serviço cadastrado ainda.</div>';
+  empLast.servicos=data;
+  $('lst').innerHTML=`<table><thead><tr><th>Serviço</th><th>Descrição</th><th>Valor</th><th></th></tr></thead><tbody>${data.map(s=>`<tr><td><b>${esc(s.nome)}</b></td><td>${esc(s.descricao||'—')}</td><td>${BRL(s.valor)}</td>${acts('servicos',s.id)}</tr>`).join('')}</tbody></table>`;
+}
+async function addServico(){const nome=$('s-nome').value.trim();if(!nome)return toast('Informe o nome');const r=await ins('servicos',{nome,descricao:$('s-desc').value.trim()||null,valor:Number($('s-val').value||0)});if(!r.error){toast('Serviço cadastrado ✓');empServicos();}}
+
+/* -- Atendimentos (histórico de contatos) -- */
+let ATEND_F='Todos';
+async function empAtend(){
+  cmain(phead('Atendimentos','Registre e acompanhe seus contatos com clientes.')+`
+    <div class="card"><div class="card-h"><h3>Iniciar atendimento</h3></div><div class="card-b" id="atform"><div class="muted">Carregando…</div></div></div>
+    <div class="card"><div class="card-h"><h3>Histórico</h3><div style="display:flex;gap:8px;align-items:center"><select class="inp" style="width:auto" id="at-filtro" onchange="ATEND_F=this.value;empAtend()">${['Todos','Ligação','WhatsApp','Reunião','E-mail','Visita'].map(o=>`<option ${ATEND_F===o?'selected':''}>${o}</option>`).join('')}</select><button class="btn btn-ghost btn-sm" onclick="empAtend()">Atualizar</button></div></div><div class="card-b" id="lst"><div class="empty"><span class="spin"></span></div></div></div>`);
+  const {data:cls}=await sb.from('clientes').select('id,nome').eq('empresa_id',EID()).order('nome');
+  if(!cls||!cls.length){$('atform').innerHTML='<div class="muted">Cadastre um cliente primeiro.</div>';}
+  else $('atform').innerHTML=`<div class="row">
+    <div><label>Cliente</label><select class="inp" id="a-cli">${cls.map(c=>`<option value="${c.id}">${esc(c.nome)}</option>`).join('')}</select></div>
+    <div style="max-width:150px"><label>Tipo</label><select class="inp" id="a-tipo"><option>Ligação</option><option>WhatsApp</option><option>Reunião</option><option>E-mail</option><option>Visita</option></select></div>
+    <div><label>Assunto</label><input class="inp" id="a-ass" placeholder="Ex.: Apresentação da proposta"></div>
+    <div><label>Resultado</label><input class="inp" id="a-res" placeholder="Ex.: Vai pensar / fechou"></div>
+    <button class="btn btn-primary" style="width:auto" onclick="addInteracao()">Registrar</button></div>`;
+  let q=sb.from('interacoes').select('*').eq('empresa_id',EID()).neq('tipo','Pós-venda').order('criado_em',{ascending:false});
+  if(ATEND_F!=='Todos')q=q.eq('tipo',ATEND_F);
+  const {data,error}=await q;
+  const cmap={};(cls||[]).forEach(c=>cmap[c.id]=c.nome);
+  if(error)return $('lst').innerHTML=`<div class="empty">Erro: ${esc(error.message)}</div>`;
+  if(!data.length)return $('lst').innerHTML='<div class="empty">Nenhum atendimento registrado.</div>';
+  empLast.interacoes=data;
+  $('lst').innerHTML=`<table><thead><tr><th>Data</th><th>Cliente</th><th>Tipo</th><th>Assunto</th><th>Resultado</th><th></th></tr></thead><tbody>${data.map(i=>`<tr><td>${new Date(i.criado_em).toLocaleDateString('pt-BR')}</td><td>${esc(cmap[i.cliente_id]||'—')}</td><td>${esc(i.tipo||'')}</td><td>${esc(i.assunto||'')}</td><td>${esc(i.resultado||'')}</td>${acts('interacoes',i.id)}</tr>`).join('')}</tbody></table>`;
+}
+async function addInteracao(){const cli=$('a-cli')?.value;if(!cli)return toast('Cadastre um cliente primeiro');const r=await ins('interacoes',{cliente_id:cli,tipo:$('a-tipo').value,assunto:$('a-ass').value.trim()||null,resultado:$('a-res').value.trim()||null});if(!r.error){toast('Atendimento registrado ✓');empAtend();}}
+
+/* -- Follow-up -- */
+async function empFollow(){
+  cmain(phead('Follow-up','Agende e acompanhe seus retornos.')+`
+    <div class="card"><div class="card-h"><h3>Novo follow-up</h3></div><div class="card-b" id="fuform"><div class="muted">Carregando…</div></div></div>
+    <div class="card"><div class="card-h"><h3>Meus follow-ups</h3><button class="btn btn-ghost btn-sm" onclick="empFollow()">Atualizar</button></div><div class="card-b" id="lst"><div class="empty"><span class="spin"></span></div></div></div>`);
+  const {data:cls}=await sb.from('clientes').select('id,nome').eq('empresa_id',EID()).order('nome');
+  $('fuform').innerHTML=`<div class="row">
+    <div><label>Cliente (opcional)</label><select class="inp" id="fu-cli"><option value="">—</option>${(cls||[]).map(c=>`<option value="${c.id}">${esc(c.nome)}</option>`).join('')}</select></div>
+    <div><label>Assunto</label><input class="inp" id="fu-tit" placeholder="Ex.: Retornar sobre a proposta"></div>
+    <div style="max-width:140px"><label>Canal</label><select class="inp" id="fu-canal"><option>WhatsApp</option><option>Ligação</option><option>E-mail</option><option>Presencial</option></select></div>
+    <div style="max-width:160px"><label>Data</label><input class="inp" id="fu-data" type="date"></div>
+    <button class="btn btn-primary" style="width:auto" onclick="addFollow()">Agendar</button></div>`;
+  const {data,error}=await sb.from('followups').select('*').eq('empresa_id',EID()).order('data_prevista',{ascending:true});
+  const cmap={};(cls||[]).forEach(c=>cmap[c.id]=c.nome);
+  if(error)return $('lst').innerHTML=`<div class="empty">Erro: ${esc(error.message)}</div>`;
+  if(!data.length)return $('lst').innerHTML='<div class="empty">Nenhum follow-up agendado.</div>';
+  empLast.followups=data;
+  const hoje=new Date().toISOString().slice(0,10);
+  $('lst').innerHTML=`<table><thead><tr><th></th><th>Data</th><th>Assunto</th><th>Cliente</th><th>Canal</th><th>Status</th><th></th></tr></thead><tbody>${data.map(f=>{const atrasado=f.status==='Pendente'&&f.data_prevista&&f.data_prevista<hoje;return `<tr><td><input type="checkbox" ${f.status==='Feito'?'checked':''} onchange="toggleFollow('${f.id}',this.checked)"></td><td>${f.data_prevista?f.data_prevista.split('-').reverse().join('/'):'—'}${atrasado?' <span style="color:#f0666b;font-weight:600;font-size:11px">atrasado</span>':''}</td><td><b>${esc(f.titulo)}</b></td><td>${esc(cmap[f.cliente_id]||'—')}</td><td>${esc(f.canal||'')}</td><td>${esc(f.status||'Pendente')}</td>${acts('followups',f.id)}</tr>`;}).join('')}</tbody></table>`;
+}
+async function addFollow(){const tit=$('fu-tit').value.trim();if(!tit)return toast('Informe o assunto');const r=await ins('followups',{cliente_id:$('fu-cli').value||null,titulo:tit,canal:$('fu-canal').value,data_prevista:$('fu-data').value||null,status:'Pendente'});if(!r.error){toast('Follow-up agendado ✓');empFollow();}}
+async function toggleFollow(id,done){const {error}=await sb.from('followups').update({status:done?'Feito':'Pendente'}).eq('id',id);if(error)toast('Erro: '+error.message);else toast(done?'Feito ✓':'Reaberto');}
+
+/* -- Relatórios -- */
+async function empRelatorios(){
+  cmain(phead('Relatórios','Os números do seu negócio.')+`
+    <div class="kpis"><div class="kpi feat"><div class="lab">Faturamento</div><div class="val" id="r-fat">—</div></div><div class="kpi"><div class="lab">Ticket médio</div><div class="val" id="r-tkt">—</div></div><div class="kpi"><div class="lab">Clientes</div><div class="val" id="r-cli">—</div></div><div class="kpi"><div class="lab">Conversão</div><div class="val" id="r-conv">—</div></div></div>
+    <div class="dash2"><div class="card"><div class="card-h"><h3>Faturamento por mês</h3></div><div class="card-b"><div class="chartbox"><canvas id="rVendas"></canvas></div></div></div><div class="card"><div class="card-h"><h3>Leads por origem</h3></div><div class="card-b"><div class="chartbox"><canvas id="rLeads"></canvas></div></div></div></div>
+    <div class="card"><div class="card-h"><h3>Top clientes por valor</h3></div><div class="card-b" id="r-top"><div class="empty"><span class="spin"></span></div></div></div>`);
+  const [vd,ld,cd,op]=await Promise.all([
+    sb.from('vendas').select('total,criado_em').eq('empresa_id',EID()),
+    sb.from('leads').select('origem').eq('empresa_id',EID()),
+    sb.from('clientes').select('nome,valor').eq('empresa_id',EID()),
+    sb.from('oportunidades').select('status').eq('empresa_id',EID())]);
+  const vendas=vd.data||[],leads=ld.data||[],clientes=cd.data||[],opps=op.data||[];
+  const fat=vendas.reduce((s,v)=>s+Number(v.total||0),0);
+  $('r-fat').textContent=BRL(fat);
+  $('r-tkt').textContent=BRL(vendas.length?fat/vendas.length:0);
+  $('r-cli').textContent=clientes.length;
+  const ganhas=opps.filter(o=>o.status==='Ganha').length,perd=opps.filter(o=>o.status==='Perdida').length;
+  $('r-conv').textContent=(ganhas+perd)?Math.round(ganhas/(ganhas+perd)*100)+'%':'—';
+  if(typeof Chart!=='undefined'){
+    const now=new Date(),meses=[];for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);meses.push({key:d.getFullYear()+'-'+(d.getMonth()+1),lbl:d.toLocaleDateString('pt-BR',{month:'short'}).replace('.',''),v:0});}
+    vendas.forEach(x=>{const d=new Date(x.criado_em),k=d.getFullYear()+'-'+(d.getMonth()+1),m=meses.find(mm=>mm.key===k);if(m)m.v+=Number(x.total||0);});
+    const cv=$('rVendas');if(cv)empCharts.push(new Chart(cv,{type:'bar',data:{labels:meses.map(m=>m.lbl),datasets:[{data:meses.map(m=>m.v),backgroundColor:'#7c6bff',borderRadius:6,maxBarThickness:38}]},options:chartBase()}));
+    const byO={};leads.forEach(l=>{const o=l.origem||'Outros';byO[o]=(byO[o]||0)+1;});
+    const labels=Object.keys(byO),vals=Object.values(byO),cores=['#7c6bff','#2dd4a0','#4e9bff','#f0a23c','#f0666b','#a78bfa'];
+    const cl=$('rLeads');if(cl)empCharts.push(new Chart(cl,{type:'doughnut',data:{labels:labels.length?labels:['Sem leads'],datasets:[{data:vals.length?vals:[1],backgroundColor:labels.length?cores:['#232b42'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:labels.length>0,position:'bottom',labels:{color:'#9aa2bd',font:{size:11},padding:12,usePointStyle:true}}}}}));
+  }
+  const top=clientes.slice().sort((a,b)=>Number(b.valor||0)-Number(a.valor||0)).slice(0,5);
+  $('r-top').innerHTML=top.length?`<table><thead><tr><th>Cliente</th><th>Valor</th></tr></thead><tbody>${top.map(c=>`<tr><td><b>${esc(c.nome)}</b></td><td>${BRL(c.valor)}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">Sem dados ainda.</div>';
+}
+
+/* -- Importação (CSV) -- */
+function empImport(){
+  cmain(phead('Importação','Importe clientes ou leads de uma planilha CSV.')+`
+    <div class="card"><div class="card-b">
+      <div class="row">
+        <div style="max-width:200px"><label>Importar para</label><select class="inp" id="imp-alvo"><option value="clientes">Clientes</option><option value="leads">Leads</option></select></div>
+        <div><label>Arquivo CSV</label><input class="inp" id="imp-file" type="file" accept=".csv,text/csv"></div>
+      </div>
+      <p class="muted" style="font-size:12px;margin-top:10px">O CSV precisa ter cabeçalho na 1ª linha. Para <b>Clientes</b>: colunas <b>nome, telefone, email, cidade, uf</b>. Para <b>Leads</b>: <b>nome, empresa, origem, temperatura</b>. Separador vírgula ou ponto-e-vírgula.</p>
+      <button class="btn btn-primary" style="width:auto;margin-top:6px" onclick="importCSV()">Importar</button>
+      <div id="imp-res" style="margin-top:12px"></div>
+    </div></div>`);
+}
+function parseCSV(text){
+  const first=text.replace(/\r/g,'').split('\n')[0]||'';
+  const sep=(first.split(';').length>first.split(',').length)?';':',';
+  const lines=text.replace(/\r/g,'').split('\n').filter(l=>l.trim());
+  if(!lines.length)return [];
+  const head=lines[0].split(sep).map(h=>h.trim().toLowerCase());
+  return lines.slice(1).map(l=>{const cells=l.split(sep);const o={};head.forEach((h,i)=>o[h]=(cells[i]||'').trim());return o;});
+}
+async function importCSV(){
+  const alvo=$('imp-alvo').value;const file=$('imp-file').files[0];
+  if(!file)return toast('Escolha um arquivo CSV');
+  const text=await file.text();
+  const rows=parseCSV(text);
+  if(!rows.length)return toast('CSV vazio ou inválido');
+  let payload;
+  if(alvo==='clientes')payload=rows.map(r=>({empresa_id:EID(),nome:r.nome||r.cliente||'Sem nome',telefone:r.telefone||r.tel||null,email:r.email||r['e-mail']||null,cidade:r.cidade||null,uf:(r.uf||'').toUpperCase()||null}));
+  else payload=rows.map(r=>({empresa_id:EID(),nome:r.nome||r.contato||'Sem nome',empresa_nome:r.empresa||r.empresa_nome||null,origem:r.origem||'Importação',temperatura:r.temperatura||'Frio'}));
+  const {error}=await sb.from(alvo).insert(payload);
+  if(error)return $('imp-res').innerHTML=`<div class="empty">Erro: ${esc(error.message)}</div>`;
+  $('imp-res').innerHTML=`<div style="color:#2dd4a0;font-weight:600">✓ ${payload.length} ${alvo} importados!</div>`;
+  toast(payload.length+' '+alvo+' importados ✓');
+}
+
 let PRES=[],PFORM={nicho:'',cid:'',uf:''},PLOAD=false;
 const pIco='M12 2v3M12 19v3M2 12h3M19 12h3M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8';
 function empProsp(){
