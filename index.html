@@ -155,6 +155,16 @@ tr:last-child td{border-bottom:none}
 @media(max-width:480px){.rec-list{grid-template-columns:1fr}}
 .rec-item{display:flex;align-items:center;gap:9px;padding:9px 11px;border:1px solid var(--line);border-radius:9px;cursor:pointer;font-size:13px}
 .rec-item input{width:16px;height:16px;accent-color:var(--brand)}
+.card-b>label{display:block;font-size:12px;color:var(--txt-2);margin:12px 0 5px;font-weight:500}
+.le-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:9px;margin-bottom:7px;font-size:13px}
+.le-item .txt{flex:1;min-width:0}
+.le-item .grip{color:var(--txt-3);cursor:grab;font-size:12px}
+.mini{width:28px;height:28px;flex:none;border:1px solid var(--line);background:var(--surface-2);color:var(--txt-2);border-radius:7px;cursor:pointer;font-size:13px;line-height:1}
+.mini:hover{color:var(--txt);border-color:var(--brand)}
+.chip-add{margin-top:6px;padding:9px 12px;width:100%;border:1px dashed var(--line);background:transparent;color:var(--txt-2);border-radius:9px;cursor:pointer;font-size:12.5px;font-weight:500}
+.chip-add:hover{border-color:var(--brand);color:var(--txt)}
+.dev-card{border:1px solid var(--line);border-radius:10px;padding:11px 12px;margin-bottom:8px}
+.dev-card .dn{font-weight:600;font-size:13.5px}
 /* Modo Reunião */
 .reuniao{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:18px;align-items:start}
 @media(max-width:860px){.reuniao{grid-template-columns:1fr}}
@@ -407,7 +417,7 @@ async function delAtendimento(id){if(!confirm('Excluir este atendimento?'))retur
 async function admAtendConfig(id){
   const {data:a,error}=await sb.from('atendimentos').select('*').eq('id',id).maybeSingle();
   if(error||!a){$('view').innerHTML=`<div class="empty">Atendimento não encontrado.</div>`;return;}
-  const recs=a.recursos||{};const toggles=EMP_MODS.filter(([mid])=>mid!=='dashboard'&&mid!=='config');ATEND_OF=normOf(a.ofertas);
+  const recs=a.recursos||{};const toggles=EMP_MODS.filter(([mid])=>mid!=='dashboard'&&mid!=='config');ATEND_OF=normOf(a.ofertas);ATEND_CFG=normCfg(a.config);
   $('view').innerHTML=`
     <div class="phead" style="display:flex;align-items:center;gap:12px"><button class="btn btn-ghost btn-sm" onclick="voltarAtend()">← Voltar</button><div><h1 style="font-size:20px">Modo Reunião — ${esc(a.empresa_nome)}</h1><p>Configure o CRM e veja a prévia ao vivo.</p></div></div>
     <div class="reuniao">
@@ -429,12 +439,18 @@ async function admAtendConfig(id){
           </div>
         </div></div>
         <div class="card"><div class="card-h"><h3>Recursos do CRM</h3></div><div class="card-b"><div class="rec-list">${toggles.map(([mid,l])=>`<label class="rec-item"><input type="checkbox" data-r="${mid}" ${recs[mid]!==false?'checked':''} onchange="renderPreviewInto('pv-device')"><span>${l}</span></label>`).join('')}</div></div></div>
+        <div class="card"><div class="card-h"><h3>Funil de vendas</h3></div><div class="card-b" id="funbody">${cfgFunilBody()}</div></div>
+        <div class="card"><div class="card-h"><h3>Campos personalizados</h3></div><div class="card-b" id="campbody">${cfgCamposBody()}</div></div>
+        <div class="card"><div class="card-h"><h3>Automações</h3></div><div class="card-b" id="autobody">${cfgAutoBody()}</div></div>
+        <div class="card"><div class="card-h"><h3>Desenvolvimentos</h3></div><div class="card-b" id="devbody">${cfgDevBody()}</div></div>
         <div class="card"><div class="card-h"><h3>Ofertas / Serviços NEXORA</h3></div><div class="card-b" id="ofbody">${ofertasBody()}</div></div>
+        <div class="card"><div class="card-h"><h3>Ajustes manuais</h3></div><div class="card-b" id="orcbody">${cfgOrcBody()}</div></div>
         <div class="card"><div class="card-b"><label>Observações</label><textarea class="inp" id="at-obs" rows="2" style="resize:vertical">${esc(a.observacoes||'')}</textarea></div></div>
         <div class="reuniao-actions">
           <button class="btn btn-ghost" onclick="delAtendimento('${a.id}')">Excluir</button>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button class="btn btn-ghost" onclick="salvarAtend('${a.id}')">Salvar</button>
+            <button class="btn btn-ghost" onclick="abrirResumoAtend()">Resumo</button>
             <button class="btn btn-ghost" onclick="gerarPropostaAtend()">Proposta</button>
             <button class="btn btn-ghost" onclick="entrarAmbientePreview()">Entrar no ambiente</button>
             ${a.convertido_empresa_id?'<span class="cob ok" style="align-self:center">✓ Convertido</span>':`<button class="btn btn-primary" onclick="converterAtend('${a.id}')">Converter em projeto</button>`}
@@ -511,6 +527,13 @@ function calcProposta(){
   if(o.consultoria){const k=OFERTAS.consultoria.find(x=>x.id===o.consultoria);if(k){const it={nome:'Consultoria — '+k.nome,valor:k.unica};if(k.id==='cons_exec')it.det='+ implementação conforme o escopo (à parte)';unicas.push(it);}}
   if(o.alteracoes){if(o.alteracoes.qtd>0)futuras.push({nome:'Alterações pós-entrega',det:o.alteracoes.qtd+' × R$ 800',valor:OFERTAS.crm.alteracao*o.alteracoes.qtd});if(o.alteracoes.recursosNovos>0)futuras.push({nome:'Recursos adicionados em alteração',det:o.alteracoes.recursosNovos+' × R$ 80',valor:OFERTAS.crm.recursoExtra*o.alteracoes.recursosNovos});}
   if(o.crm&&o.indicacao&&o.indicacao.ativo&&o.indicacao.posvenda&&recs.posvenda)warnings.push('"Pós-venda" aparece como recurso adicional do CRM e também no Plano de indicação — revise para não cobrar em dobro.');
+  const org=(ATEND_CFG&&ATEND_CFG.orcamento)||{};
+  if(org.implantacao)unicas.push({nome:'Implantação (ajuste manual)',valor:org.implantacao});
+  if(org.desenvolvimento)unicas.push({nome:'Desenvolvimento (ajuste manual)',valor:org.desenvolvimento});
+  if(org.configuracao)unicas.push({nome:'Configuração (ajuste manual)',valor:org.configuracao});
+  if(org.outros)unicas.push({nome:'Outros (ajuste manual)',valor:org.outros});
+  if(org.licenca)mensais.push({nome:'Licenciamento (ajuste manual)',valor:org.licenca});
+  if(org.suporte)mensais.push({nome:'Suporte (ajuste manual)',valor:org.suporte});
   const totalUnica=unicas.reduce((s,x)=>s+x.valor,0),totalMensal=mensais.reduce((s,x)=>s+x.valor,0),totalFuturas=futuras.reduce((s,x)=>s+x.valor,0);
   return {unicas,mensais,futuras,warnings,totalUnica,totalMensal,totalFuturas,verba:+o.verba||0};
 }
@@ -569,7 +592,7 @@ function copiarPropostaAtend(){
   t+='\nValidade: 15 dias.';
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(()=>toast('Proposta copiada ✓')).catch(()=>toast('Selecione e copie manualmente'));else toast('Copie manualmente');
 }
-function atendForm(){const recs={};document.querySelectorAll('.rec-list [data-r]').forEach(el=>recs[el.getAttribute('data-r')]=el.checked);return {empresa_nome:$('at-nome').value.trim(),segmento:$('at-seg').value.trim()||null,emoji:$('at-emoji').value||'🏢',cor:$('at-cor').value,contato:$('at-contato').value.trim()||null,telefone:$('at-tel').value.trim()||null,email:$('at-email').value.trim()||null,status:$('at-status').value,recursos:recs,ofertas:normOf(ATEND_OF),observacoes:$('at-obs').value.trim()||null};}
+function atendForm(){const recs={};document.querySelectorAll('.rec-list [data-r]').forEach(el=>recs[el.getAttribute('data-r')]=el.checked);return {empresa_nome:$('at-nome').value.trim(),segmento:$('at-seg').value.trim()||null,emoji:$('at-emoji').value||'🏢',cor:$('at-cor').value,contato:$('at-contato').value.trim()||null,telefone:$('at-tel').value.trim()||null,email:$('at-email').value.trim()||null,status:$('at-status').value,recursos:recs,ofertas:normOf(ATEND_OF),config:normCfg(ATEND_CFG),observacoes:$('at-obs').value.trim()||null};}
 async function salvarAtend(id){const f=atendForm();if(!f.empresa_nome)return toast('Informe o nome da empresa');const {error}=await sb.from('atendimentos').update(f).eq('id',id);if(error)return toast('Erro: '+error.message);toast('Salvo ✓');}
 async function converterAtend(id){
   const f=atendForm();if(!f.empresa_nome)return toast('Informe o nome da empresa');
@@ -583,6 +606,62 @@ async function converterAtend(id){
   await sb.from('atendimentos').update({status:'Aprovado',convertido_empresa_id:data.empresa.id}).eq('id',id);
   LAST_CREDS={email:data.login.email,senha:data.login.senha,empresa:data.empresa.nome};showCreds();
   admAtendConfig(id);
+}
+
+/* ===== CONFIG DO ATENDIMENTO: funil, campos, automações, dev, ajustes ===== */
+const defConfig=()=>({funil:[{nome:'Novo contato',prob:10},{nome:'Qualificação',prob:30},{nome:'Proposta',prob:55},{nome:'Negociação',prob:75},{nome:'Fechamento',prob:95}],campos:[],automacoes:[],desenvolvimentos:[],orcamento:{implantacao:0,desenvolvimento:0,configuracao:0,outros:0,licenca:0,suporte:0}});
+let ATEND_CFG=defConfig();
+function normCfg(c){const d=defConfig();c=c||{};return {funil:Array.isArray(c.funil)&&c.funil.length?c.funil:d.funil,campos:Array.isArray(c.campos)?c.campos:[],automacoes:Array.isArray(c.automacoes)?c.automacoes:[],desenvolvimentos:Array.isArray(c.desenvolvimentos)?c.desenvolvimentos:[],orcamento:Object.assign({},d.orcamento,c.orcamento||{})};}
+function openModal(title,body,saveLabel,onSave){const ov=document.createElement('div');ov.className='creds-ov';ov.id='genmodal';ov.innerHTML=`<div class="creds-card"><h3>${esc(title)}</h3><div class="eform" style="margin-top:12px">${body}</div><div class="row" style="margin-top:16px;justify-content:flex-end"><button class="btn btn-ghost" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" id="gm-save">${esc(saveLabel||'Salvar')}</button></div></div>`;ov.onclick=e=>{if(e.target===ov)closeModal();};document.body.appendChild(ov);document.getElementById('gm-save').onclick=onSave;}
+function closeModal(){const m=document.getElementById('genmodal');if(m)m.remove();}
+/* Funil */
+function cfgFunilBody(){return `<div id="funList">${renderFunList()}</div><div class="row" style="margin-top:10px"><input class="inp" id="funNew" placeholder="Nova etapa (ex.: Orçamento)" style="flex:1"><button class="btn btn-primary btn-sm" onclick="addFunil()">+ Etapa</button></div>`;}
+function renderFunList(){return (ATEND_CFG.funil||[]).map((f,i)=>`<div class="le-item"><span class="grip">⋮⋮</span><div class="txt">${esc(f.nome)} <small class="muted">· ${f.prob}%</small></div><button class="mini" onclick="moveFun(${i},-1)">↑</button><button class="mini" onclick="moveFun(${i},1)">↓</button><button class="mini" onclick="editFun(${i})">✎</button><button class="mini" onclick="delFun(${i})">✕</button></div>`).join('')||'<p class="muted" style="font-size:12px">Sem etapas ainda.</p>';}
+function refreshFun(){const el=$('funList');if(el)el.innerHTML=renderFunList();}
+function addFunil(){const v=$('funNew').value.trim();if(!v)return;ATEND_CFG.funil.push({nome:v,prob:50});$('funNew').value='';refreshFun();}
+function moveFun(i,d){const j=i+d,a=ATEND_CFG.funil;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];refreshFun();}
+function delFun(i){ATEND_CFG.funil.splice(i,1);refreshFun();}
+function editFun(i){const f=ATEND_CFG.funil[i];openModal('Editar etapa',`<div class="efield"><label>Nome</label><input class="inp" id="ef-n" value="${esc(f.nome)}"></div><div class="efield"><label>Probabilidade (%)</label><input class="inp" id="ef-p" type="number" value="${f.prob}"></div>`,'Salvar',()=>{f.nome=$('ef-n').value.trim()||f.nome;f.prob=Math.max(0,Math.min(100,+$('ef-p').value||f.prob));closeModal();refreshFun();});}
+/* Campos personalizados */
+const tipoCampoLabel={texto:'Texto',numero:'Número',moeda:'Moeda',data:'Data',selecao:'Seleção',multi:'Múltipla seleção',telefone:'Telefone',email:'E-mail',checkbox:'Checkbox'};
+function cfgCamposBody(){return `<div id="campList">${renderCampList()}</div><button class="chip-add" onclick="addCampoModal()">+ Adicionar campo personalizado</button>`;}
+function renderCampList(){return (ATEND_CFG.campos||[]).map((c,i)=>`<div class="le-item"><div class="txt">${esc(c.nome)} <small class="muted">· ${tipoCampoLabel[c.tipo]||c.tipo} · ${esc(c.aplicacao)}</small></div><button class="mini" onclick="delCampo(${i})">✕</button></div>`).join('')||'<p class="muted" style="font-size:12px">Nenhum campo extra.</p>';}
+function refreshCamp(){const el=$('campList');if(el)el.innerHTML=renderCampList();}
+function delCampo(i){ATEND_CFG.campos.splice(i,1);refreshCamp();}
+function addCampoModal(){openModal('Novo campo personalizado',`<div class="efield"><label>Nome do campo</label><input class="inp" id="cp-n" placeholder="Ex.: Número da obra"></div><div class="efield"><label>Tipo</label><select class="inp" id="cp-t">${Object.entries(tipoCampoLabel).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select></div><div class="efield"><label>Aplicar em</label><select class="inp" id="cp-a"><option>Clientes</option><option>Leads</option><option>Oportunidades</option><option>Propostas</option></select></div>`,'Adicionar',()=>{const n=$('cp-n').value.trim();if(!n)return toast('Informe o nome');ATEND_CFG.campos.push({nome:n,tipo:$('cp-t').value,aplicacao:$('cp-a').value});closeModal();refreshCamp();toast('Campo adicionado');});}
+/* Automações */
+function cfgAutoBody(){return `<div id="autoList">${renderAutoList()}</div><button class="chip-add" onclick="addAutoModal()">+ Adicionar automação</button>`;}
+function renderAutoList(){return (ATEND_CFG.automacoes||[]).map((a,i)=>`<div class="le-item"><div class="txt" style="font-size:12px"><b>Quando</b> ${esc(a.quando)} <b>→</b> ${esc(a.fazer)}</div><button class="mini" onclick="delAuto(${i})">✕</button></div>`).join('')||'<p class="muted" style="font-size:12px">Nenhuma automação.</p>';}
+function refreshAuto(){const el=$('autoList');if(el)el.innerHTML=renderAutoList();}
+function delAuto(i){ATEND_CFG.automacoes.splice(i,1);refreshAuto();}
+function addAutoModal(){openModal('Nova automação',`<div class="efield"><label>Quando (gatilho)</label><input class="inp" id="au-q" placeholder='Ex.: Oportunidade entrar em &quot;Proposta&quot;'></div><div class="efield"><label>Fazer (ação)</label><input class="inp" id="au-f" placeholder="Ex.: Criar follow-up em 3 dias"></div>`,'Adicionar',()=>{const q=$('au-q').value.trim(),f=$('au-f').value.trim();if(!q||!f)return toast('Preencha os dois campos');ATEND_CFG.automacoes.push({quando:q,fazer:f});closeModal();refreshAuto();});}
+/* Desenvolvimentos */
+function cfgDevBody(){return `<div id="devList">${renderDevList()}</div><button class="chip-add" onclick="addDevModal()">+ Registrar desenvolvimento</button>`;}
+function renderDevList(){return (ATEND_CFG.desenvolvimentos||[]).map((d,i)=>`<div class="dev-card"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div class="dn">${esc(d.nome)}</div><button class="mini" onclick="delDev(${i})">✕</button></div>${d.descricao?`<div class="muted" style="font-size:12px;margin-top:3px">${esc(d.descricao)}</div>`:''}<div style="margin-top:6px;display:flex;gap:6px"><span class="cob" style="background:rgba(245,180,80,.15);color:#f5b450">${esc(d.complexidade)}</span><span class="cob" style="background:var(--surface-2)">${esc(d.status)}</span></div></div>`).join('')||'<p class="muted" style="font-size:12px">Nenhum desenvolvimento registrado.</p>';}
+function refreshDev(){const el=$('devList');if(el)el.innerHTML=renderDevList();}
+function delDev(i){ATEND_CFG.desenvolvimentos.splice(i,1);refreshDev();}
+function addDevModal(){openModal('Registrar desenvolvimento',`<div class="efield"><label>Nome</label><input class="inp" id="dv-n" placeholder="Ex.: Aprovação interna de orçamento"></div><div class="efield"><label>Descrição</label><textarea class="inp" id="dv-d" rows="2" style="resize:vertical"></textarea></div><div class="efield"><label>Complexidade</label><select class="inp" id="dv-c"><option>Baixa</option><option selected>Média</option><option>Alta</option></select></div><div class="efield"><label>Status</label><select class="inp" id="dv-s"><option>A avaliar</option><option>Aprovado p/ dev</option><option>Em desenvolvimento</option></select></div>`,'Registrar',()=>{const n=$('dv-n').value.trim();if(!n)return toast('Informe o nome');ATEND_CFG.desenvolvimentos.push({nome:n,descricao:$('dv-d').value.trim(),complexidade:$('dv-c').value,status:$('dv-s').value});closeModal();refreshDev();toast('Desenvolvimento registrado');});}
+/* Ajustes manuais */
+function cfgOrcBody(){const o=ATEND_CFG.orcamento;return `<div class="row"><div style="flex:1;min-width:120px"><label>Implantação</label><input class="inp" type="number" value="${o.implantacao||0}" oninput="ATEND_CFG.orcamento.implantacao=+this.value||0;updOrcTot()"></div><div style="flex:1;min-width:120px"><label>Desenvolvimento</label><input class="inp" type="number" value="${o.desenvolvimento||0}" oninput="ATEND_CFG.orcamento.desenvolvimento=+this.value||0;updOrcTot()"></div></div><div class="row" style="margin-top:8px"><div style="flex:1;min-width:120px"><label>Configuração</label><input class="inp" type="number" value="${o.configuracao||0}" oninput="ATEND_CFG.orcamento.configuracao=+this.value||0;updOrcTot()"></div><div style="flex:1;min-width:120px"><label>Outros</label><input class="inp" type="number" value="${o.outros||0}" oninput="ATEND_CFG.orcamento.outros=+this.value||0;updOrcTot()"></div></div><div style="display:flex;justify-content:space-between;padding:12px 0;border-top:1px solid var(--line);margin-top:12px;font-weight:700"><span>Total inicial (ajustes)</span><span id="orcTot">${BRL((o.implantacao||0)+(o.desenvolvimento||0)+(o.configuracao||0)+(o.outros||0))}</span></div><div class="row"><div style="flex:1;min-width:120px"><label>Licenciamento (mensal)</label><input class="inp" type="number" value="${o.licenca||0}" oninput="ATEND_CFG.orcamento.licenca=+this.value||0"></div><div style="flex:1;min-width:120px"><label>Suporte (mensal)</label><input class="inp" type="number" value="${o.suporte||0}" oninput="ATEND_CFG.orcamento.suporte=+this.value||0"></div></div><div class="muted" style="font-size:11px;margin-top:6px">Entram na proposta como ajustes manuais, além das Ofertas.</div>`;}
+function updOrcTot(){const o=ATEND_CFG.orcamento,el=$('orcTot');if(el)el.textContent=BRL((o.implantacao||0)+(o.desenvolvimento||0)+(o.configuracao||0)+(o.outros||0));}
+/* Resumo da solução */
+function abrirResumoAtend(){
+  const recs=atendCurrentRecs();const on=EMP_MODS.filter(([id])=>id==='dashboard'||id==='config'||recs[id]!==false).map(([id,l])=>l);
+  const cfg=ATEND_CFG,P=calcProposta();
+  const line=t=>`<div style="display:flex;gap:8px;padding:4px 0;font-size:13px"><span style="color:#2DD4BF">✓</span><span>${t}</span></div>`;
+  const html=`<div class="prop-card"><h3 style="margin-bottom:10px">Solução configurada</h3>
+    <div class="muted" style="font-size:12px;margin-bottom:4px">Recursos ativos (${on.length})</div>${on.map(line).join('')}
+    <div class="muted" style="font-size:12px;margin:12px 0 4px">Personalizações</div>
+    ${line('Funil com '+cfg.funil.length+' etapas')}
+    ${cfg.campos.map(x=>line('Campo "'+esc(x.nome)+'" ('+esc(x.aplicacao)+')')).join('')}
+    ${cfg.automacoes.map(a=>line('Automação: '+esc(a.quando)+' → '+esc(a.fazer))).join('')}
+    <div class="muted" style="font-size:12px;margin:12px 0 4px">Desenvolvimentos (${cfg.desenvolvimentos.length})</div>
+    ${cfg.desenvolvimentos.length?cfg.desenvolvimentos.map(d=>`<div style="font-size:13px;padding:3px 0">• ${esc(d.nome)} <span class="muted">(${esc(d.complexidade)})</span></div>`).join(''):'<div class="muted" style="font-size:12.5px">Nenhum — solução 100% com recursos existentes.</div>'}
+    <div class="prop-tot" style="margin-top:12px"><span>Investimento inicial</span><span>${fmt2(P.totalUnica)}</span></div>
+    <div class="prop-tot"><span>Mensal</span><span>${fmt2(P.totalMensal)}/mês</span></div>
+    <div class="row" style="margin-top:16px;justify-content:flex-end"><button class="btn btn-primary" onclick="this.closest('.prop-ov').remove()">Fechar</button></div>
+  </div>`;
+  const ov=document.createElement('div');ov.className='prop-ov';ov.innerHTML=html;ov.onclick=e=>{if(e.target===ov)ov.remove();};document.body.appendChild(ov);
 }
 async function admPainel(){
   const {data,error}=await sb.from('empresas').select('*').eq('is_demo',false);
