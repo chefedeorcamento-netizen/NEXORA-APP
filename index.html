@@ -218,6 +218,14 @@ tr:last-child td{border-bottom:none}
 .creds-card{width:100%;max-width:440px;background:var(--surface);border:1px solid rgba(255,255,255,.1);border-radius:18px;box-shadow:var(--shadow);padding:26px;animation:cpop .2s ease}
 @keyframes cpop{from{transform:translateY(10px) scale(.98);opacity:0}to{transform:none;opacity:1}}
 .creds-card h3{font-size:19px;margin-bottom:6px}
+.prop-ov{position:fixed;inset:0;background:rgba(5,8,15,.6);backdrop-filter:blur(4px);display:flex;align-items:flex-start;justify-content:center;padding:28px 18px;z-index:100;overflow:auto}
+.prop-card{width:100%;max-width:560px;background:var(--surface);border:1px solid rgba(255,255,255,.1);border-radius:18px;box-shadow:var(--shadow);padding:26px;animation:cpop .2s ease}
+.prop-card h3{font-size:18px}.prop-card h4{font-size:14px;font-weight:700}
+.prop-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.prop-head .lg{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;color:#fff;font-size:20px;flex:none}
+.prop-card table{width:100%;border-collapse:collapse}
+.prop-card td{padding:8px 0;border-bottom:1px solid var(--line);font-size:13px;vertical-align:top}
+.prop-tot{display:flex;justify-content:space-between;padding:10px 0;font-weight:700;font-size:14.5px}
 .creds-box{margin-top:14px;display:flex;flex-direction:column;gap:1px;border-radius:12px;overflow:hidden;border:1px solid var(--line)}
 .creds-box .cr{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;background:var(--surface-2)}
 .creds-box .cr span{color:var(--txt-3);font-size:12px}
@@ -399,7 +407,7 @@ async function delAtendimento(id){if(!confirm('Excluir este atendimento?'))retur
 async function admAtendConfig(id){
   const {data:a,error}=await sb.from('atendimentos').select('*').eq('id',id).maybeSingle();
   if(error||!a){$('view').innerHTML=`<div class="empty">Atendimento não encontrado.</div>`;return;}
-  const recs=a.recursos||{};const toggles=EMP_MODS.filter(([mid])=>mid!=='dashboard'&&mid!=='config');
+  const recs=a.recursos||{};const toggles=EMP_MODS.filter(([mid])=>mid!=='dashboard'&&mid!=='config');ATEND_OF=normOf(a.ofertas);
   $('view').innerHTML=`
     <div class="phead" style="display:flex;align-items:center;gap:12px"><button class="btn btn-ghost btn-sm" onclick="voltarAtend()">← Voltar</button><div><h1 style="font-size:20px">Modo Reunião — ${esc(a.empresa_nome)}</h1><p>Configure o CRM e veja a prévia ao vivo.</p></div></div>
     <div class="reuniao">
@@ -421,11 +429,13 @@ async function admAtendConfig(id){
           </div>
         </div></div>
         <div class="card"><div class="card-h"><h3>Recursos do CRM</h3></div><div class="card-b"><div class="rec-list">${toggles.map(([mid,l])=>`<label class="rec-item"><input type="checkbox" data-r="${mid}" ${recs[mid]!==false?'checked':''} onchange="renderPreviewInto('pv-device')"><span>${l}</span></label>`).join('')}</div></div></div>
+        <div class="card"><div class="card-h"><h3>Ofertas / Serviços NEXORA</h3></div><div class="card-b" id="ofbody">${ofertasBody()}</div></div>
         <div class="card"><div class="card-b"><label>Observações</label><textarea class="inp" id="at-obs" rows="2" style="resize:vertical">${esc(a.observacoes||'')}</textarea></div></div>
         <div class="reuniao-actions">
           <button class="btn btn-ghost" onclick="delAtendimento('${a.id}')">Excluir</button>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button class="btn btn-ghost" onclick="salvarAtend('${a.id}')">Salvar</button>
+            <button class="btn btn-ghost" onclick="gerarPropostaAtend()">Proposta</button>
             <button class="btn btn-ghost" onclick="entrarAmbientePreview()">Entrar no ambiente</button>
             ${a.convertido_empresa_id?'<span class="cob ok" style="align-self:center">✓ Convertido</span>':`<button class="btn btn-primary" onclick="converterAtend('${a.id}')">Converter em projeto</button>`}
           </div>
@@ -453,7 +463,6 @@ function renderPreviewInto(elId){
       </div>
     </div>`;
 }
-let AMBP=null;
 async function entrarAmbientePreview(){
   const {data:demo}=await sb.from('empresas').select('id').eq('is_demo',true).limit(1).maybeSingle();
   if(!demo){toast('Rode o SQL do ambiente demo (nexora-06) primeiro.');return;}
@@ -463,32 +472,104 @@ async function entrarAmbientePreview(){
   if(!document.getElementById('prevBanner')){const b=document.createElement('div');b.id='prevBanner';b.className='prev-banner';b.innerHTML='🎬 <b>Modo demonstração</b> — CRM real com dados de exemplo. Adicione, edite e arraste à vontade. <button class="btn btn-primary btn-sm" onclick="sairPreview()">Sair da demonstração</button>';document.body.appendChild(b);}
 }
 function sairPreview(){PREVIEW_EID=null;EMP_INFO=null;const b=document.getElementById('prevBanner');if(b)b.remove();if(atendConfigId)admAtendConfig(atendConfigId);else admGo('atendimentos');}
-function ambPrevGo(t){AMBP.tab=t;ambPrevRender();}
-function ambPrevRender(){
-  if(!document.getElementById('ambPrevSide'))return;
-  $('ambPrevSide').innerHTML=`<div class="crm-emp"><span class="crm-emoji">${esc(AMBP.emoji)}</span><div><div class="crm-empn">${esc(AMBP.nome)}</div></div></div><nav class="crm-nav">${AMBP.mods.map(([id,l,d])=>`<a class="${AMBP.tab===id?'on':''}" onclick="ambPrevGo('${id}')">${mi(d)}<span>${esc(l)}</span></a>`).join('')}</nav>`;
-  $('ambPrevMain').innerHTML=ambPrevContent(AMBP.tab);
+/* ===== OFERTAS / PROPOSTA (Modo Reunião) ===== */
+const OFERTAS={
+  crm:{planoBasico:1500,mensal:299.90,recursoExtra:80,alteracao:800},
+  trafego:[
+    {id:'trafego1',nome:'Gestão de tráfego',mensal:1500,desc:'Cliente grava e edita o vídeo. NEXORA faz a gestão do tráfego.'},
+    {id:'trafego2',nome:'Roteiro, edição e gestão de tráfego',mensal:1750,desc:'NEXORA fornece roteiro e edita o vídeo; cliente grava.'}
+  ],
+  indicacao:{estruturacao:400,posvenda:80},
+  followup:{treinamento:300,recurso:80,automacao:80},
+  sites:[
+    {id:'site1',nome:'Site com gestão NEXORA',unica:600,mensal:60,dominio:'NEXORA'},
+    {id:'site2',nome:'Site entregue ao cliente',unica:1000,mensal:0,dominio:'Cliente'}
+  ],
+  consultoria:[
+    {id:'cons_avulsa',nome:'Consultoria avulsa',unica:2500,desc:'Diagnóstico e plano de ação.'},
+    {id:'cons_exec',nome:'Execução pela NEXORA',unica:200,desc:'+ implementação conforme o escopo.'}
+  ]
+};
+const CRM_INCL=['dashboard','clientes','leads','atendimentos'];
+const defOfertas=()=>({crm:false,trafego:null,indicacao:{ativo:false,posvenda:false},followup:{ativo:false},site:null,consultoria:null,alteracoes:{qtd:0,recursosNovos:0},verba:0,obs:''});
+const fmt2=n=>Number(n||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:2,maximumFractionDigits:2});
+const recNome=k=>{const m=EMP_MODS.find(x=>x[0]===k);return m?m[1]:k;};
+let ATEND_OF=defOfertas();
+function normOf(o){const d=defOfertas();o=o||{};return {crm:!!o.crm,trafego:o.trafego||null,indicacao:Object.assign({},d.indicacao,o.indicacao||{}),followup:Object.assign({},d.followup,o.followup||{}),site:o.site||null,consultoria:o.consultoria||null,alteracoes:Object.assign({},d.alteracoes,o.alteracoes||{}),verba:+o.verba||0,obs:o.obs||''};}
+
+function calcProposta(){
+  const o=ATEND_OF,recs=atendCurrentRecs();const unicas=[],mensais=[],futuras=[],warnings=[];
+  if(o.crm){
+    unicas.push({nome:'CRM — Plano básico + implementação inicial',det:'Dashboard · Clientes · Leads · Atendimentos',valor:OFERTAS.crm.planoBasico});
+    Object.keys(recs).filter(k=>recs[k]&&!CRM_INCL.includes(k)).forEach(k=>unicas.push({nome:'Recurso adicional: '+recNome(k),valor:OFERTAS.crm.recursoExtra}));
+    mensais.push({nome:'Licenciamento + suporte (CRM)',valor:OFERTAS.crm.mensal,cond:'Inicia após a entrega do CRM'});
+  }
+  if(o.trafego){const t=OFERTAS.trafego.find(x=>x.id===o.trafego);if(t)mensais.push({nome:t.nome,valor:t.mensal,det:t.desc});}
+  if(o.indicacao&&o.indicacao.ativo){unicas.push({nome:'Plano de indicação — estruturação',valor:OFERTAS.indicacao.estruturacao});if(o.indicacao.posvenda)unicas.push({nome:'Recurso Pós-venda no CRM',valor:OFERTAS.indicacao.posvenda});}
+  if(o.followup&&o.followup.ativo){unicas.push({nome:'Treinamento de follow-up',valor:OFERTAS.followup.treinamento});unicas.push({nome:'Recurso Follow-up no CRM',valor:OFERTAS.followup.recurso});unicas.push({nome:'Automação de mensagens',valor:OFERTAS.followup.automacao});}
+  if(o.site){const s=OFERTAS.sites.find(x=>x.id===o.site);if(s){unicas.push({nome:'Site — '+s.nome,valor:s.unica,det:'Domínio sob controle: '+s.dominio});if(s.mensal)mensais.push({nome:'Site — ajustes, hospedagem e manutenção',valor:s.mensal});}}
+  if(o.consultoria){const k=OFERTAS.consultoria.find(x=>x.id===o.consultoria);if(k){const it={nome:'Consultoria — '+k.nome,valor:k.unica};if(k.id==='cons_exec')it.det='+ implementação conforme o escopo (à parte)';unicas.push(it);}}
+  if(o.alteracoes){if(o.alteracoes.qtd>0)futuras.push({nome:'Alterações pós-entrega',det:o.alteracoes.qtd+' × R$ 800',valor:OFERTAS.crm.alteracao*o.alteracoes.qtd});if(o.alteracoes.recursosNovos>0)futuras.push({nome:'Recursos adicionados em alteração',det:o.alteracoes.recursosNovos+' × R$ 80',valor:OFERTAS.crm.recursoExtra*o.alteracoes.recursosNovos});}
+  if(o.crm&&o.indicacao&&o.indicacao.ativo&&o.indicacao.posvenda&&recs.posvenda)warnings.push('"Pós-venda" aparece como recurso adicional do CRM e também no Plano de indicação — revise para não cobrar em dobro.');
+  const totalUnica=unicas.reduce((s,x)=>s+x.valor,0),totalMensal=mensais.reduce((s,x)=>s+x.valor,0),totalFuturas=futuras.reduce((s,x)=>s+x.valor,0);
+  return {unicas,mensais,futuras,warnings,totalUnica,totalMensal,totalFuturas,verba:+o.verba||0};
 }
-function ambPrevContent(t){
-  const cor=AMBP.cor;
-  const kpi=(l,v,acc)=>`<div class="kpi"><div class="lab">${l}</div><div class="val"${acc?` style="color:${cor}"`:''}>${v}</div></div>`;
-  const tbl=(head,rows)=>`<div class="card"><div class="card-b"><div style="overflow-x:auto"><table><thead><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div></div>`;
-  const ph=(a,b)=>`<div class="phead"><h1>${a}</h1><p>${b}</p></div>`;
-  if(t==='dashboard')return ph('Painel','Visão geral do comercial')+`<div class="kpis">${kpi('Clientes','128')}${kpi('Em negociação','R$ 24k',1)}${kpi('Vendas','87')}${kpi('Conversão','32%')}</div><div class="card"><div class="card-h"><h3>Vendas por mês</h3></div><div class="card-b"><div class="pv-bars" style="--pv:${cor};height:130px">${[40,65,50,80,60,90,72,85,70,95].map(h=>`<i style="height:${h}%"></i>`).join('')}</div></div></div>`;
-  if(t==='clientes')return ph('Clientes','Sua carteira')+tbl(['Cliente','Telefone','Status','Valor'],[['Marcos Vieira','(31) 9••••','🟢 Ativo','R$ 4.200'],['Patrícia Lopes','(31) 9••••','🟢 Ativo','R$ 1.800'],['Rafael Nunes','(31) 9••••','Prospect','—'],['Juliana Castro','(31) 9••••','🟢 Ativo','R$ 9.500']]);
-  if(t==='leads')return ph('Leads','Potenciais clientes')+tbl(['Lead','Origem','Temperatura','Status'],[['Fernando Alves','Instagram','🔥 Quente','Novo'],['Beatriz Rocha','Indicação','🌡️ Morno','Em qualificação'],['Gustavo Pinto','Prospecção IA','❄️ Frio','Novo']]);
-  if(t==='funil')return ph('Funil de vendas','Negociações por etapa')+`<div class="kanban">${['Novo contato','Qualificação','Proposta','Negociação','Fechado'].map((e,i)=>`<div class="kcol"><div class="kcol-h"><span>${e}</span><span class="kcount">${[3,2,2,1,4][i]}</span></div><div class="kcol-sum" style="color:${cor}">R$ ${[12,24,38,15,60][i]}k</div>${Array.from({length:[2,1,1,1,2][i]}).map((_,k)=>`<div class="kcard"><div class="kc-t">Cliente ${k+1}</div><div class="kc-v" style="color:${cor}">R$ ${(8+i*6+k*4)}k</div></div>`).join('')}</div>`).join('')}</div>`;
-  if(t==='oportunidades')return ph('Oportunidades','Em andamento')+tbl(['Título','Cliente','Etapa','Valor'],[['Plano mensal','Marcos Vieira','Proposta','R$ 12k'],['Projeto novo','Juliana Castro','Negociação','R$ 28k']]);
-  if(t==='propostas')return ph('Propostas','Comerciais')+tbl(['Número','Cliente','Status','Total'],[['PROP-301','Marcos Vieira','Enviada','R$ 12k'],['PROP-302','Rafael Nunes','Rascunho','R$ 8k']]);
-  if(t==='produtos')return ph('Catálogo','Itens e serviços')+tbl(['Item','Categoria','Valor','Estoque'],[['Corte masculino','Serviço','R$ 45','∞'],['Barba','Serviço','R$ 35','∞'],['Pomada','Produto','R$ 40','24']]);
-  if(t==='vendas')return ph('Vendas','Registradas')+tbl(['Nº','Descrição','Pagamento','Valor'],[['VND-5001','Corte + barba','Pix','R$ 80'],['VND-5002','Combo completo','Cartão','R$ 120']]);
-  if(t==='tarefas')return ph('Tarefas','Pendências')+tbl(['Tarefa','Prioridade','Status'],[['Ligar para cliente','Alta','Pendente'],['Enviar proposta','Média','Em andamento']]);
-  if(t==='posvenda')return ph('Pós-venda','Satisfação e retorno')+tbl(['Cliente','Assunto','Resultado'],[['Marcos Vieira','Retorno pós-compra','Muito satisfeito'],['Juliana Castro','Acompanhamento','Vai recomprar']]);
-  if(t==='prospeccao')return ph('Buscar com IA','Possíveis clientes na região')+tbl(['Nome','Bairro','Por que é um bom lead','Nota'],[['Camila Duarte','Centro','Buscou esse serviço na região','94'],['Bruno Teixeira','Vila Nova','Ainda não é seu cliente','88'],['Aline Moraes','Santa Cruz','Perfil compatível','81']]);
-  if(t==='config')return ph('Configurações','Personalização')+`<div class="card"><div class="card-b"><div class="muted">Aqui o cliente ajusta o nome, a cor e troca a própria senha.</div></div></div>`;
-  return ph(t,'Módulo do CRM')+`<div class="empty">Prévia do módulo.</div>`;
+function ofertasBody(){
+  const of=ATEND_OF;
+  const sw=(on,label,sub,handler)=>`<label class="rec-item" style="justify-content:space-between;cursor:pointer"><span>${label}${sub?`<br><small class="muted">${sub}</small>`:''}</span><input type="checkbox" ${on?'checked':''} onchange="${handler}"></label>`;
+  return `
+    ${sw(of.crm,'CRM — R$ 1.500 + R$ 299,90/mês','Básico: Dashboard, Clientes, Leads, Atendimentos','ATEND_OF.crm=this.checked;refreshOf()')}
+    ${of.crm?`<div class="muted" style="font-size:11.5px;margin:-4px 0 8px">✦ Recursos além dos 4 básicos entram a R$ 80 cada (automático). Mensal começa após a entrega.</div>`:''}
+    <label>Gestão de tráfego</label>
+    <select class="inp" onchange="ATEND_OF.trafego=this.value||null"><option value="">Não incluir</option><option value="trafego1" ${of.trafego==='trafego1'?'selected':''}>Gestão — R$ 1.500/mês</option><option value="trafego2" ${of.trafego==='trafego2'?'selected':''}>Roteiro + edição + gestão — R$ 1.750/mês</option></select>
+    ${sw(of.indicacao.ativo,'Plano de indicação — R$ 400','Indicação real de clientes','ATEND_OF.indicacao.ativo=this.checked;refreshOf()')}
+    ${of.indicacao.ativo?`<div style="padding-left:10px">${sw(of.indicacao.posvenda,'↳ Pós-venda no CRM — R$ 80','Quando aplicável','ATEND_OF.indicacao.posvenda=this.checked')}</div>`:''}
+    ${sw(of.followup.ativo,'Treinamento de follow-up','Treino R$300 + recurso R$80 + automação R$80','ATEND_OF.followup.ativo=this.checked')}
+    <label>Site</label>
+    <select class="inp" onchange="ATEND_OF.site=this.value||null"><option value="">Não incluir</option><option value="site1" ${of.site==='site1'?'selected':''}>Com gestão NEXORA — R$ 600 + R$ 60/mês</option><option value="site2" ${of.site==='site2'?'selected':''}>Entregue ao cliente — R$ 1.000</option></select>
+    <label>Consultoria comercial</label>
+    <select class="inp" onchange="ATEND_OF.consultoria=this.value||null"><option value="">Não incluir</option><option value="cons_avulsa" ${of.consultoria==='cons_avulsa'?'selected':''}>Avulsa — R$ 2.500</option><option value="cons_exec" ${of.consultoria==='cons_exec'?'selected':''}>Execução pela NEXORA — R$ 200 + implementação</option></select>
+    <label>Verba de anúncios (opcional)</label>
+    <input class="inp" type="number" value="${of.verba||0}" oninput="ATEND_OF.verba=+this.value||0">
+    <div class="muted" style="font-size:11px;margin-top:4px">Exibida separada na proposta — não entra como receita da NEXORA.</div>
+    <label style="margin-top:12px;display:block">Alterações pós-entrega (futuras, opcional)</label>
+    <div class="row"><input class="inp" type="number" value="${of.alteracoes.qtd||0}" oninput="ATEND_OF.alteracoes.qtd=Math.max(0,+this.value||0)" placeholder="Nº alterações (R$ 800)"><input class="inp" type="number" value="${of.alteracoes.recursosNovos||0}" oninput="ATEND_OF.alteracoes.recursosNovos=Math.max(0,+this.value||0)" placeholder="Recursos novos (R$ 80)"></div>
+    <label style="margin-top:12px;display:block">Observações da proposta</label>
+    <textarea class="inp" rows="2" style="resize:vertical" oninput="ATEND_OF.obs=this.value">${esc(of.obs||'')}</textarea>`;
 }
-function atendForm(){const recs={};document.querySelectorAll('.rec-list [data-r]').forEach(el=>recs[el.getAttribute('data-r')]=el.checked);return {empresa_nome:$('at-nome').value.trim(),segmento:$('at-seg').value.trim()||null,emoji:$('at-emoji').value||'🏢',cor:$('at-cor').value,contato:$('at-contato').value.trim()||null,telefone:$('at-tel').value.trim()||null,email:$('at-email').value.trim()||null,status:$('at-status').value,recursos:recs,observacoes:$('at-obs').value.trim()||null};}
+function refreshOf(){const el=$('ofbody');if(el)el.innerHTML=ofertasBody();}
+function gerarPropostaAtend(){
+  const c={nome:($('at-nome')&&$('at-nome').value.trim())||'Empresa',emoji:($('at-emoji')&&$('at-emoji').value)||'🏢',cor:($('at-cor')&&$('at-cor').value)||'#6D5EF6'};
+  const P=calcProposta();
+  const rowItem=x=>`<tr><td><div style="font-weight:600">${esc(x.nome)}</div>${x.det?`<div class="muted" style="font-size:11.5px">${esc(x.det)}${x.cond?' · <b>'+esc(x.cond)+'</b>':''}</div>`:(x.cond?`<div class="muted" style="font-size:11.5px"><b>${esc(x.cond)}</b></div>`:'')}</td><td style="text-align:right;white-space:nowrap">${fmt2(x.valor)}</td></tr>`;
+  const bloco=(titulo,arr,sub,totLabel,tot,mes)=>arr.length?`<h4 style="margin:16px 0 6px">${titulo}</h4>${sub?`<p class="muted" style="font-size:12px;margin:-2px 0 6px">${sub}</p>`:''}<table style="width:100%"><tbody>${arr.map(rowItem).join('')}</tbody></table><div class="prop-tot"><span>${totLabel}</span><span>${fmt2(tot)}${mes?'/mês':''}</span></div>`:'';
+  const warn=P.warnings.length?`<div style="background:#4a3a10;border:1px solid #6b5416;border-radius:10px;padding:11px 13px;margin-bottom:12px;font-size:12.5px;color:#ffd98a">⚠ <b>Revisar:</b><ul style="margin:6px 0 0 18px">${P.warnings.map(w=>`<li>${esc(w)}</li>`).join('')}</ul></div>`:'';
+  const vazio=!P.unicas.length&&!P.mensais.length;
+  const html=`<div class="prop-card"><div class="prop-head"><span class="lg" style="background:${c.cor}">${esc(c.emoji)}</span><div><h3>Proposta NEXORA</h3><div class="muted">Para <b>${esc(c.nome)}</b> · ${new Date().toLocaleDateString('pt-BR')}</div></div></div>
+    ${warn}
+    ${vazio?`<div class="empty" style="padding:28px">Ligue as ofertas em <b>Ofertas / Serviços NEXORA</b> para montar a proposta.</div>`:''}
+    ${bloco('Cobranças únicas (investimento inicial)',P.unicas,'','Total inicial',P.totalUnica,false)}
+    ${bloco('Cobranças mensais',P.mensais,'A mensalidade do CRM começa após a entrega.','Total mensal',P.totalMensal,true)}
+    ${P.futuras.length?`<h4 style="margin:16px 0 6px">Opcionais / futuros</h4><p class="muted" style="font-size:12px;margin:-2px 0 6px">Cobrado apenas quando solicitado.</p><table style="width:100%"><tbody>${P.futuras.map(rowItem).join('')}</tbody></table><div class="prop-tot"><span>Se solicitado</span><span>${fmt2(P.totalFuturas)}</span></div>`:''}
+    ${P.verba>0?`<h4 style="margin:16px 0 6px">Verba de anúncios</h4><div style="background:rgba(45,212,191,.12);border-radius:10px;padding:12px;display:flex;justify-content:space-between;gap:12px;align-items:center"><div style="font-size:12.5px;color:#2DD4BF">Investimento em mídia — <b>separado</b> do serviço.</div><div style="font-weight:700;color:#2DD4BF;white-space:nowrap">${fmt2(P.verba)}/mês</div></div>`:''}
+    ${ATEND_OF.obs?`<h4 style="margin:16px 0 6px">Observações</h4><p style="font-size:13px">${esc(ATEND_OF.obs)}</p>`:''}
+    <p class="muted" style="font-size:12px;margin-top:14px">Validade: 15 dias. Prazo de implantação estimado após aprovação.${ATEND_OF.site==='site1'?' O domínio do site fica sob controle da NEXORA.':''}</p>
+    <div class="row" style="margin-top:16px;justify-content:flex-end"><button class="btn btn-ghost" onclick="copiarPropostaAtend()">Copiar proposta</button><button class="btn btn-primary" onclick="this.closest('.prop-ov').remove()">Fechar</button></div>
+  </div>`;
+  const ov=document.createElement('div');ov.className='prop-ov';ov.innerHTML=html;ov.onclick=e=>{if(e.target===ov)ov.remove();};document.body.appendChild(ov);
+}
+function copiarPropostaAtend(){
+  const nome=($('at-nome')&&$('at-nome').value.trim())||'Empresa';const P=calcProposta();
+  let t='PROPOSTA NEXORA — '+nome+'\n'+new Date().toLocaleDateString('pt-BR')+'\n';
+  if(P.unicas.length){t+='\nCOBRANÇAS ÚNICAS (investimento inicial)\n';P.unicas.forEach(x=>t+='• '+x.nome+': '+fmt2(x.valor)+'\n');t+='Total inicial: '+fmt2(P.totalUnica)+'\n';}
+  if(P.mensais.length){t+='\nCOBRANÇAS MENSAIS\n';P.mensais.forEach(x=>t+='• '+x.nome+': '+fmt2(x.valor)+'/mês\n');t+='Total mensal: '+fmt2(P.totalMensal)+'/mês\n(A mensalidade do CRM inicia após a entrega.)\n';}
+  if(P.futuras.length){t+='\nOPCIONAIS / FUTUROS\n';P.futuras.forEach(x=>t+='• '+x.nome+': '+fmt2(x.valor)+'\n');}
+  if(P.verba>0)t+='\nVERBA DE ANÚNCIOS (separada): '+fmt2(P.verba)+'/mês\n';
+  if(ATEND_OF.obs)t+='\nObservações: '+ATEND_OF.obs+'\n';
+  t+='\nValidade: 15 dias.';
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(()=>toast('Proposta copiada ✓')).catch(()=>toast('Selecione e copie manualmente'));else toast('Copie manualmente');
+}
+function atendForm(){const recs={};document.querySelectorAll('.rec-list [data-r]').forEach(el=>recs[el.getAttribute('data-r')]=el.checked);return {empresa_nome:$('at-nome').value.trim(),segmento:$('at-seg').value.trim()||null,emoji:$('at-emoji').value||'🏢',cor:$('at-cor').value,contato:$('at-contato').value.trim()||null,telefone:$('at-tel').value.trim()||null,email:$('at-email').value.trim()||null,status:$('at-status').value,recursos:recs,ofertas:normOf(ATEND_OF),observacoes:$('at-obs').value.trim()||null};}
 async function salvarAtend(id){const f=atendForm();if(!f.empresa_nome)return toast('Informe o nome da empresa');const {error}=await sb.from('atendimentos').update(f).eq('id',id);if(error)return toast('Erro: '+error.message);toast('Salvo ✓');}
 async function converterAtend(id){
   const f=atendForm();if(!f.empresa_nome)return toast('Informe o nome da empresa');
