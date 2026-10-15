@@ -1,6 +1,6 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <!DOCTYPE html>
-<html lang="pt-BR" data-theme="dark">
+<html lang="pt-BR" data-theme="nexora">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&family=Oswald:wght@500;600;700&family=Poppins:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -689,6 +690,109 @@ label.fl{display:block;font-size:12px;color:var(--txt-2);font-weight:500;margin:
 #empapp .creds-card h3{font-size:18px;margin-bottom:10px}
 #empapp .efield{margin-bottom:12px}
 #empapp .efield label{display:block;font-size:12px;color:var(--txt-2);margin-bottom:5px}
+
+/* ============================================================
+   NEXORA v2 — NOVA INTERFACE (Etapa 1: só visual)
+   Tudo escopado em [data-theme="nexora"]. Nenhuma função foi alterada.
+   Para voltar ao visual antigo: no <html>, troque data-theme="nexora" por "dark".
+   ============================================================ */
+:root[data-theme="nexora"]{
+  --ink:#0A1020;--ink-2:#121A30;
+  --bg:#F3F5FA;--surface:#FFFFFF;--surface-2:#F8FAFD;
+  --line:#E4E8F1;--line-2:#EDF0F6;
+  --txt:#0B1220;--txt-2:#5A6680;--txt-3:#7A859D;
+  --brand:#1452F0;--brand-soft:#EEF3FF;--teal:#047857;--teal-soft:#E8F8F1;
+  --warn:#B45309;--warn-soft:#FFF4E5;--danger:#DC2626;--danger-soft:#FDECEC;--info:#2563EB;--info-soft:#EAF1FF;--sky:#38BDF8;
+  --radius:16px;--shadow:0 1px 2px rgba(10,16,32,.04),0 4px 14px rgba(10,16,32,.04);--shadow-lg:0 24px 60px rgba(10,16,32,.18);
+  --side:256px;
+}
+/* Tipografia: mesma especificidade das regras antigas (via :where), então os sites modelo mantêm as fontes deles */
+:where(:root[data-theme="nexora"]) body{font-family:'Plus Jakarta Sans',Inter,system-ui,sans-serif;background:var(--bg)}
+:where(:root[data-theme="nexora"]) h1,:where(:root[data-theme="nexora"]) h2,:where(:root[data-theme="nexora"]) h3,:where(:root[data-theme="nexora"]) h4,:where(:root[data-theme="nexora"]) .disp,
+:where(:root[data-theme="nexora"]) .brand .txt,:where(:root[data-theme="nexora"]) .tb-title,:where(:root[data-theme="nexora"]) .avatar,:where(:root[data-theme="nexora"]) .kpi .val,
+:where(:root[data-theme="nexora"]) .sim-bar .emp .n,:where(:root[data-theme="nexora"]) .pv-brand .bn,:where(:root[data-theme="nexora"]) .pv-h h4,:where(:root[data-theme="nexora"]) .pv-kpi .v,
+:where(:root[data-theme="nexora"]) .prop h4,:where(:root[data-theme="nexora"]) .prop .tot,:where(:root[data-theme="nexora"]) .amb-brand,:where(:root[data-theme="nexora"]) .amb-h,
+:where(:root[data-theme="nexora"]) .amb-kpi .v,:where(:root[data-theme="nexora"]) .of-ht h3,:where(:root[data-theme="nexora"]) .of-price .pv,:where(:root[data-theme="nexora"]) .of-opt .ov,
+:where(:root[data-theme="nexora"]) .det-head .bigav,:where(:root[data-theme="nexora"]) .det-mini .m .v,:where(:root[data-theme="nexora"]) .pc-av,:where(:root[data-theme="nexora"]) .pc-score,
+:where(:root[data-theme="nexora"]) #empapp .mark b,:where(:root[data-theme="nexora"]) #empapp .avatar,:where(:root[data-theme="nexora"]) #empapp .kpi .val,:where(:root[data-theme="nexora"]) #empapp .crm-empn,
+:where(:root[data-theme="nexora"]) #empapp .pc-av,:where(:root[data-theme="nexora"]) #empapp .pc-score{font-family:'Plus Jakarta Sans',Inter,sans-serif}
+:root[data-theme="nexora"] ::-webkit-scrollbar-thumb{background:#CBD3E1}
+
+/* Logo: marca azul NEXORA */
+:root[data-theme="nexora"] .mark rect,:root[data-theme="nexora"] svg.mark rect{fill:#1452F0}
+
+/* Login e carregamento */
+:root[data-theme="nexora"] #login,:root[data-theme="nexora"] #boot{background:#0A1020}
+:root[data-theme="nexora"] .login-art::before{background:radial-gradient(640px 520px at 20% 20%,rgba(20,82,240,.38),transparent 60%),radial-gradient(700px 600px at 90% 85%,rgba(127,166,255,.16),transparent 55%),linear-gradient(160deg,#0A1020,#121A30)}
+:root[data-theme="nexora"] .login-card h1{font-weight:800;letter-spacing:-.02em}
+:root[data-theme="nexora"] .login-card .badge-sa{background:rgba(20,82,240,.2);color:#9DBBFF}
+:root[data-theme="nexora"] .field input{background:#0D1528;border-color:#23305A;border-radius:12px;padding:13px 14px}
+:root[data-theme="nexora"] .btn-login{border-radius:12px;padding:14px;font-weight:700}
+:root[data-theme="nexora"] .btn-login:hover{background:#0F45D1;box-shadow:0 8px 22px rgba(20,82,240,.35)}
+:root[data-theme="nexora"] .lchip{--c:#1452F0;background:#0D1528;border-color:#23305A}
+:root[data-theme="nexora"] .lchip.admin>span{background:rgba(20,82,240,.22)}
+:root[data-theme="nexora"] .forgot-link{color:#9DBBFF}
+
+/* Barra lateral */
+:root[data-theme="nexora"] .sidebar{background:#0A1020;border-right:0}
+:root[data-theme="nexora"] .brand{padding:24px 22px 18px}
+:root[data-theme="nexora"] .brand .txt{font-weight:800;letter-spacing:.14em}
+:root[data-theme="nexora"] .brand .txt small{font-family:'Plus Jakarta Sans',Inter,sans-serif;letter-spacing:.42em;color:#8D9BB8}
+:root[data-theme="nexora"] .sa-pill{background:#121A30;border-color:#1E2A47;border-radius:12px;margin:0 16px 12px}
+:root[data-theme="nexora"] .sa-pill .t span{color:#8D9BB8}
+:root[data-theme="nexora"] .nav{padding:6px 16px 18px}
+:root[data-theme="nexora"] .nav .grp{color:#7D8BA8;font-weight:700;letter-spacing:.14em;padding:16px 12px 6px}
+:root[data-theme="nexora"] .nav a{padding:11px 12px;border-radius:10px;color:#B4BFD6;font-size:14px;margin-bottom:2px}
+:root[data-theme="nexora"] .nav a:hover{background:#16203A;color:#fff}
+:root[data-theme="nexora"] .nav a.active{background:#1452F0;color:#fff;font-weight:600;box-shadow:0 8px 18px rgba(20,82,240,.32)}
+:root[data-theme="nexora"] .nav a.active::before{display:none}
+:root[data-theme="nexora"] .nav a .cnt{background:#1B2A4D;color:#9DBBFF;border-radius:6px}
+:root[data-theme="nexora"] .nav a.active .cnt{background:#fff;color:#1452F0}
+
+/* Topo e conteúdo */
+:root[data-theme="nexora"] .topbar{background:#FFFFFF;backdrop-filter:none;padding:0 32px}
+:root[data-theme="nexora"] .tb-title{font-weight:800;font-size:16px}
+:root[data-theme="nexora"] .icon-btn{border:1px solid var(--line);border-radius:12px}
+:root[data-theme="nexora"] .avatar{background:#0A1020;border-radius:50%}
+:root[data-theme="nexora"] .content{padding:28px 32px}
+:root[data-theme="nexora"] .page-head{margin-bottom:22px}
+:root[data-theme="nexora"] .page-head h1{font-size:28px;font-weight:800;letter-spacing:-.02em}
+:root[data-theme="nexora"] .page-head p{font-size:15px}
+
+/* Botões */
+:root[data-theme="nexora"] .btn{border-radius:12px;padding:10px 16px}
+:root[data-theme="nexora"] .btn-sm{padding:7px 12px;border-radius:10px}
+:root[data-theme="nexora"] .btn-primary{font-weight:700}
+:root[data-theme="nexora"] .btn-primary:hover{background:#0F45D1;box-shadow:0 8px 18px rgba(20,82,240,.28)}
+:root[data-theme="nexora"] .btn-ghost{border-color:#D5DBE7}
+:root[data-theme="nexora"] .btn-teal:hover{background:#065F46}
+:root[data-theme="nexora"] .inp:focus{box-shadow:0 0 0 3px rgba(20,82,240,.12)}
+
+/* Cards, indicadores e tabelas */
+:root[data-theme="nexora"] .card-h{padding:18px 22px}
+:root[data-theme="nexora"] .card-h h3{font-size:16px;font-weight:700}
+:root[data-theme="nexora"] .card-b{padding:22px}
+:root[data-theme="nexora"] .kpis{gap:16px;margin-bottom:22px}
+:root[data-theme="nexora"] .kpi{padding:20px}
+:root[data-theme="nexora"] .kpi .val{font-size:28px;font-weight:800;letter-spacing:-.02em}
+:root[data-theme="nexora"] .kpi .lab{font-weight:600}
+:root[data-theme="nexora"] thead th{text-transform:none;letter-spacing:0;font-size:12px;padding:14px 16px}
+:root[data-theme="nexora"] tbody td{padding:14px 16px}
+:root[data-theme="nexora"] .who .av{border-radius:11px}
+:root[data-theme="nexora"] .bdg{padding:4px 10px}
+
+/* Modo Reunião / demonstração */
+:root[data-theme="nexora"] .prev-banner{background:linear-gradient(90deg,#1452F0,#0F45D1)}
+
+/* CRM do cliente (área da empresa) */
+:root[data-theme="nexora"] #empapp .topbar{background:#FFFFFF;backdrop-filter:none}
+:root[data-theme="nexora"] #empapp .kpi.feat{box-shadow:0 10px 30px rgba(20,82,240,.16)}
+:root[data-theme="nexora"] #empapp .btn{border-radius:12px}
+:root[data-theme="nexora"] #empapp .btn-primary{box-shadow:0 6px 18px rgba(20,82,240,.25)}
+:root[data-theme="nexora"] #empapp .btn-primary:hover{box-shadow:0 10px 26px rgba(20,82,240,.38)}
+:root[data-theme="nexora"] #empapp .crm-nav a{padding:10px 12px;border-radius:10px}
+:root[data-theme="nexora"] #empapp .crm-nav a.on{background:var(--brand-soft);color:var(--brand);font-weight:600;box-shadow:none}
+:root[data-theme="nexora"] #empapp .avatar{background:#0A1020;border-radius:50%}
 </style>
 </head>
 <body>
@@ -1965,8 +2069,8 @@ function openModal(title,body,cls='',okLabel='',okFn=null){
 function openConfirm(title,msg,fn){openModal(title,`<p style="color:var(--txt-2)">${msg}</p>`,'','Confirmar',fn);}
 function closeModal(){document.getElementById('overlay').classList.remove('open');}
 function toast(m){const t=document.createElement('div');t.className='toast';t.innerHTML=`${svgI(IC.check)}<span>${m}</span>`;document.getElementById('toast').appendChild(t);setTimeout(()=>{t.style.opacity=0;t.style.transform='translateX(30px)';t.style.transition='.3s';setTimeout(()=>t.remove(),300);},2600);}
-function toggleTheme(){const cur=document.documentElement.getAttribute('data-theme');const n=cur==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);try{localStorage.setItem('nexora-theme-v2',n);}catch(e){}}
-try{const st=localStorage.getItem('nexora-theme-v2');document.documentElement.setAttribute('data-theme',st||'dark');}catch(e){}
+function toggleTheme(){const cur=document.documentElement.getAttribute('data-theme');const n=cur==='nexora'?'dark':'nexora';document.documentElement.setAttribute('data-theme',n);try{localStorage.setItem('nexora-theme-v3',n);}catch(e){}}
+try{const st=localStorage.getItem('nexora-theme-v3');document.documentElement.setAttribute('data-theme',st||'nexora');}catch(e){}
 function toggleSide(o){document.getElementById('sidebar').classList.toggle('open',o);document.getElementById('scrim').classList.toggle('on',o);}
 /* ============================================================
    ===== BACKEND REAL (Supabase): auth, provisionamento, CRM do cliente =====
