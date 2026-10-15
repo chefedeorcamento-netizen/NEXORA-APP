@@ -694,10 +694,10 @@ label.fl{display:block;font-size:12px;color:var(--txt-2);font-weight:500;margin:
 
 /* ============================================================
    NEXORA v2 — NOVA INTERFACE (Etapa 1: só visual)
-   Tudo escopado em [data-theme="nexora"]. Nenhuma função foi alterada.
-   Para voltar ao visual antigo: no <html>, troque data-theme="nexora" por "dark".
+   Tudo escopado em [data-theme^="nexora"]. Nenhuma função foi alterada.
+   Tema único: data-theme="nexora" (interface clara).
    ============================================================ */
-:root[data-theme="nexora"]{
+:root[data-theme^="nexora"]{
   --ink:#0A1020;--ink-2:#121A30;
   --bg:#F3F5FA;--surface:#FFFFFF;--surface-2:#F8FAFD;
   --line:#E4E8F1;--line-2:#EDF0F6;
@@ -708,259 +708,262 @@ label.fl{display:block;font-size:12px;color:var(--txt-2);font-weight:500;margin:
   --side:256px;
 }
 /* Tipografia: mesma especificidade das regras antigas (via :where), então os sites modelo mantêm as fontes deles */
-:where(:root[data-theme="nexora"]) body{font-family:'Plus Jakarta Sans',Inter,system-ui,sans-serif;background:var(--bg)}
-:where(:root[data-theme="nexora"]) h1,:where(:root[data-theme="nexora"]) h2,:where(:root[data-theme="nexora"]) h3,:where(:root[data-theme="nexora"]) h4,:where(:root[data-theme="nexora"]) .disp,
-:where(:root[data-theme="nexora"]) .brand .txt,:where(:root[data-theme="nexora"]) .tb-title,:where(:root[data-theme="nexora"]) .avatar,:where(:root[data-theme="nexora"]) .kpi .val,
-:where(:root[data-theme="nexora"]) .sim-bar .emp .n,:where(:root[data-theme="nexora"]) .pv-brand .bn,:where(:root[data-theme="nexora"]) .pv-h h4,:where(:root[data-theme="nexora"]) .pv-kpi .v,
-:where(:root[data-theme="nexora"]) .prop h4,:where(:root[data-theme="nexora"]) .prop .tot,:where(:root[data-theme="nexora"]) .amb-brand,:where(:root[data-theme="nexora"]) .amb-h,
-:where(:root[data-theme="nexora"]) .amb-kpi .v,:where(:root[data-theme="nexora"]) .of-ht h3,:where(:root[data-theme="nexora"]) .of-price .pv,:where(:root[data-theme="nexora"]) .of-opt .ov,
-:where(:root[data-theme="nexora"]) .det-head .bigav,:where(:root[data-theme="nexora"]) .det-mini .m .v,:where(:root[data-theme="nexora"]) .pc-av,:where(:root[data-theme="nexora"]) .pc-score,
-:where(:root[data-theme="nexora"]) #empapp .mark b,:where(:root[data-theme="nexora"]) #empapp .avatar,:where(:root[data-theme="nexora"]) #empapp .kpi .val,:where(:root[data-theme="nexora"]) #empapp .crm-empn,
-:where(:root[data-theme="nexora"]) #empapp .pc-av,:where(:root[data-theme="nexora"]) #empapp .pc-score{font-family:'Plus Jakarta Sans',Inter,sans-serif}
-:root[data-theme="nexora"] ::-webkit-scrollbar-thumb{background:#CBD3E1}
+:where(:root[data-theme^="nexora"]) body{font-family:'Plus Jakarta Sans',Inter,system-ui,sans-serif;background:var(--bg)}
+:where(:root[data-theme^="nexora"]) h1,:where(:root[data-theme^="nexora"]) h2,:where(:root[data-theme^="nexora"]) h3,:where(:root[data-theme^="nexora"]) h4,:where(:root[data-theme^="nexora"]) .disp,
+:where(:root[data-theme^="nexora"]) .brand .txt,:where(:root[data-theme^="nexora"]) .tb-title,:where(:root[data-theme^="nexora"]) .avatar,:where(:root[data-theme^="nexora"]) .kpi .val,
+:where(:root[data-theme^="nexora"]) .sim-bar .emp .n,:where(:root[data-theme^="nexora"]) .pv-brand .bn,:where(:root[data-theme^="nexora"]) .pv-h h4,:where(:root[data-theme^="nexora"]) .pv-kpi .v,
+:where(:root[data-theme^="nexora"]) .prop h4,:where(:root[data-theme^="nexora"]) .prop .tot,:where(:root[data-theme^="nexora"]) .amb-brand,:where(:root[data-theme^="nexora"]) .amb-h,
+:where(:root[data-theme^="nexora"]) .amb-kpi .v,:where(:root[data-theme^="nexora"]) .of-ht h3,:where(:root[data-theme^="nexora"]) .of-price .pv,:where(:root[data-theme^="nexora"]) .of-opt .ov,
+:where(:root[data-theme^="nexora"]) .det-head .bigav,:where(:root[data-theme^="nexora"]) .det-mini .m .v,:where(:root[data-theme^="nexora"]) .pc-av,:where(:root[data-theme^="nexora"]) .pc-score,
+:where(:root[data-theme^="nexora"]) #empapp .mark b,:where(:root[data-theme^="nexora"]) #empapp .avatar,:where(:root[data-theme^="nexora"]) #empapp .kpi .val,:where(:root[data-theme^="nexora"]) #empapp .crm-empn,
+:where(:root[data-theme^="nexora"]) #empapp .pc-av,:where(:root[data-theme^="nexora"]) #empapp .pc-score{font-family:'Plus Jakarta Sans',Inter,sans-serif}
+:root[data-theme^="nexora"] ::-webkit-scrollbar-thumb{background:#CBD3E1}
 
 /* Logo: marca azul NEXORA */
-:root[data-theme="nexora"] .mark rect,:root[data-theme="nexora"] svg.mark rect{fill:#1452F0}
+:root[data-theme^="nexora"] .mark rect,:root[data-theme^="nexora"] svg.mark rect{fill:#1452F0}
 
 /* Login e carregamento */
-:root[data-theme="nexora"] #login,:root[data-theme="nexora"] #boot{background:#0A1020}
-:root[data-theme="nexora"] .login-art::before{background:radial-gradient(640px 520px at 20% 20%,rgba(20,82,240,.38),transparent 60%),radial-gradient(700px 600px at 90% 85%,rgba(127,166,255,.16),transparent 55%),linear-gradient(160deg,#0A1020,#121A30)}
-:root[data-theme="nexora"] .login-card h1{font-weight:800;letter-spacing:-.02em}
-:root[data-theme="nexora"] .login-card .badge-sa{background:rgba(20,82,240,.2);color:#9DBBFF}
-:root[data-theme="nexora"] .field input{background:#0D1528;border-color:#23305A;border-radius:12px;padding:13px 14px}
-:root[data-theme="nexora"] .btn-login{border-radius:12px;padding:14px;font-weight:700}
-:root[data-theme="nexora"] .btn-login:hover{background:#0F45D1;box-shadow:0 8px 22px rgba(20,82,240,.35)}
-:root[data-theme="nexora"] .lchip{--c:#1452F0;background:#0D1528;border-color:#23305A}
-:root[data-theme="nexora"] .lchip.admin>span{background:rgba(20,82,240,.22)}
-:root[data-theme="nexora"] .forgot-link{color:#9DBBFF}
+:root[data-theme^="nexora"] #login,:root[data-theme^="nexora"] #boot{background:#0A1020}
+:root[data-theme^="nexora"] .login-art::before{background:radial-gradient(640px 520px at 20% 20%,rgba(20,82,240,.38),transparent 60%),radial-gradient(700px 600px at 90% 85%,rgba(127,166,255,.16),transparent 55%),linear-gradient(160deg,#0A1020,#121A30)}
+:root[data-theme^="nexora"] .login-card h1{font-weight:800;letter-spacing:-.02em}
+:root[data-theme^="nexora"] .login-card .badge-sa{background:rgba(20,82,240,.2);color:#9DBBFF}
+:root[data-theme^="nexora"] .field input{background:#0D1528;border-color:#23305A;border-radius:12px;padding:13px 14px}
+:root[data-theme^="nexora"] .btn-login{border-radius:12px;padding:14px;font-weight:700}
+:root[data-theme^="nexora"] .btn-login:hover{background:#0F45D1;box-shadow:0 8px 22px rgba(20,82,240,.35)}
+:root[data-theme^="nexora"] .lchip{--c:#1452F0;background:#0D1528;border-color:#23305A}
+:root[data-theme^="nexora"] .lchip.admin>span{background:rgba(20,82,240,.22)}
+:root[data-theme^="nexora"] .forgot-link{color:#9DBBFF}
 
 /* Barra lateral */
-:root[data-theme="nexora"] .sidebar{background:#0A1020;border-right:0}
-:root[data-theme="nexora"] .brand{padding:24px 22px 18px}
-:root[data-theme="nexora"] .brand .txt{font-weight:800;letter-spacing:.14em}
-:root[data-theme="nexora"] .brand .txt small{font-family:'Plus Jakarta Sans',Inter,sans-serif;letter-spacing:.42em;color:#8D9BB8}
-:root[data-theme="nexora"] .sa-pill{background:#121A30;border-color:#1E2A47;border-radius:12px;margin:0 16px 12px}
-:root[data-theme="nexora"] .sa-pill .t span{color:#8D9BB8}
-:root[data-theme="nexora"] .nav{padding:6px 16px 18px}
-:root[data-theme="nexora"] .nav .grp{color:#7D8BA8;font-weight:700;letter-spacing:.14em;padding:16px 12px 6px}
-:root[data-theme="nexora"] .nav a{padding:11px 12px;border-radius:10px;color:#B4BFD6;font-size:14px;margin-bottom:2px}
-:root[data-theme="nexora"] .nav a:hover{background:#16203A;color:#fff}
-:root[data-theme="nexora"] .nav a.active{background:#1452F0;color:#fff;font-weight:600;box-shadow:0 8px 18px rgba(20,82,240,.32)}
-:root[data-theme="nexora"] .nav a.active::before{display:none}
-:root[data-theme="nexora"] .nav a .cnt{background:#1B2A4D;color:#9DBBFF;border-radius:6px}
-:root[data-theme="nexora"] .nav a.active .cnt{background:#fff;color:#1452F0}
+:root[data-theme^="nexora"] .sidebar{background:#0A1020;border-right:0}
+:root[data-theme^="nexora"] .brand{padding:24px 22px 18px}
+:root[data-theme^="nexora"] .brand .txt{font-weight:800;letter-spacing:.14em}
+:root[data-theme^="nexora"] .brand .txt small{font-family:'Plus Jakarta Sans',Inter,sans-serif;letter-spacing:.42em;color:#8D9BB8}
+:root[data-theme^="nexora"] .sa-pill{background:#121A30;border-color:#1E2A47;border-radius:12px;margin:0 16px 12px}
+:root[data-theme^="nexora"] .sa-pill .t span{color:#8D9BB8}
+:root[data-theme^="nexora"] .nav{padding:6px 16px 18px}
+:root[data-theme^="nexora"] .nav .grp{color:#7D8BA8;font-weight:700;letter-spacing:.14em;padding:16px 12px 6px}
+:root[data-theme^="nexora"] .nav a{padding:11px 12px;border-radius:10px;color:#B4BFD6;font-size:14px;margin-bottom:2px}
+:root[data-theme^="nexora"] .nav a:hover{background:#16203A;color:#fff}
+:root[data-theme^="nexora"] .nav a.active{background:#1452F0;color:#fff;font-weight:600;box-shadow:0 8px 18px rgba(20,82,240,.32)}
+:root[data-theme^="nexora"] .nav a.active::before{display:none}
+:root[data-theme^="nexora"] .nav a .cnt{background:#1B2A4D;color:#9DBBFF;border-radius:6px}
+:root[data-theme^="nexora"] .nav a.active .cnt{background:#fff;color:#1452F0}
 
 /* Topo e conteúdo */
-:root[data-theme="nexora"] .topbar{background:#FFFFFF;backdrop-filter:none;padding:0 32px}
-:root[data-theme="nexora"] .tb-title{font-weight:800;font-size:16px}
-:root[data-theme="nexora"] .icon-btn{border:1px solid var(--line);border-radius:12px}
-:root[data-theme="nexora"] .avatar{background:#0A1020;border-radius:50%}
-:root[data-theme="nexora"] .content{padding:28px 32px}
-:root[data-theme="nexora"] .page-head{margin-bottom:22px}
-:root[data-theme="nexora"] .page-head h1{font-size:28px;font-weight:800;letter-spacing:-.02em}
-:root[data-theme="nexora"] .page-head p{font-size:15px}
+:root[data-theme^="nexora"] .topbar{background:#FFFFFF;backdrop-filter:none;padding:0 32px}
+:root[data-theme^="nexora"] .tb-title{font-weight:800;font-size:16px}
+:root[data-theme^="nexora"] .icon-btn{border:1px solid var(--line);border-radius:12px}
+/* Botão ☰ só existe no celular (abre o menu lateral); no computador o menu já está sempre visível */
+:root[data-theme^="nexora"] .burger{display:none}
+@media(max-width:900px){:root[data-theme^="nexora"] .burger{display:grid;place-items:center}}
+:root[data-theme^="nexora"] .avatar{background:#0A1020;border-radius:50%}
+:root[data-theme^="nexora"] .content{padding:28px 32px}
+:root[data-theme^="nexora"] .page-head{margin-bottom:22px}
+:root[data-theme^="nexora"] .page-head h1{font-size:28px;font-weight:800;letter-spacing:-.02em}
+:root[data-theme^="nexora"] .page-head p{font-size:15px}
 
 /* Botões */
-:root[data-theme="nexora"] .btn{border-radius:12px;padding:10px 16px}
-:root[data-theme="nexora"] .btn-sm{padding:7px 12px;border-radius:10px}
-:root[data-theme="nexora"] .btn-primary{font-weight:700}
-:root[data-theme="nexora"] .btn-primary:hover{background:#0F45D1;box-shadow:0 8px 18px rgba(20,82,240,.28)}
-:root[data-theme="nexora"] .btn-ghost{border-color:#D5DBE7}
-:root[data-theme="nexora"] .btn-teal:hover{background:#065F46}
-:root[data-theme="nexora"] .inp:focus{box-shadow:0 0 0 3px rgba(20,82,240,.12)}
+:root[data-theme^="nexora"] .btn{border-radius:12px;padding:10px 16px}
+:root[data-theme^="nexora"] .btn-sm{padding:7px 12px;border-radius:10px}
+:root[data-theme^="nexora"] .btn-primary{font-weight:700}
+:root[data-theme^="nexora"] .btn-primary:hover{background:#0F45D1;box-shadow:0 8px 18px rgba(20,82,240,.28)}
+:root[data-theme^="nexora"] .btn-ghost{border-color:#D5DBE7}
+:root[data-theme^="nexora"] .btn-teal:hover{background:#065F46}
+:root[data-theme^="nexora"] .inp:focus{box-shadow:0 0 0 3px rgba(20,82,240,.12)}
 
 /* Cards, indicadores e tabelas */
-:root[data-theme="nexora"] .card-h{padding:18px 22px}
-:root[data-theme="nexora"] .card-h h3{font-size:16px;font-weight:700}
-:root[data-theme="nexora"] .card-b{padding:22px}
-:root[data-theme="nexora"] .kpis{gap:16px;margin-bottom:22px}
-:root[data-theme="nexora"] .kpi{padding:20px}
-:root[data-theme="nexora"] .kpi .val{font-size:28px;font-weight:800;letter-spacing:-.02em}
-:root[data-theme="nexora"] .kpi .lab{font-weight:600}
-:root[data-theme="nexora"] thead th{text-transform:none;letter-spacing:0;font-size:12px;padding:14px 16px}
-:root[data-theme="nexora"] tbody td{padding:14px 16px}
-:root[data-theme="nexora"] .who .av{border-radius:11px}
-:root[data-theme="nexora"] .bdg{padding:4px 10px}
+:root[data-theme^="nexora"] .card-h{padding:18px 22px}
+:root[data-theme^="nexora"] .card-h h3{font-size:16px;font-weight:700}
+:root[data-theme^="nexora"] .card-b{padding:22px}
+:root[data-theme^="nexora"] .kpis{gap:16px;margin-bottom:22px}
+:root[data-theme^="nexora"] .kpi{padding:20px}
+:root[data-theme^="nexora"] .kpi .val{font-size:28px;font-weight:800;letter-spacing:-.02em}
+:root[data-theme^="nexora"] .kpi .lab{font-weight:600}
+:root[data-theme^="nexora"] thead th{text-transform:none;letter-spacing:0;font-size:12px;padding:14px 16px}
+:root[data-theme^="nexora"] tbody td{padding:14px 16px}
+:root[data-theme^="nexora"] .who .av{border-radius:11px}
+:root[data-theme^="nexora"] .bdg{padding:4px 10px}
 
 /* Modo Reunião / demonstração */
-:root[data-theme="nexora"] .prev-banner{background:linear-gradient(90deg,#1452F0,#0F45D1)}
+:root[data-theme^="nexora"] .prev-banner{background:linear-gradient(90deg,#1452F0,#0F45D1)}
 
 /* CRM do cliente (área da empresa) */
-:root[data-theme="nexora"] #empapp .topbar{background:#FFFFFF;backdrop-filter:none}
-:root[data-theme="nexora"] #empapp .kpi.feat{box-shadow:0 10px 30px rgba(20,82,240,.16)}
-:root[data-theme="nexora"] #empapp .btn{border-radius:12px}
-:root[data-theme="nexora"] #empapp .btn-primary{box-shadow:0 6px 18px rgba(20,82,240,.25)}
-:root[data-theme="nexora"] #empapp .btn-primary:hover{box-shadow:0 10px 26px rgba(20,82,240,.38)}
-:root[data-theme="nexora"] #empapp .crm-nav a{padding:10px 12px;border-radius:10px}
-:root[data-theme="nexora"] #empapp .crm-nav a.on{background:var(--brand-soft);color:var(--brand);font-weight:600;box-shadow:none}
-:root[data-theme="nexora"] #empapp .avatar{background:#0A1020;border-radius:50%}
+:root[data-theme^="nexora"] #empapp .topbar{background:#FFFFFF;backdrop-filter:none}
+:root[data-theme^="nexora"] #empapp .kpi.feat{box-shadow:0 10px 30px rgba(20,82,240,.16)}
+:root[data-theme^="nexora"] #empapp .btn{border-radius:12px}
+:root[data-theme^="nexora"] #empapp .btn-primary{box-shadow:0 6px 18px rgba(20,82,240,.25)}
+:root[data-theme^="nexora"] #empapp .btn-primary:hover{box-shadow:0 10px 26px rgba(20,82,240,.38)}
+:root[data-theme^="nexora"] #empapp .crm-nav a{padding:10px 12px;border-radius:10px}
+:root[data-theme^="nexora"] #empapp .crm-nav a.on{background:var(--brand-soft);color:var(--brand);font-weight:600;box-shadow:none}
+:root[data-theme^="nexora"] #empapp .avatar{background:#0A1020;border-radius:50%}
 
 /* ============================================================
-   NEXORA v2 — ETAPA 2: TELAS (só visual, mesmo escopo [data-theme="nexora"])
+   NEXORA v2 — ETAPA 2: TELAS (só visual, mesmo escopo [data-theme^="nexora"])
    ============================================================ */
 /* Cabeçalho das páginas */
-:root[data-theme="nexora"] .page-head .crumb{font-size:13px;font-weight:600;color:var(--txt-2);margin-bottom:6px}
-:root[data-theme="nexora"] .section-sub{color:#2A3550;font-weight:800;letter-spacing:.12em;font-size:12px;display:flex;align-items:center;gap:10px}
-:root[data-theme="nexora"] .section-sub::after{content:"";flex:1;height:1px;background:#DCE2EE}
-:root[data-theme="nexora"] .empty{padding:52px 20px}
-:root[data-theme="nexora"] .empty svg{opacity:.35}
+:root[data-theme^="nexora"] .page-head .crumb{font-size:13px;font-weight:600;color:var(--txt-2);margin-bottom:6px}
+:root[data-theme^="nexora"] .section-sub{color:#2A3550;font-weight:800;letter-spacing:.12em;font-size:12px;display:flex;align-items:center;gap:10px}
+:root[data-theme^="nexora"] .section-sub::after{content:"";flex:1;height:1px;background:#DCE2EE}
+:root[data-theme^="nexora"] .empty{padding:52px 20px}
+:root[data-theme^="nexora"] .empty svg{opacity:.35}
 
 /* Indicadores do Painel: ícone e número com mais destaque */
-:root[data-theme="nexora"] .kpi .ic{width:40px;height:40px;border-radius:12px}
-:root[data-theme="nexora"] .kpi{transition:.15s}
-:root[data-theme="nexora"] .kpi:hover{border-color:#C9D5F2;box-shadow:0 10px 26px rgba(10,16,32,.06)}
+:root[data-theme^="nexora"] .kpi .ic{width:40px;height:40px;border-radius:12px}
+:root[data-theme^="nexora"] .kpi{transition:.15s}
+:root[data-theme^="nexora"] .kpi:hover{border-color:#C9D5F2;box-shadow:0 10px 26px rgba(10,16,32,.06)}
 
 /* Tabelas (Atendimentos, Projetos, Painel) */
-:root[data-theme="nexora"] .tbl-wrap{border-radius:16px}
-:root[data-theme="nexora"] thead th{background:#F8FAFD;color:#5A6680}
-:root[data-theme="nexora"] tbody tr:hover{background:#F5F8FF}
-:root[data-theme="nexora"] .card .tbl-wrap{border-radius:0}
-:root[data-theme="nexora"] .pubtag{border-radius:6px;font-weight:800;letter-spacing:.06em;font-size:10.5px}
-:root[data-theme="nexora"] .pubtag.rasc{background:#FFF8DB;color:#7A5B00}
+:root[data-theme^="nexora"] .tbl-wrap{border-radius:16px}
+:root[data-theme^="nexora"] thead th{background:#F8FAFD;color:#5A6680}
+:root[data-theme^="nexora"] tbody tr:hover{background:#F5F8FF}
+:root[data-theme^="nexora"] .card .tbl-wrap{border-radius:0}
+:root[data-theme^="nexora"] .pubtag{border-radius:6px;font-weight:800;letter-spacing:.06em;font-size:10.5px}
+:root[data-theme^="nexora"] .pubtag.rasc{background:#FFF8DB;color:#7A5B00}
 
 /* Prospecção IA: barra de busca em destaque (azul-marinho) */
-:root[data-theme="nexora"] .card:has(.prosp-form){background:#0A1020;border:0;box-shadow:0 16px 40px rgba(10,16,32,.14)}
-:root[data-theme="nexora"] .card:has(.prosp-form) .card-b{padding:24px}
-:root[data-theme="nexora"] .prosp-form .fl{color:#8D9BB8;font-weight:700;letter-spacing:.06em;font-size:11px;text-transform:uppercase}
-:root[data-theme="nexora"] .prosp-form .inp{background:#121A30;border-color:#23305A;color:#FFFFFF;height:48px;border-radius:12px;font-size:15px;font-weight:600}
-:root[data-theme="nexora"] .prosp-form .inp::placeholder{color:#7D8BA8;font-weight:500}
-:root[data-theme="nexora"] .prosp-form .inp:focus{border-color:#7FA6FF;box-shadow:0 0 0 3px rgba(127,166,255,.2)}
-:root[data-theme="nexora"] .prosp-go{height:48px;padding:0 22px}
-:root[data-theme="nexora"] .prosp-count{font-size:15px;color:#2A3550;margin-bottom:14px}
-:root[data-theme="nexora"] .prosp-card,:root[data-theme="nexora"] #empapp .prosp-card{border-radius:18px;padding:20px;gap:2px}
-:root[data-theme="nexora"] .pc-av,:root[data-theme="nexora"] #empapp .pc-av{background:var(--brand-soft);color:var(--brand);border-radius:12px}
-:root[data-theme="nexora"] .pc-tag.warn,:root[data-theme="nexora"] #empapp .pc-tag.warn{background:#FFF4E5;color:#9A4A06}
-:root[data-theme="nexora"] .pc-tag.serv,:root[data-theme="nexora"] #empapp .pc-tag.serv{background:#EEF3FF;color:#1238A8}
-:root[data-theme="nexora"] .pc-tag{padding:4px 10px}
-:root[data-theme="nexora"] .pc-add{height:44px}
+:root[data-theme^="nexora"] .card:has(.prosp-form){background:#0A1020;border:0;box-shadow:0 16px 40px rgba(10,16,32,.14)}
+:root[data-theme^="nexora"] .card:has(.prosp-form) .card-b{padding:24px}
+:root[data-theme^="nexora"] .prosp-form .fl{color:#8D9BB8;font-weight:700;letter-spacing:.06em;font-size:11px;text-transform:uppercase}
+:root[data-theme^="nexora"] .prosp-form .inp{background:#121A30;border-color:#23305A;color:#FFFFFF;height:48px;border-radius:12px;font-size:15px;font-weight:600}
+:root[data-theme^="nexora"] .prosp-form .inp::placeholder{color:#7D8BA8;font-weight:500}
+:root[data-theme^="nexora"] .prosp-form .inp:focus{border-color:#7FA6FF;box-shadow:0 0 0 3px rgba(127,166,255,.2)}
+:root[data-theme^="nexora"] .prosp-go{height:48px;padding:0 22px}
+:root[data-theme^="nexora"] .prosp-count{font-size:15px;color:#2A3550;margin-bottom:14px}
+:root[data-theme^="nexora"] .prosp-card,:root[data-theme^="nexora"] #empapp .prosp-card{border-radius:18px;padding:20px;gap:2px}
+:root[data-theme^="nexora"] .pc-av,:root[data-theme^="nexora"] #empapp .pc-av{background:var(--brand-soft);color:var(--brand);border-radius:12px}
+:root[data-theme^="nexora"] .pc-tag.warn,:root[data-theme^="nexora"] #empapp .pc-tag.warn{background:#FFF4E5;color:#9A4A06}
+:root[data-theme^="nexora"] .pc-tag.serv,:root[data-theme^="nexora"] #empapp .pc-tag.serv{background:#EEF3FF;color:#1238A8}
+:root[data-theme^="nexora"] .pc-tag{padding:4px 10px}
+:root[data-theme^="nexora"] .pc-add{height:44px}
 
 /* Catálogo de recursos: lista vira grade de cards */
-:root[data-theme="nexora"] .card:has(> .card-b > .res-item){background:transparent;border:0;box-shadow:none}
-:root[data-theme="nexora"] .card-b:has(> .res-item){display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;padding:0!important}
-:root[data-theme="nexora"] .card-b > .res-item{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;align-items:flex-start;flex-wrap:wrap;row-gap:8px}
-:root[data-theme="nexora"] .card-b > .res-item:last-child{border-bottom:1px solid var(--line)}
-:root[data-theme="nexora"] .res-item .ri{width:40px;height:40px;border-radius:12px}
-:root[data-theme="nexora"] .res-item .ri svg{width:19px;height:19px}
-:root[data-theme="nexora"] .res-item .rn{font-size:14.5px;flex:1;min-width:0}
-:root[data-theme="nexora"] .res-item .rn small{font-size:12.5px;line-height:1.45;margin-top:3px;color:var(--txt-2)}
-:root[data-theme="nexora"] .card-b > .res-item .rn{flex:1 1 calc(100% - 60px)}
-:root[data-theme="nexora"] .res-item .tipo{font-size:11px;padding:3px 8px;border-radius:6px}
-:root[data-theme="nexora"] .card-b > .res-item .tipo{margin-left:51px}
+:root[data-theme^="nexora"] .card:has(> .card-b > .res-item){background:transparent;border:0;box-shadow:none}
+:root[data-theme^="nexora"] .card-b:has(> .res-item){display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;padding:0!important}
+:root[data-theme^="nexora"] .card-b > .res-item{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;align-items:flex-start;flex-wrap:wrap;row-gap:8px}
+:root[data-theme^="nexora"] .card-b > .res-item:last-child{border-bottom:1px solid var(--line)}
+:root[data-theme^="nexora"] .res-item .ri{width:40px;height:40px;border-radius:12px}
+:root[data-theme^="nexora"] .res-item .ri svg{width:19px;height:19px}
+:root[data-theme^="nexora"] .res-item .rn{font-size:14.5px;flex:1;min-width:0}
+:root[data-theme^="nexora"] .res-item .rn small{font-size:12.5px;line-height:1.45;margin-top:3px;color:var(--txt-2)}
+:root[data-theme^="nexora"] .card-b > .res-item .rn{flex:1 1 calc(100% - 60px)}
+:root[data-theme^="nexora"] .res-item .tipo{font-size:11px;padding:3px 8px;border-radius:6px}
+:root[data-theme^="nexora"] .card-b > .res-item .tipo{margin-left:51px}
 /* Coluna de ações das tabelas: alinha a linha (a célula usava flex e desalinhava a borda) */
-:root[data-theme="nexora"] tbody td[style*="display:flex"]{display:table-cell!important;text-align:right;vertical-align:middle}
-:root[data-theme="nexora"] tbody td[style*="display:flex"] > *{margin-left:6px;vertical-align:middle}
-:root[data-theme="nexora"] .t-conf{background:#FFF4E5;color:#9A4A06}
+:root[data-theme^="nexora"] tbody td[style*="display:flex"]{display:table-cell!important;text-align:right;vertical-align:middle}
+:root[data-theme^="nexora"] tbody td[style*="display:flex"] > *{margin-left:6px;vertical-align:middle}
+:root[data-theme^="nexora"] .t-conf{background:#FFF4E5;color:#9A4A06}
 
 /* Serviços: cabeçalho do serviço em azul-marinho */
-:root[data-theme="nexora"] .of-card{border-radius:20px}
-:root[data-theme="nexora"] .of-head{background:#0A1020;border-bottom:0;padding:26px 26px}
-:root[data-theme="nexora"] .of-ic{background:#16203A;color:#7FA6FF;width:52px;height:52px;border-radius:14px}
-:root[data-theme="nexora"] .of-ht h3{color:#FFFFFF;font-size:22px;font-weight:800;letter-spacing:-.01em}
-:root[data-theme="nexora"] .of-ht .tag{color:#9DBBFF;font-size:13.5px}
-:root[data-theme="nexora"] .of-body{padding:24px 26px}
-:root[data-theme="nexora"] .of-desc{font-size:14.5px}
-:root[data-theme="nexora"] .of-sub{color:#2A3550;font-weight:800;letter-spacing:.1em}
-:root[data-theme="nexora"] .of-incl .it svg{color:#FFFFFF;background:var(--brand);border-radius:50%;padding:3px;width:18px;height:18px;margin-top:1px}
-:root[data-theme="nexora"] .of-prices{border-radius:14px}
-:root[data-theme="nexora"] .of-price{padding:14px 16px}
-:root[data-theme="nexora"] .of-price .pv{font-size:16px;font-weight:800}
-:root[data-theme="nexora"] .of-opt{border-radius:16px;padding:18px;background:#FFFFFF}
-:root[data-theme="nexora"] .of-opt .ov{font-size:22px;font-weight:800;color:var(--txt);letter-spacing:-.01em}
-:root[data-theme="nexora"] .of-note{border-radius:12px}
-:root[data-theme="nexora"] .of-demo-btn{background:#0A1020;border-radius:12px}
-:root[data-theme="nexora"] .of-demo-btn:hover{box-shadow:0 8px 20px rgba(10,16,32,.25)}
+:root[data-theme^="nexora"] .of-card{border-radius:20px}
+:root[data-theme^="nexora"] .of-head{background:#0A1020;border-bottom:0;padding:26px 26px}
+:root[data-theme^="nexora"] .of-ic{background:#16203A;color:#7FA6FF;width:52px;height:52px;border-radius:14px}
+:root[data-theme^="nexora"] .of-ht h3{color:#FFFFFF;font-size:22px;font-weight:800;letter-spacing:-.01em}
+:root[data-theme^="nexora"] .of-ht .tag{color:#9DBBFF;font-size:13.5px}
+:root[data-theme^="nexora"] .of-body{padding:24px 26px}
+:root[data-theme^="nexora"] .of-desc{font-size:14.5px}
+:root[data-theme^="nexora"] .of-sub{color:#2A3550;font-weight:800;letter-spacing:.1em}
+:root[data-theme^="nexora"] .of-incl .it svg{color:#FFFFFF;background:var(--brand);border-radius:50%;padding:3px;width:18px;height:18px;margin-top:1px}
+:root[data-theme^="nexora"] .of-prices{border-radius:14px}
+:root[data-theme^="nexora"] .of-price{padding:14px 16px}
+:root[data-theme^="nexora"] .of-price .pv{font-size:16px;font-weight:800}
+:root[data-theme^="nexora"] .of-opt{border-radius:16px;padding:18px;background:#FFFFFF}
+:root[data-theme^="nexora"] .of-opt .ov{font-size:22px;font-weight:800;color:var(--txt);letter-spacing:-.01em}
+:root[data-theme^="nexora"] .of-note{border-radius:12px}
+:root[data-theme^="nexora"] .of-demo-btn{background:#0A1020;border-radius:12px}
+:root[data-theme^="nexora"] .of-demo-btn:hover{box-shadow:0 8px 20px rgba(10,16,32,.25)}
 
 /* Galeria de sites modelo (prévia com a cara de cada site) */
-:root[data-theme="nexora"] .seg-grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
-:root[data-theme="nexora"] .seg-card{border-radius:18px}
-:root[data-theme="nexora"] .seg-card:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(10,16,32,.12)}
-:root[data-theme="nexora"] .seg-top{height:150px;align-items:flex-end;padding:18px;position:relative;overflow:hidden}
-:root[data-theme="nexora"] .seg-top::after{content:"";position:absolute;right:-36px;top:-36px;width:130px;height:130px;border-radius:50%;background:var(--seg-acc,rgba(255,255,255,.18));opacity:.9}
-:root[data-theme="nexora"] .seg-top .si{position:absolute;left:18px;top:18px;background:rgba(255,255,255,.16)}
-:root[data-theme="nexora"] .seg-top .sn{font-size:22px;position:relative;z-index:1}
-:root[data-theme="nexora"] .seg-bd{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-:root[data-theme="nexora"] .seg-bd .sg{font-size:13px;font-weight:600;color:var(--txt-2)}
-:root[data-theme="nexora"] .seg-bd .sl{margin-top:0;background:var(--brand-soft);padding:7px 11px;border-radius:10px;white-space:nowrap;flex:none}
-:root[data-theme="nexora"] .seg-cafe .seg-top{background:#1F3A2B!important;--seg-acc:#B4532A}
-:root[data-theme="nexora"] .seg-cafe .sn{font-family:'Fraunces',Georgia,serif;font-weight:600}
-:root[data-theme="nexora"] .seg-clinica .seg-top{background:#3B2230!important;--seg-acc:#A84E70}
-:root[data-theme="nexora"] .seg-clinica .sn{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:26px}
-:root[data-theme="nexora"] .seg-barbearia .seg-top{background:#121110!important;--seg-acc:#C9A063}
-:root[data-theme="nexora"] .seg-barbearia .sn{font-family:'Anton',Impact,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.02em}
-:root[data-theme="nexora"] .seg-loja .seg-top{background:#1D1916!important;--seg-acc:#9A5B3A}
-:root[data-theme="nexora"] .seg-loja .sn{font-family:'Bodoni Moda',Georgia,serif;font-weight:400}
-:root[data-theme="nexora"] .seg-academia .seg-top{background:#0C0E12!important;--seg-acc:#FF5A2C}
-:root[data-theme="nexora"] .seg-academia .sn{font-family:'Big Shoulders Display',Impact,sans-serif;font-weight:900;text-transform:uppercase;font-size:28px}
-:root[data-theme="nexora"] .seg-advocacia .seg-top{background:#12233F!important;--seg-acc:#B08D3F}
-:root[data-theme="nexora"] .seg-advocacia .sn{font-family:'Libre Baskerville',Georgia,serif;font-weight:700;font-size:19px}
+:root[data-theme^="nexora"] .seg-grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+:root[data-theme^="nexora"] .seg-card{border-radius:18px}
+:root[data-theme^="nexora"] .seg-card:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(10,16,32,.12)}
+:root[data-theme^="nexora"] .seg-top{height:150px;align-items:flex-end;padding:18px;position:relative;overflow:hidden}
+:root[data-theme^="nexora"] .seg-top::after{content:"";position:absolute;right:-36px;top:-36px;width:130px;height:130px;border-radius:50%;background:var(--seg-acc,rgba(255,255,255,.18));opacity:.9}
+:root[data-theme^="nexora"] .seg-top .si{position:absolute;left:18px;top:18px;background:rgba(255,255,255,.16)}
+:root[data-theme^="nexora"] .seg-top .sn{font-size:22px;position:relative;z-index:1}
+:root[data-theme^="nexora"] .seg-bd{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+:root[data-theme^="nexora"] .seg-bd .sg{font-size:13px;font-weight:600;color:var(--txt-2)}
+:root[data-theme^="nexora"] .seg-bd .sl{margin-top:0;background:var(--brand-soft);padding:7px 11px;border-radius:10px;white-space:nowrap;flex:none}
+:root[data-theme^="nexora"] .seg-cafe .seg-top{background:#1F3A2B!important;--seg-acc:#B4532A}
+:root[data-theme^="nexora"] .seg-cafe .sn{font-family:'Fraunces',Georgia,serif;font-weight:600}
+:root[data-theme^="nexora"] .seg-clinica .seg-top{background:#3B2230!important;--seg-acc:#A84E70}
+:root[data-theme^="nexora"] .seg-clinica .sn{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:26px}
+:root[data-theme^="nexora"] .seg-barbearia .seg-top{background:#121110!important;--seg-acc:#C9A063}
+:root[data-theme^="nexora"] .seg-barbearia .sn{font-family:'Anton',Impact,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.02em}
+:root[data-theme^="nexora"] .seg-loja .seg-top{background:#1D1916!important;--seg-acc:#9A5B3A}
+:root[data-theme^="nexora"] .seg-loja .sn{font-family:'Bodoni Moda',Georgia,serif;font-weight:400}
+:root[data-theme^="nexora"] .seg-academia .seg-top{background:#0C0E12!important;--seg-acc:#FF5A2C}
+:root[data-theme^="nexora"] .seg-academia .sn{font-family:'Big Shoulders Display',Impact,sans-serif;font-weight:900;text-transform:uppercase;font-size:28px}
+:root[data-theme^="nexora"] .seg-advocacia .seg-top{background:#12233F!important;--seg-acc:#B08D3F}
+:root[data-theme^="nexora"] .seg-advocacia .sn{font-family:'Libre Baskerville',Georgia,serif;font-weight:700;font-size:19px}
 
 /* Modo Reunião: barra superior escura + configurador */
-:root[data-theme="nexora"] .sim-bar{background:#0A1020;border-bottom:0;padding:12px 24px}
-:root[data-theme="nexora"] .sim-bar .emp .n{color:#FFFFFF;font-weight:800}
-:root[data-theme="nexora"] .sim-bar .emp .n span{color:#8D9BB8}
-:root[data-theme="nexora"] .sim-bar .emp .e{border-radius:11px}
-:root[data-theme="nexora"] .sim-bar .btn-ghost{background:transparent;border-color:#23305A;color:#FFFFFF}
-:root[data-theme="nexora"] .sim-bar .btn-ghost:hover{background:#16203A;border-color:#7FA6FF;color:#FFFFFF}
-:root[data-theme="nexora"] .sim-bar .inp{background:#16203A;border-color:#23305A;color:#FFFFFF;font-weight:600}
-:root[data-theme="nexora"] .sim-bar .inp option{color:#0B1220;background:#FFFFFF}
-:root[data-theme="nexora"] .sim-bar .btn-teal{background:#10B981;color:#04241A;font-weight:800}
-:root[data-theme="nexora"] .sim-bar .btn-teal:hover{background:#34D399}
-:root[data-theme="nexora"] .sim-bar .pubtag.rasc{background:#2A2410;color:#F5C451}
-:root[data-theme="nexora"] .sim-bar .pubtag.pub{background:#0F2A22;color:#6EE7B7}
-:root[data-theme="nexora"] .configurator{background:#FFFFFF}
-:root[data-theme="nexora"] .acc-h{padding:16px 20px}
-:root[data-theme="nexora"] .acc-h .ci{width:34px;height:34px;border-radius:10px}
-:root[data-theme="nexora"] .acc-h .tt{font-size:14px;font-weight:700}
-:root[data-theme="nexora"] .acc.open{background:#FAFBFE}
-:root[data-theme="nexora"] .acc.open .acc-h .ci{background:var(--brand);color:#FFFFFF}
-:root[data-theme="nexora"] .acc-b{padding:4px 20px 20px}
-:root[data-theme="nexora"] .inp{border-radius:10px;padding:10px 12px}
-:root[data-theme="nexora"] .sw{width:42px;height:24px}
-:root[data-theme="nexora"] .sw::after{top:3px;left:3px}
-:root[data-theme="nexora"] .sw.on::after{left:21px}
-:root[data-theme="nexora"] .le-item{border-radius:12px;padding:10px 12px}
-:root[data-theme="nexora"] .chip-add{border-radius:10px;padding:8px 13px}
-:root[data-theme="nexora"] .preview-pane{background:#E9EDF5;padding:26px}
-:root[data-theme="nexora"] .pv{border-radius:18px;box-shadow:0 24px 50px rgba(10,16,32,.14)}
-:root[data-theme="nexora"] .pv-side{width:160px}
-:root[data-theme="nexora"] .pv-menu a{border-radius:8px}
+:root[data-theme^="nexora"] .sim-bar{background:#0A1020;border-bottom:0;padding:12px 24px}
+:root[data-theme^="nexora"] .sim-bar .emp .n{color:#FFFFFF;font-weight:800}
+:root[data-theme^="nexora"] .sim-bar .emp .n span{color:#8D9BB8}
+:root[data-theme^="nexora"] .sim-bar .emp .e{border-radius:11px}
+:root[data-theme^="nexora"] .sim-bar .btn-ghost{background:transparent;border-color:#23305A;color:#FFFFFF}
+:root[data-theme^="nexora"] .sim-bar .btn-ghost:hover{background:#16203A;border-color:#7FA6FF;color:#FFFFFF}
+:root[data-theme^="nexora"] .sim-bar .inp{background:#16203A;border-color:#23305A;color:#FFFFFF;font-weight:600}
+:root[data-theme^="nexora"] .sim-bar .inp option{color:#0B1220;background:#FFFFFF}
+:root[data-theme^="nexora"] .sim-bar .btn-teal{background:#10B981;color:#04241A;font-weight:800}
+:root[data-theme^="nexora"] .sim-bar .btn-teal:hover{background:#34D399}
+:root[data-theme^="nexora"] .sim-bar .pubtag.rasc{background:#2A2410;color:#F5C451}
+:root[data-theme^="nexora"] .sim-bar .pubtag.pub{background:#0F2A22;color:#6EE7B7}
+:root[data-theme^="nexora"] .configurator{background:#FFFFFF}
+:root[data-theme^="nexora"] .acc-h{padding:16px 20px}
+:root[data-theme^="nexora"] .acc-h .ci{width:34px;height:34px;border-radius:10px}
+:root[data-theme^="nexora"] .acc-h .tt{font-size:14px;font-weight:700}
+:root[data-theme^="nexora"] .acc.open{background:#FAFBFE}
+:root[data-theme^="nexora"] .acc.open .acc-h .ci{background:var(--brand);color:#FFFFFF}
+:root[data-theme^="nexora"] .acc-b{padding:4px 20px 20px}
+:root[data-theme^="nexora"] .inp{border-radius:10px;padding:10px 12px}
+:root[data-theme^="nexora"] .sw{width:42px;height:24px}
+:root[data-theme^="nexora"] .sw::after{top:3px;left:3px}
+:root[data-theme^="nexora"] .sw.on::after{left:21px}
+:root[data-theme^="nexora"] .le-item{border-radius:12px;padding:10px 12px}
+:root[data-theme^="nexora"] .chip-add{border-radius:10px;padding:8px 13px}
+:root[data-theme^="nexora"] .preview-pane{background:#E9EDF5;padding:26px}
+:root[data-theme^="nexora"] .pv{border-radius:18px;box-shadow:0 24px 50px rgba(10,16,32,.14)}
+:root[data-theme^="nexora"] .pv-side{width:160px}
+:root[data-theme^="nexora"] .pv-menu a{border-radius:8px}
 
 /* Janelas (modais), proposta e checklist de projetos */
-:root[data-theme="nexora"] .overlay{background:rgba(10,16,32,.55);backdrop-filter:blur(4px)}
-:root[data-theme="nexora"] .modal{border-radius:22px}
-:root[data-theme="nexora"] .modal-h{padding:20px 24px}
-:root[data-theme="nexora"] .modal-h h3{font-size:18px;font-weight:800}
-:root[data-theme="nexora"] .modal-h .x{border:1px solid var(--line);border-radius:10px}
-:root[data-theme="nexora"] .modal-b{padding:24px}
-:root[data-theme="nexora"] .modal-f{padding:16px 24px;background:#F8FAFD;border-radius:0 0 22px 22px}
-:root[data-theme="nexora"] .prop h4{font-weight:800}
-:root[data-theme="nexora"] .prop .tot{font-weight:800}
-:root[data-theme="nexora"] .checklist .ci{border-radius:12px;padding:13px 16px;font-weight:600}
-:root[data-theme="nexora"] .checklist .ci.done{background:#E8F8F1}
-:root[data-theme="nexora"] .checklist .ci.done .box{background:#10B981;border-color:#10B981}
-:root[data-theme="nexora"] .checklist .box{border-radius:7px;width:22px;height:22px}
-:root[data-theme="nexora"] .det-mini .m{border-radius:14px}
-:root[data-theme="nexora"] .toast{background:#0A1020;border-radius:12px}
+:root[data-theme^="nexora"] .overlay{background:rgba(10,16,32,.55);backdrop-filter:blur(4px)}
+:root[data-theme^="nexora"] .modal{border-radius:22px}
+:root[data-theme^="nexora"] .modal-h{padding:20px 24px}
+:root[data-theme^="nexora"] .modal-h h3{font-size:18px;font-weight:800}
+:root[data-theme^="nexora"] .modal-h .x{border:1px solid var(--line);border-radius:10px}
+:root[data-theme^="nexora"] .modal-b{padding:24px}
+:root[data-theme^="nexora"] .modal-f{padding:16px 24px;background:#F8FAFD;border-radius:0 0 22px 22px}
+:root[data-theme^="nexora"] .prop h4{font-weight:800}
+:root[data-theme^="nexora"] .prop .tot{font-weight:800}
+:root[data-theme^="nexora"] .checklist .ci{border-radius:12px;padding:13px 16px;font-weight:600}
+:root[data-theme^="nexora"] .checklist .ci.done{background:#E8F8F1}
+:root[data-theme^="nexora"] .checklist .ci.done .box{background:#10B981;border-color:#10B981}
+:root[data-theme^="nexora"] .checklist .box{border-radius:7px;width:22px;height:22px}
+:root[data-theme^="nexora"] .det-mini .m{border-radius:14px}
+:root[data-theme^="nexora"] .toast{background:#0A1020;border-radius:12px}
 
 /* Ambiente de demonstração (prévia do CRM do cliente em tela cheia) */
-:root[data-theme="nexora"] .amb-side{width:224px;padding:16px 12px}
-:root[data-theme="nexora"] .amb-menu a{border-radius:10px;padding:10px 12px}
-:root[data-theme="nexora"] .amb-menu a.on{font-weight:700}
-:root[data-theme="nexora"] .amb-main{padding:28px}
-:root[data-theme="nexora"] .amb-h{font-weight:800;font-size:24px;letter-spacing:-.02em}
-:root[data-theme="nexora"] .amb-kpi{border-radius:16px;padding:18px}
-:root[data-theme="nexora"] .amb-kpi .v{font-weight:800;font-size:24px}
-:root[data-theme="nexora"] .amb-bars,:root[data-theme="nexora"] .amb-fcol{border-radius:16px}
-:root[data-theme="nexora"] .amb-fcol{background:#EEF1F7;border:0}
-:root[data-theme="nexora"] .amb-fcard{background:#FFFFFF;border-radius:12px;box-shadow:0 1px 2px rgba(10,16,32,.06)}
+:root[data-theme^="nexora"] .amb-side{width:224px;padding:16px 12px}
+:root[data-theme^="nexora"] .amb-menu a{border-radius:10px;padding:10px 12px}
+:root[data-theme^="nexora"] .amb-menu a.on{font-weight:700}
+:root[data-theme^="nexora"] .amb-main{padding:28px}
+:root[data-theme^="nexora"] .amb-h{font-weight:800;font-size:24px;letter-spacing:-.02em}
+:root[data-theme^="nexora"] .amb-kpi{border-radius:16px;padding:18px}
+:root[data-theme^="nexora"] .amb-kpi .v{font-weight:800;font-size:24px}
+:root[data-theme^="nexora"] .amb-bars,:root[data-theme^="nexora"] .amb-fcol{border-radius:16px}
+:root[data-theme^="nexora"] .amb-fcol{background:#EEF1F7;border:0}
+:root[data-theme^="nexora"] .amb-fcard{background:#FFFFFF;border-radius:12px;box-shadow:0 1px 2px rgba(10,16,32,.06)}
 
 /* CRM do cliente: barra lateral e funil */
-:root[data-theme="nexora"] #empapp .crm-side{border-radius:18px;padding:16px}
-:root[data-theme="nexora"] #empapp .kpi{border-radius:16px;padding:20px}
-:root[data-theme="nexora"] #empapp .card{border-radius:16px}
-:root[data-theme="nexora"] #empapp .kcol{background:#EEF1F7;border:0;border-radius:16px}
-:root[data-theme="nexora"] #empapp .kcard{border-radius:12px;box-shadow:0 1px 2px rgba(10,16,32,.06)}
-:root[data-theme="nexora"] #empapp .inp{border-radius:10px}
+:root[data-theme^="nexora"] #empapp .crm-side{border-radius:18px;padding:16px}
+:root[data-theme^="nexora"] #empapp .kpi{border-radius:16px;padding:20px}
+:root[data-theme^="nexora"] #empapp .card{border-radius:16px}
+:root[data-theme^="nexora"] #empapp .kcol{background:#EEF1F7;border:0;border-radius:16px}
+:root[data-theme^="nexora"] #empapp .kcard{border-radius:12px;box-shadow:0 1px 2px rgba(10,16,32,.06)}
+:root[data-theme^="nexora"] #empapp .inp{border-radius:10px}
 
 /* ============================================================
    NEXORA v2 — ETAPA 3: SITES MODELO (só visual)
@@ -971,136 +974,227 @@ label.fl{display:block;font-size:12px;color:var(--txt-2);font-weight:500;margin:
 .ds-ribbon svg{width:16px;height:16px;flex:none}
 
 /* Cores e fontes de cada site */
-:root[data-theme="nexora"] .ds-cafe{--ds-bg:#F5EEE4!important;--ds-ink:#2B1B12!important;--ds-muted:#6E5A4B!important;--ds-brand:#B4532A!important;--ds-green:#1F3A2B!important;--ds-surface:#FBF7F1!important;--ds-line:#E6D9C8!important;--ds-gold:#E9A47E!important;--ds-display:'Fraunces',Georgia,serif!important;--ds-body:'DM Sans',system-ui,sans-serif!important;--ds-herograd:#1F3A2B!important}
-:root[data-theme="nexora"] .ds-clinica{--ds-bg:#F7EEEC!important;--ds-ink:#3B2230!important;--ds-muted:#6A5560!important;--ds-brand:#A84E70!important;--ds-green:#3B2230!important;--ds-surface:#FDF9F7!important;--ds-line:#EBDADD!important;--ds-gold:#E9B9C9!important;--ds-display:'Cormorant Garamond',Georgia,serif!important;--ds-body:'Manrope',system-ui,sans-serif!important;--ds-herograd:#3B2230!important}
-:root[data-theme="nexora"] .ds-barbearia{--ds-bg:#F2EEE7!important;--ds-ink:#121110!important;--ds-muted:#5E574D!important;--ds-brand:#8A6A2F!important;--ds-green:#121110!important;--ds-surface:#FFFFFF!important;--ds-line:#DDD5C8!important;--ds-gold:#C9A063!important;--ds-display:'Anton',Impact,sans-serif!important;--ds-body:'Archivo',system-ui,sans-serif!important;--ds-herograd:#121110!important}
-:root[data-theme="nexora"] .ds-loja{--ds-bg:#F4EFE9!important;--ds-ink:#1D1916!important;--ds-muted:#5F564F!important;--ds-brand:#9A5B3A!important;--ds-green:#1D1916!important;--ds-surface:#FFFFFF!important;--ds-line:#DDD2C5!important;--ds-gold:#C9A386!important;--ds-display:'Bodoni Moda',Georgia,serif!important;--ds-body:'Jost',system-ui,sans-serif!important;--ds-herograd:#1D1916!important}
-:root[data-theme="nexora"] .ds-academia{--ds-bg:#F2F4F7!important;--ds-ink:#0C0E12!important;--ds-muted:#4A5260!important;--ds-brand:#D43E12!important;--ds-green:#0C0E12!important;--ds-surface:#FFFFFF!important;--ds-line:#E3E6EC!important;--ds-gold:#FF5A2C!important;--ds-display:'Big Shoulders Display',Impact,sans-serif!important;--ds-body:'Archivo',system-ui,sans-serif!important;--ds-herograd:#0C0E12!important}
-:root[data-theme="nexora"] .ds-advocacia{--ds-bg:#F7F5F0!important;--ds-ink:#12233F!important;--ds-muted:#4A5468!important;--ds-brand:#8A6A26!important;--ds-green:#12233F!important;--ds-surface:#FFFFFF!important;--ds-line:#E4E6EC!important;--ds-gold:#D9BE7E!important;--ds-display:'Libre Baskerville',Georgia,serif!important;--ds-body:'Source Sans 3',system-ui,sans-serif!important;--ds-herograd:#12233F!important}
-:root[data-theme="nexora"] #sitedemo{background:var(--bg)}
+:root[data-theme^="nexora"] .ds-cafe{--ds-bg:#F5EEE4!important;--ds-ink:#2B1B12!important;--ds-muted:#6E5A4B!important;--ds-brand:#B4532A!important;--ds-green:#1F3A2B!important;--ds-surface:#FBF7F1!important;--ds-line:#E6D9C8!important;--ds-gold:#E9A47E!important;--ds-display:'Fraunces',Georgia,serif!important;--ds-body:'DM Sans',system-ui,sans-serif!important;--ds-herograd:#1F3A2B!important}
+:root[data-theme^="nexora"] .ds-clinica{--ds-bg:#F7EEEC!important;--ds-ink:#3B2230!important;--ds-muted:#6A5560!important;--ds-brand:#A84E70!important;--ds-green:#3B2230!important;--ds-surface:#FDF9F7!important;--ds-line:#EBDADD!important;--ds-gold:#E9B9C9!important;--ds-display:'Cormorant Garamond',Georgia,serif!important;--ds-body:'Manrope',system-ui,sans-serif!important;--ds-herograd:#3B2230!important}
+:root[data-theme^="nexora"] .ds-barbearia{--ds-bg:#F2EEE7!important;--ds-ink:#121110!important;--ds-muted:#5E574D!important;--ds-brand:#8A6A2F!important;--ds-green:#121110!important;--ds-surface:#FFFFFF!important;--ds-line:#DDD5C8!important;--ds-gold:#C9A063!important;--ds-display:'Anton',Impact,sans-serif!important;--ds-body:'Archivo',system-ui,sans-serif!important;--ds-herograd:#121110!important}
+:root[data-theme^="nexora"] .ds-loja{--ds-bg:#F4EFE9!important;--ds-ink:#1D1916!important;--ds-muted:#5F564F!important;--ds-brand:#9A5B3A!important;--ds-green:#1D1916!important;--ds-surface:#FFFFFF!important;--ds-line:#DDD2C5!important;--ds-gold:#C9A386!important;--ds-display:'Bodoni Moda',Georgia,serif!important;--ds-body:'Jost',system-ui,sans-serif!important;--ds-herograd:#1D1916!important}
+:root[data-theme^="nexora"] .ds-academia{--ds-bg:#F2F4F7!important;--ds-ink:#0C0E12!important;--ds-muted:#4A5260!important;--ds-brand:#D43E12!important;--ds-green:#0C0E12!important;--ds-surface:#FFFFFF!important;--ds-line:#E3E6EC!important;--ds-gold:#FF5A2C!important;--ds-display:'Big Shoulders Display',Impact,sans-serif!important;--ds-body:'Archivo',system-ui,sans-serif!important;--ds-herograd:#0C0E12!important}
+:root[data-theme^="nexora"] .ds-advocacia{--ds-bg:#F7F5F0!important;--ds-ink:#12233F!important;--ds-muted:#4A5468!important;--ds-brand:#8A6A26!important;--ds-green:#12233F!important;--ds-surface:#FFFFFF!important;--ds-line:#E4E6EC!important;--ds-gold:#D9BE7E!important;--ds-display:'Libre Baskerville',Georgia,serif!important;--ds-body:'Source Sans 3',system-ui,sans-serif!important;--ds-herograd:#12233F!important}
+:root[data-theme^="nexora"] #sitedemo{background:var(--bg)}
 
 /* Faixa de demonstração e menu */
-:root[data-theme="nexora"] .ds-ribbon{background:#0A1020;color:#C9D2E6;font-size:13px}
-:root[data-theme="nexora"] .ds-ribbon button{background:#1452F0;border-radius:8px;padding:6px 14px}
-:root[data-theme="nexora"] .ds-nav{background:color-mix(in srgb,var(--ds-surface) 94%,transparent);padding:16px max(24px,calc((100% - 1180px)/2))}
-:root[data-theme="nexora"] .ds-logo{font-size:24px;font-weight:700}
-:root[data-theme="nexora"] .ds-logo .bean{width:40px;height:40px;background:var(--ds-brand)}
-:root[data-theme="nexora"] .ds-logo .bean svg{width:20px;height:20px}
-:root[data-theme="nexora"] .ds-links a{color:var(--ds-ink);font-weight:500;font-size:15px}
-:root[data-theme="nexora"] .ds-res{border-radius:999px;padding:13px 22px;font-size:14.5px}
+:root[data-theme^="nexora"] .ds-ribbon{background:#0A1020;color:#C9D2E6;font-size:13px}
+:root[data-theme^="nexora"] .ds-ribbon button{background:#1452F0;border-radius:8px;padding:6px 14px}
+:root[data-theme^="nexora"] .ds-nav{background:color-mix(in srgb,var(--ds-surface) 94%,transparent);padding:16px max(24px,calc((100% - 1180px)/2))}
+:root[data-theme^="nexora"] .ds-logo{font-size:24px;font-weight:700}
+:root[data-theme^="nexora"] .ds-logo .bean{width:40px;height:40px;background:var(--ds-brand)}
+:root[data-theme^="nexora"] .ds-logo .bean svg{width:20px;height:20px}
+:root[data-theme^="nexora"] .ds-links a{color:var(--ds-ink);font-weight:500;font-size:15px}
+:root[data-theme^="nexora"] .ds-res{border-radius:999px;padding:13px 22px;font-size:14.5px}
 
 /* Topo (hero): texto à esquerda + arte à direita */
-:root[data-theme="nexora"] .ds-hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:56px;align-items:center;text-align:left;padding:88px max(24px,calc((100% - 1180px)/2)) 96px;color:#FFFFFF}
-:root[data-theme="nexora"] .ds-hero::before{opacity:1;background:radial-gradient(700px 420px at 85% 0%,rgba(255,255,255,.07),transparent 60%)}
-:root[data-theme="nexora"] .ds-hero .in{max-width:none;margin:0}
-:root[data-theme="nexora"] .ds-eyebrow{display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);padding:8px 14px;border-radius:999px;letter-spacing:.18em;font-size:12px;margin-bottom:22px}
-:root[data-theme="nexora"] .ds-hero h1{font-size:clamp(40px,5.4vw,72px);line-height:1.02;letter-spacing:-.02em;font-weight:700}
-:root[data-theme="nexora"] .ds-hero p{color:rgba(255,255,255,.78);margin:22px 0 0;font-size:18px;line-height:1.6}
-:root[data-theme="nexora"] .ds-cta{justify-content:flex-start;margin-top:32px}
-:root[data-theme="nexora"] .ds-btn{padding:16px 28px;font-size:15.5px;border-radius:999px}
-:root[data-theme="nexora"] .ds-btn.p{background:var(--ds-gold);color:#14100C}
-:root[data-theme="nexora"] .ds-btn.p:hover{background:var(--ds-gold);filter:brightness(1.07)}
-:root[data-theme="nexora"] .ds-btn.g{color:#FFFFFF;border-color:rgba(255,255,255,.35)}
-:root[data-theme="nexora"] .ds-hours{color:rgba(255,255,255,.88)}
-:root[data-theme="nexora"] .ds-hero-art{display:grid;place-items:center;position:relative;justify-self:center;width:min(100%,420px);aspect-ratio:4/5;border-radius:999px 999px 28px 28px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--ds-gold);overflow:hidden}
-:root[data-theme="nexora"] .ds-hero-art::before{content:"";position:absolute;width:76%;aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,.06)}
-:root[data-theme="nexora"] .ds-hero-art::after{content:"";position:absolute;width:50%;aspect-ratio:1;border-radius:50%;background:var(--ds-gold);opacity:.16}
-:root[data-theme="nexora"] .ds-hero-art svg{position:relative;z-index:1;width:36%;height:auto;stroke-width:1.1}
-@media(max-width:820px){:root[data-theme="nexora"] .ds-hero{grid-template-columns:1fr;padding:64px 24px 72px}:root[data-theme="nexora"] .ds-hero-art{display:none}}
+:root[data-theme^="nexora"] .ds-hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:56px;align-items:center;text-align:left;padding:88px max(24px,calc((100% - 1180px)/2)) 96px;color:#FFFFFF}
+:root[data-theme^="nexora"] .ds-hero::before{opacity:1;background:radial-gradient(700px 420px at 85% 0%,rgba(255,255,255,.07),transparent 60%)}
+:root[data-theme^="nexora"] .ds-hero .in{max-width:none;margin:0}
+:root[data-theme^="nexora"] .ds-eyebrow{display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);padding:8px 14px;border-radius:999px;letter-spacing:.18em;font-size:12px;margin-bottom:22px}
+:root[data-theme^="nexora"] .ds-hero h1{font-size:clamp(40px,5.4vw,72px);line-height:1.02;letter-spacing:-.02em;font-weight:700}
+:root[data-theme^="nexora"] .ds-hero p{color:rgba(255,255,255,.78);margin:22px 0 0;font-size:18px;line-height:1.6}
+:root[data-theme^="nexora"] .ds-cta{justify-content:flex-start;margin-top:32px}
+:root[data-theme^="nexora"] .ds-btn{padding:16px 28px;font-size:15.5px;border-radius:999px}
+:root[data-theme^="nexora"] .ds-btn.p{background:var(--ds-gold);color:#14100C}
+:root[data-theme^="nexora"] .ds-btn.p:hover{background:var(--ds-gold);filter:brightness(1.07)}
+:root[data-theme^="nexora"] .ds-btn.g{color:#FFFFFF;border-color:rgba(255,255,255,.35)}
+:root[data-theme^="nexora"] .ds-hours{color:rgba(255,255,255,.88)}
+:root[data-theme^="nexora"] .ds-hero-art{display:grid;place-items:center;position:relative;justify-self:center;width:min(100%,420px);aspect-ratio:4/5;border-radius:999px 999px 28px 28px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--ds-gold);overflow:hidden}
+:root[data-theme^="nexora"] .ds-hero-art::before{content:"";position:absolute;width:76%;aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,.06)}
+:root[data-theme^="nexora"] .ds-hero-art::after{content:"";position:absolute;width:50%;aspect-ratio:1;border-radius:50%;background:var(--ds-gold);opacity:.16}
+:root[data-theme^="nexora"] .ds-hero-art svg{position:relative;z-index:1;width:36%;height:auto;stroke-width:1.1}
+@media(max-width:820px){:root[data-theme^="nexora"] .ds-hero{grid-template-columns:1fr;padding:64px 24px 72px}:root[data-theme^="nexora"] .ds-hero-art{display:none}}
 
 /* Seções */
-:root[data-theme="nexora"] .ds-sec{padding:96px 0}
-:root[data-theme="nexora"] .ds-wrap{max-width:1180px;padding:0 32px}
-:root[data-theme="nexora"] .ds-shead{max-width:680px;margin-bottom:48px}
-:root[data-theme="nexora"] .ds-head .k{letter-spacing:.2em;font-size:12.5px}
-:root[data-theme="nexora"] .ds-head h2{font-size:clamp(32px,4.2vw,52px);line-height:1.05;letter-spacing:-.01em}
-:root[data-theme="nexora"] .ds-feats{gap:20px}
-:root[data-theme="nexora"] .ds-feat{text-align:left;padding:28px;background:var(--ds-surface);border:1px solid var(--ds-line);border-radius:22px}
-:root[data-theme="nexora"] .ds-feat .fi{margin:0 0 18px;width:56px;height:56px;border-radius:16px;background:var(--ds-green);color:#FFFFFF}
-:root[data-theme="nexora"] .ds-feat h3{font-size:21px;margin-bottom:8px}
-:root[data-theme="nexora"] .ds-feat p{font-size:14.5px;line-height:1.6}
-:root[data-theme="nexora"] .ds-tabs{margin-bottom:36px}
-:root[data-theme="nexora"] .ds-tab{border-radius:999px;padding:11px 20px;font-size:14.5px}
-:root[data-theme="nexora"] .ds-menu{max-width:none;gap:4px 56px}
-:root[data-theme="nexora"] .ds-item{padding:18px 0;border-bottom-color:var(--ds-line)}
-:root[data-theme="nexora"] .ds-item .mi{background:color-mix(in srgb,var(--ds-brand) 12%,var(--ds-surface));border-radius:14px;width:48px;height:48px}
-:root[data-theme="nexora"] .ds-item .nm{font-size:20px}
-:root[data-theme="nexora"] .ds-item .pr{font-size:19px}
-:root[data-theme="nexora"] .ds-item .ds-dots{border-bottom-color:var(--ds-line)}
-:root[data-theme="nexora"] .ds-item .de{font-size:14px;margin-top:4px}
-:root[data-theme="nexora"] .ds-about{gap:64px}
-:root[data-theme="nexora"] .ds-about h2{font-size:clamp(30px,4vw,48px);line-height:1.05}
-:root[data-theme="nexora"] .ds-about p{font-size:16.5px;line-height:1.7}
-:root[data-theme="nexora"] .ds-stat .v{font-size:44px;font-weight:700}
-:root[data-theme="nexora"] .ds-stat .l{letter-spacing:.12em}
-:root[data-theme="nexora"] .ds-artwork{background:var(--ds-green);border-radius:28px;box-shadow:none}
-:root[data-theme="nexora"] .ds-artwork::before{content:"";position:absolute;width:64%;aspect-ratio:1;border-radius:50%;background:var(--ds-gold);opacity:.18}
-:root[data-theme="nexora"] .ds-artwork::after{opacity:1;background:radial-gradient(360px 240px at 75% 15%,rgba(255,255,255,.08),transparent 60%)}
-:root[data-theme="nexora"] .ds-artwork .cup{color:var(--ds-gold)}
-:root[data-theme="nexora"] .ds-artwork .cup svg{width:140px;height:140px}
-:root[data-theme="nexora"] .ds-quotes{gap:20px}
-:root[data-theme="nexora"] .ds-quote{background:var(--ds-surface);border-radius:22px;padding:30px}
-:root[data-theme="nexora"] .ds-quote .stars{color:var(--ds-brand);letter-spacing:2px}
-:root[data-theme="nexora"] .ds-quote p{font-family:var(--ds-display);font-size:19px;line-height:1.45}
-:root[data-theme="nexora"] .ds-quote .who .av{background:var(--ds-green)}
+:root[data-theme^="nexora"] .ds-sec{padding:96px 0}
+:root[data-theme^="nexora"] .ds-wrap{max-width:1180px;padding:0 32px}
+:root[data-theme^="nexora"] .ds-shead{max-width:680px;margin-bottom:48px}
+:root[data-theme^="nexora"] .ds-head .k{letter-spacing:.2em;font-size:12.5px}
+:root[data-theme^="nexora"] .ds-head h2{font-size:clamp(32px,4.2vw,52px);line-height:1.05;letter-spacing:-.01em}
+:root[data-theme^="nexora"] .ds-feats{gap:20px}
+:root[data-theme^="nexora"] .ds-feat{text-align:left;padding:28px;background:var(--ds-surface);border:1px solid var(--ds-line);border-radius:22px}
+:root[data-theme^="nexora"] .ds-feat .fi{margin:0 0 18px;width:56px;height:56px;border-radius:16px;background:var(--ds-green);color:#FFFFFF}
+:root[data-theme^="nexora"] .ds-feat h3{font-size:21px;margin-bottom:8px}
+:root[data-theme^="nexora"] .ds-feat p{font-size:14.5px;line-height:1.6}
+:root[data-theme^="nexora"] .ds-tabs{margin-bottom:36px}
+:root[data-theme^="nexora"] .ds-tab{border-radius:999px;padding:11px 20px;font-size:14.5px}
+:root[data-theme^="nexora"] .ds-menu{max-width:none;gap:4px 56px}
+:root[data-theme^="nexora"] .ds-item{padding:18px 0;border-bottom-color:var(--ds-line)}
+:root[data-theme^="nexora"] .ds-item .mi{background:color-mix(in srgb,var(--ds-brand) 12%,var(--ds-surface));border-radius:14px;width:48px;height:48px}
+:root[data-theme^="nexora"] .ds-item .nm{font-size:20px}
+:root[data-theme^="nexora"] .ds-item .pr{font-size:19px}
+:root[data-theme^="nexora"] .ds-item .ds-dots{border-bottom-color:var(--ds-line)}
+:root[data-theme^="nexora"] .ds-item .de{font-size:14px;margin-top:4px}
+:root[data-theme^="nexora"] .ds-about{gap:64px}
+:root[data-theme^="nexora"] .ds-about h2{font-size:clamp(30px,4vw,48px);line-height:1.05}
+:root[data-theme^="nexora"] .ds-about p{font-size:16.5px;line-height:1.7}
+:root[data-theme^="nexora"] .ds-stat .v{font-size:44px;font-weight:700}
+:root[data-theme^="nexora"] .ds-stat .l{letter-spacing:.12em}
+:root[data-theme^="nexora"] .ds-artwork{background:var(--ds-green);border-radius:28px;box-shadow:none}
+:root[data-theme^="nexora"] .ds-artwork::before{content:"";position:absolute;width:64%;aspect-ratio:1;border-radius:50%;background:var(--ds-gold);opacity:.18}
+:root[data-theme^="nexora"] .ds-artwork::after{opacity:1;background:radial-gradient(360px 240px at 75% 15%,rgba(255,255,255,.08),transparent 60%)}
+:root[data-theme^="nexora"] .ds-artwork .cup{color:var(--ds-gold)}
+:root[data-theme^="nexora"] .ds-artwork .cup svg{width:140px;height:140px}
+:root[data-theme^="nexora"] .ds-quotes{gap:20px}
+:root[data-theme^="nexora"] .ds-quote{background:var(--ds-surface);border-radius:22px;padding:30px}
+:root[data-theme^="nexora"] .ds-quote .stars{color:var(--ds-brand);letter-spacing:2px}
+:root[data-theme^="nexora"] .ds-quote p{font-family:var(--ds-display);font-size:19px;line-height:1.45}
+:root[data-theme^="nexora"] .ds-quote .who .av{background:var(--ds-green)}
 
 /* Contato/reserva em bloco de destaque */
-:root[data-theme="nexora"] .ds-reserve{background:var(--ds-green);color:#FFFFFF;border-radius:32px;padding:56px;gap:48px}
-:root[data-theme="nexora"] .ds-reserve .ds-head .k{color:var(--ds-gold)}
-:root[data-theme="nexora"] .ds-reserve .intro h2{font-size:clamp(30px,4vw,48px);line-height:1.05}
-:root[data-theme="nexora"] .ds-reserve .intro p{color:rgba(255,255,255,.78);font-size:16.5px}
-:root[data-theme="nexora"] .ds-info .row{background:rgba(255,255,255,.07);border-radius:16px;padding:16px}
-:root[data-theme="nexora"] .ds-info .row svg{color:var(--ds-gold)}
-:root[data-theme="nexora"] .ds-form{border:0;border-radius:24px;padding:32px;color:var(--ds-ink);box-shadow:none}
-:root[data-theme="nexora"] .ds-form h3{font-size:26px}
-:root[data-theme="nexora"] .ds-field input,:root[data-theme="nexora"] .ds-field select,:root[data-theme="nexora"] .ds-field textarea{border-radius:12px;padding:13px 14px}
-:root[data-theme="nexora"] .ds-submit{background:var(--ds-brand);border-radius:999px;padding:16px;font-size:16px}
-:root[data-theme="nexora"] .ds-submit:hover{background:var(--ds-ink)}
-@media(max-width:820px){:root[data-theme="nexora"] .ds-reserve{padding:28px;border-radius:24px}}
+:root[data-theme^="nexora"] .ds-reserve{background:var(--ds-green);color:#FFFFFF;border-radius:32px;padding:56px;gap:48px}
+:root[data-theme^="nexora"] .ds-reserve .ds-head .k{color:var(--ds-gold)}
+:root[data-theme^="nexora"] .ds-reserve .intro h2{font-size:clamp(30px,4vw,48px);line-height:1.05}
+:root[data-theme^="nexora"] .ds-reserve .intro p{color:rgba(255,255,255,.78);font-size:16.5px}
+:root[data-theme^="nexora"] .ds-info .row{background:rgba(255,255,255,.07);border-radius:16px;padding:16px}
+:root[data-theme^="nexora"] .ds-info .row svg{color:var(--ds-gold)}
+:root[data-theme^="nexora"] .ds-form{border:0;border-radius:24px;padding:32px;color:var(--ds-ink);box-shadow:none}
+:root[data-theme^="nexora"] .ds-form h3{font-size:26px}
+:root[data-theme^="nexora"] .ds-field input,:root[data-theme^="nexora"] .ds-field select,:root[data-theme^="nexora"] .ds-field textarea{border-radius:12px;padding:13px 14px}
+:root[data-theme^="nexora"] .ds-submit{background:var(--ds-brand);border-radius:999px;padding:16px;font-size:16px}
+:root[data-theme^="nexora"] .ds-submit:hover{background:var(--ds-ink)}
+@media(max-width:820px){:root[data-theme^="nexora"] .ds-reserve{padding:28px;border-radius:24px}}
 @media(max-width:600px){
-  :root[data-theme="nexora"] .ds-nav{padding:12px 16px;gap:12px}
-  :root[data-theme="nexora"] .ds-logo{font-size:18px;white-space:nowrap}
-  :root[data-theme="nexora"] .ds-logo .bean{width:34px;height:34px}
-  :root[data-theme="nexora"] .ds-res{padding:10px 14px;font-size:13px}
-  :root[data-theme="nexora"] .ds-sec{padding:64px 0}
-  :root[data-theme="nexora"] .ds-wrap{padding:0 20px}
-  :root[data-theme="nexora"] .content{padding:20px 16px}
-  :root[data-theme="nexora"] .topbar{padding:0 16px}
+  :root[data-theme^="nexora"] .ds-nav{padding:12px 16px;gap:12px}
+  :root[data-theme^="nexora"] .ds-logo{font-size:18px;white-space:nowrap}
+  :root[data-theme^="nexora"] .ds-logo .bean{width:34px;height:34px}
+  :root[data-theme^="nexora"] .ds-res{padding:10px 14px;font-size:13px}
+  :root[data-theme^="nexora"] .ds-sec{padding:64px 0}
+  :root[data-theme^="nexora"] .ds-wrap{padding:0 20px}
+  :root[data-theme^="nexora"] .content{padding:20px 16px}
+  :root[data-theme^="nexora"] .topbar{padding:0 16px}
 }
 
 /* Rodapé */
-:root[data-theme="nexora"] .ds-foot{background:var(--ds-ink);color:rgba(255,255,255,.72);padding:56px 24px 32px}
-:root[data-theme="nexora"] .ds-foot .fl{font-size:32px}
-:root[data-theme="nexora"] .ds-foot .cr{color:rgba(255,255,255,.45);border-top-color:rgba(255,255,255,.1)}
+:root[data-theme^="nexora"] .ds-foot{background:var(--ds-ink);color:rgba(255,255,255,.72);padding:56px 24px 32px}
+:root[data-theme^="nexora"] .ds-foot .fl{font-size:32px}
+:root[data-theme^="nexora"] .ds-foot .cr{color:rgba(255,255,255,.45);border-top-color:rgba(255,255,255,.1)}
 
 /* Personalidade de cada segmento */
-:root[data-theme="nexora"] .ds-cafe h1,:root[data-theme="nexora"] .ds-cafe h2,:root[data-theme="nexora"] .ds-cafe h3{font-weight:600}
-:root[data-theme="nexora"] .ds-clinica h1,:root[data-theme="nexora"] .ds-clinica h2,:root[data-theme="nexora"] .ds-clinica h3,:root[data-theme="nexora"] .ds-clinica .ds-logo{font-weight:600}
-:root[data-theme="nexora"] .ds-clinica .ds-hero h1{font-size:clamp(46px,6.4vw,88px);line-height:.95}
-:root[data-theme="nexora"] .ds-clinica .ds-hero-art{border-radius:999px}
-:root[data-theme="nexora"] .ds-barbearia h1,:root[data-theme="nexora"] .ds-barbearia h2,:root[data-theme="nexora"] .ds-barbearia h3,:root[data-theme="nexora"] .ds-barbearia .ds-logo,:root[data-theme="nexora"] .ds-barbearia .nm,:root[data-theme="nexora"] .ds-barbearia .ds-stat .v{font-weight:400;text-transform:uppercase;letter-spacing:.01em}
-:root[data-theme="nexora"] .ds-barbearia .ds-hero h1{font-size:clamp(48px,7vw,104px);line-height:.92}
-:root[data-theme="nexora"] .ds-barbearia :is(.ds-btn,.ds-res,.ds-submit,.ds-tab,.ds-feat,.ds-feat .fi,.ds-quote,.ds-reserve,.ds-form,.ds-artwork,.ds-hero-art,.ds-item .mi,.ds-logo .bean){border-radius:0}
-:root[data-theme="nexora"] .ds-barbearia .ds-sec.alt{background:#1C1A17;color:#EFE8DC;--ds-ink:#EFE8DC;--ds-muted:#A39A8C;--ds-line:#3A3631;--ds-surface:#24211D;--ds-bg:#24211D;--ds-brand:#C9A063}
-:root[data-theme="nexora"] .ds-barbearia .ds-sec.alt .ds-tab.on{color:#121110}
-:root[data-theme="nexora"] .ds-loja h1,:root[data-theme="nexora"] .ds-loja h2,:root[data-theme="nexora"] .ds-loja h3,:root[data-theme="nexora"] .ds-loja .ds-logo,:root[data-theme="nexora"] .ds-loja .nm{font-weight:400}
-:root[data-theme="nexora"] .ds-loja .ds-logo{letter-spacing:.12em;text-transform:uppercase}
-:root[data-theme="nexora"] .ds-loja .ds-hero h1{font-size:clamp(46px,6.2vw,86px);line-height:.98}
-:root[data-theme="nexora"] .ds-loja :is(.ds-btn,.ds-res,.ds-submit,.ds-tab,.ds-feat,.ds-feat .fi,.ds-quote,.ds-reserve,.ds-form,.ds-artwork,.ds-hero-art,.ds-item .mi,.ds-field input,.ds-field select,.ds-field textarea){border-radius:0}
-:root[data-theme="nexora"] .ds-loja :is(.ds-btn,.ds-res,.ds-submit,.ds-tab){letter-spacing:.14em;text-transform:uppercase;font-size:13px}
-:root[data-theme="nexora"] .ds-academia h1,:root[data-theme="nexora"] .ds-academia h2,:root[data-theme="nexora"] .ds-academia h3,:root[data-theme="nexora"] .ds-academia .ds-logo,:root[data-theme="nexora"] .ds-academia .nm,:root[data-theme="nexora"] .ds-academia .pr,:root[data-theme="nexora"] .ds-academia .ds-stat .v{font-weight:900;text-transform:uppercase;letter-spacing:0}
-:root[data-theme="nexora"] .ds-academia .ds-hero h1{font-size:clamp(48px,7vw,104px);line-height:.88}
-:root[data-theme="nexora"] :is(.ds-barbearia,.ds-academia) .ds-foot .fl{text-transform:uppercase;font-weight:400;letter-spacing:.02em}
-:root[data-theme="nexora"] .ds-academia .ds-foot .fl{font-weight:900}
-:root[data-theme="nexora"] .ds-academia .ds-hero-art{border-radius:50%;aspect-ratio:1}
-:root[data-theme="nexora"] .ds-academia :is(.ds-btn,.ds-res,.ds-submit){border-radius:14px}
-:root[data-theme="nexora"] .ds-academia .ds-submit{background:var(--ds-gold);color:#0C0E12}
-:root[data-theme="nexora"] .ds-academia .ds-sec.alt{background:#12161C;color:#F2F4F7;--ds-ink:#F2F4F7;--ds-muted:#A9B0BC;--ds-line:#232935;--ds-surface:#161A21;--ds-bg:#161A21;--ds-brand:#FF5A2C}
-:root[data-theme="nexora"] .ds-academia .ds-sec.alt .ds-tab.on{color:#0C0E12}
-:root[data-theme="nexora"] .ds-advocacia h1,:root[data-theme="nexora"] .ds-advocacia h2{font-weight:400}
-:root[data-theme="nexora"] .ds-advocacia .ds-hero h1{font-size:clamp(38px,4.8vw,64px);line-height:1.1}
-:root[data-theme="nexora"] .ds-advocacia :is(.ds-btn,.ds-res,.ds-submit,.ds-tab,.ds-feat,.ds-feat .fi,.ds-quote,.ds-reserve,.ds-form,.ds-artwork,.ds-item .mi,.ds-logo .bean){border-radius:4px}
-:root[data-theme="nexora"] .ds-advocacia .ds-hero-art{border-radius:4px}
+:root[data-theme^="nexora"] .ds-cafe h1,:root[data-theme^="nexora"] .ds-cafe h2,:root[data-theme^="nexora"] .ds-cafe h3{font-weight:600}
+:root[data-theme^="nexora"] .ds-clinica h1,:root[data-theme^="nexora"] .ds-clinica h2,:root[data-theme^="nexora"] .ds-clinica h3,:root[data-theme^="nexora"] .ds-clinica .ds-logo{font-weight:600}
+:root[data-theme^="nexora"] .ds-clinica .ds-hero h1{font-size:clamp(46px,6.4vw,88px);line-height:.95}
+:root[data-theme^="nexora"] .ds-clinica .ds-hero-art{border-radius:999px}
+:root[data-theme^="nexora"] .ds-barbearia h1,:root[data-theme^="nexora"] .ds-barbearia h2,:root[data-theme^="nexora"] .ds-barbearia h3,:root[data-theme^="nexora"] .ds-barbearia .ds-logo,:root[data-theme^="nexora"] .ds-barbearia .nm,:root[data-theme^="nexora"] .ds-barbearia .ds-stat .v{font-weight:400;text-transform:uppercase;letter-spacing:.01em}
+:root[data-theme^="nexora"] .ds-barbearia .ds-hero h1{font-size:clamp(48px,7vw,104px);line-height:.92}
+:root[data-theme^="nexora"] .ds-barbearia :is(.ds-btn,.ds-res,.ds-submit,.ds-tab,.ds-feat,.ds-feat .fi,.ds-quote,.ds-reserve,.ds-form,.ds-artwork,.ds-hero-art,.ds-item .mi,.ds-logo .bean){border-radius:0}
+:root[data-theme^="nexora"] .ds-barbearia .ds-sec.alt{background:#1C1A17;color:#EFE8DC;--ds-ink:#EFE8DC;--ds-muted:#A39A8C;--ds-line:#3A3631;--ds-surface:#24211D;--ds-bg:#24211D;--ds-brand:#C9A063}
+:root[data-theme^="nexora"] .ds-barbearia .ds-sec.alt .ds-tab.on{color:#121110}
+:root[data-theme^="nexora"] .ds-loja h1,:root[data-theme^="nexora"] .ds-loja h2,:root[data-theme^="nexora"] .ds-loja h3,:root[data-theme^="nexora"] .ds-loja .ds-logo,:root[data-theme^="nexora"] .ds-loja .nm{font-weight:400}
+:root[data-theme^="nexora"] .ds-loja .ds-logo{letter-spacing:.12em;text-transform:uppercase}
+:root[data-theme^="nexora"] .ds-loja .ds-hero h1{font-size:clamp(46px,6.2vw,86px);line-height:.98}
+:root[data-theme^="nexora"] .ds-loja :is(.ds-btn,.ds-res,.ds-submit,.ds-tab,.ds-feat,.ds-feat .fi,.ds-quote,.ds-reserve,.ds-form,.ds-artwork,.ds-hero-art,.ds-item .mi,.ds-field input,.ds-field select,.ds-field textarea){border-radius:0}
+:root[data-theme^="nexora"] .ds-loja :is(.ds-btn,.ds-res,.ds-submit,.ds-tab){letter-spacing:.14em;text-transform:uppercase;font-size:13px}
+:root[data-theme^="nexora"] .ds-academia h1,:root[data-theme^="nexora"] .ds-academia h2,:root[data-theme^="nexora"] .ds-academia h3,:root[data-theme^="nexora"] .ds-academia .ds-logo,:root[data-theme^="nexora"] .ds-academia .nm,:root[data-theme^="nexora"] .ds-academia .pr,:root[data-theme^="nexora"] .ds-academia .ds-stat .v{font-weight:900;text-transform:uppercase;letter-spacing:0}
+:root[data-theme^="nexora"] .ds-academia .ds-hero h1{font-size:clamp(48px,7vw,104px);line-height:.88}
+:root[data-theme^="nexora"] :is(.ds-barbearia,.ds-academia) .ds-foot .fl{text-transform:uppercase;font-weight:400;letter-spacing:.02em}
+:root[data-theme^="nexora"] .ds-academia .ds-foot .fl{font-weight:900}
+:root[data-theme^="nexora"] .ds-academia .ds-hero-art{border-radius:50%;aspect-ratio:1}
+:root[data-theme^="nexora"] .ds-academia :is(.ds-btn,.ds-res,.ds-submit){border-radius:14px}
+:root[data-theme^="nexora"] .ds-academia .ds-submit{background:var(--ds-gold);color:#0C0E12}
+:root[data-theme^="nexora"] .ds-academia .ds-sec.alt{background:#12161C;color:#F2F4F7;--ds-ink:#F2F4F7;--ds-muted:#A9B0BC;--ds-line:#232935;--ds-surface:#161A21;--ds-bg:#161A21;--ds-brand:#FF5A2C}
+:root[data-theme^="nexora"] .ds-academia .ds-sec.alt .ds-tab.on{color:#0C0E12}
+:root[data-theme^="nexora"] .ds-advocacia h1,:root[data-theme^="nexora"] .ds-advocacia h2{font-weight:400}
+:root[data-theme^="nexora"] .ds-advocacia .ds-hero h1{font-size:clamp(38px,4.8vw,64px);line-height:1.1}
+:root[data-theme^="nexora"] .ds-advocacia :is(.ds-btn,.ds-res,.ds-submit,.ds-tab,.ds-feat,.ds-feat .fi,.ds-quote,.ds-reserve,.ds-form,.ds-artwork,.ds-item .mi,.ds-logo .bean){border-radius:4px}
+:root[data-theme^="nexora"] .ds-advocacia .ds-hero-art{border-radius:4px}
+
+/* ============================================================
+   NEXORA v2 — AJUSTES: LOGIN, CRM DO CLIENTE E MODO ESCURO
+   ============================================================ */
+/* ---------- LOGIN ---------- */
+:root[data-theme^="nexora"] #login{background:var(--surface)}
+:root[data-theme^="nexora"] .login-art{flex:1.15}
+:root[data-theme^="nexora"] .login-art .grid{opacity:.22}
+:root[data-theme^="nexora"] .la-in{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;justify-content:center;gap:36px;padding:56px 64px;box-sizing:border-box;color:#FFFFFF}
+:root[data-theme^="nexora"] .login-art .q{position:static;left:auto;right:auto;bottom:auto}
+:root[data-theme^="nexora"] .la-brand{display:flex;align-items:center;gap:14px}
+:root[data-theme^="nexora"] .la-name{display:flex;flex-direction:column;font-size:24px;font-weight:800;letter-spacing:.14em;line-height:1.1}
+:root[data-theme^="nexora"] .la-name small{font-size:10px;font-weight:600;letter-spacing:.46em;color:#8D9BB8;margin-top:5px}
+:root[data-theme^="nexora"] .la-tag{display:inline-block;font-size:12px;font-weight:700;color:#9DBBFF;background:rgba(20,82,240,.18);border:1px solid rgba(127,166,255,.25);padding:6px 12px;border-radius:999px;margin-bottom:18px}
+:root[data-theme^="nexora"] .login-art .q h2{font-size:clamp(34px,3.6vw,52px);font-weight:800;line-height:1.06;letter-spacing:-.03em;max-width:560px}
+:root[data-theme^="nexora"] .login-art .q h2 span{color:#7FA6FF}
+:root[data-theme^="nexora"] .login-art .q p{color:#B4BFD6;font-size:16.5px;line-height:1.6;max-width:470px;margin-top:16px}
+:root[data-theme^="nexora"] .la-feats{display:flex;flex-direction:column;gap:14px}
+:root[data-theme^="nexora"] .la-feat{display:flex;align-items:center;gap:14px}
+:root[data-theme^="nexora"] .la-feat>span{width:44px;height:44px;border-radius:12px;background:#16203A;border:1px solid #23305A;color:#7FA6FF;display:grid;place-items:center;flex:none}
+:root[data-theme^="nexora"] .la-feat svg{width:20px;height:20px}
+:root[data-theme^="nexora"] .la-feat b{display:block;font-size:15px}
+:root[data-theme^="nexora"] .la-feat small{color:#8D9BB8;font-size:13px}
+:root[data-theme^="nexora"] .la-card{max-width:420px;background:rgba(18,26,48,.85);border:1px solid #23305A;border-radius:18px;padding:18px 20px;display:flex;flex-direction:column;gap:10px}
+:root[data-theme^="nexora"] .la-card-h{font-size:13px;font-weight:700;color:#C9D2E6;margin-bottom:2px}
+:root[data-theme^="nexora"] .la-bar{display:grid;grid-template-columns:110px 1fr;align-items:center;gap:12px;font-size:12px;color:#8D9BB8}
+:root[data-theme^="nexora"] .la-bar i{display:block;height:8px;border-radius:8px;background:#1452F0}
+@media(max-height:780px){:root[data-theme^="nexora"] .la-card{display:none}}
+:root[data-theme^="nexora"] .login-scroll{background:var(--surface);display:flex;align-items:center;padding:48px 40px}
+@media(min-width:920px){:root[data-theme^="nexora"] .login-scroll{width:540px;flex:none}:root[data-theme^="nexora"] .login-card .brandrow{display:none}}
+:root[data-theme^="nexora"] .login-card{color:var(--txt);max-width:400px;margin:0 auto}
+:root[data-theme^="nexora"] .lb-name{font-weight:800;letter-spacing:.14em;font-size:20px;color:var(--txt)}
+:root[data-theme^="nexora"] .login-card h1{color:var(--txt);font-size:32px;font-weight:800;letter-spacing:-.02em;margin-bottom:8px}
+:root[data-theme^="nexora"] .login-card .sub{color:var(--txt-2);font-size:15px;margin-bottom:26px}
+:root[data-theme^="nexora"] .field{margin-bottom:16px}
+:root[data-theme^="nexora"] .field label{color:var(--txt);font-weight:700;font-size:13px;margin-bottom:8px}
+:root[data-theme^="nexora"] .field input{background:var(--surface);border:1px solid #D5DBE7;color:var(--txt);height:52px;border-radius:12px;padding:0 14px;font-size:15px}
+:root[data-theme^="nexora"] .field input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(20,82,240,.14)}
+:root[data-theme^="nexora"] .btn-login{background:var(--brand);color:#FFFFFF;height:54px;font-size:16px;margin-top:8px}
+:root[data-theme^="nexora"] .forgot-link{color:var(--brand);font-weight:600;margin-top:16px}
+:root[data-theme^="nexora"] .login-safe{margin-top:24px;text-align:center;font-size:13px;color:var(--txt-3)}
+:root[data-theme^="nexora"] .lmsg.err{background:var(--danger-soft);color:var(--danger);border-color:transparent}
+:root[data-theme^="nexora"] .lmsg.ok{background:var(--teal-soft);color:var(--teal);border-color:transparent}
+
+/* ---------- CRM DO CLIENTE (área da empresa) ---------- */
+:root[data-theme^="nexora"] #empapp{background:var(--bg)}
+:root[data-theme^="nexora"] #empapp .topbar{height:64px;padding:0 24px;background:var(--surface);border-bottom:1px solid var(--line)}
+:root[data-theme^="nexora"] #empapp .mark b{letter-spacing:.14em;font-weight:800}
+:root[data-theme^="nexora"] #empapp .pill{background:var(--brand-soft);border:0;color:var(--brand);font-weight:700;padding:7px 12px}
+:root[data-theme^="nexora"] #empapp .content{max-width:none;margin:0;padding:0}
+:root[data-theme^="nexora"] #empapp .crm{gap:0;align-items:stretch;min-height:calc(100vh - 64px)}
+:root[data-theme^="nexora"] #empapp .crm-side{width:256px;background:#0A1020;border:0;border-radius:0;box-shadow:none;position:sticky;top:64px;height:calc(100vh - 64px);min-height:0;overflow-y:auto;padding:20px 16px}
+:root[data-theme^="nexora"] #empapp .crm-emp{border-bottom:1px solid #1E2A47;padding:6px 8px 18px;margin-bottom:12px;gap:12px}
+:root[data-theme^="nexora"] #empapp .crm-emoji{width:44px;height:44px;border-radius:12px;background:#16203A;display:grid;place-items:center;font-size:22px;flex:none}
+:root[data-theme^="nexora"] #empapp .crm-empn{color:#FFFFFF;font-size:15px;font-weight:800}
+:root[data-theme^="nexora"] #empapp .crm-emp .muted{color:#8D9BB8}
+:root[data-theme^="nexora"] #empapp .crm-nav{gap:3px}
+:root[data-theme^="nexora"] #empapp .crm-nav a{color:#B4BFD6;padding:11px 12px;font-size:14px;border-radius:10px}
+:root[data-theme^="nexora"] #empapp .crm-nav a:hover{background:#16203A;color:#FFFFFF}
+:root[data-theme^="nexora"] #empapp .crm-nav a.on{background:#1452F0;color:#FFFFFF;font-weight:600;box-shadow:0 8px 18px rgba(20,82,240,.32)}
+:root[data-theme^="nexora"] #empapp .crm-main{padding:28px 32px 56px;min-width:0}
+:root[data-theme^="nexora"] #empapp .phead{margin-bottom:24px}
+:root[data-theme^="nexora"] #empapp .phead h1{font-size:28px;font-weight:800;letter-spacing:-.02em}
+:root[data-theme^="nexora"] #empapp .phead p{font-size:15px}
+:root[data-theme^="nexora"] #empapp .kpis{gap:16px;margin-bottom:22px}
+:root[data-theme^="nexora"] #empapp .kpi .lab{font-weight:600}
+:root[data-theme^="nexora"] #empapp .kpi .val{font-size:28px}
+:root[data-theme^="nexora"] #empapp #ek .kpi::before{content:"";display:block;width:40px;height:40px;border-radius:12px;margin-bottom:14px;background-color:var(--brand-soft);background-position:center;background-repeat:no-repeat;background-size:20px}
+:root[data-theme^="nexora"] #empapp #ek .kpi:nth-child(1)::before{background-color:#16203A;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237FA6FF' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 7h18v10H3zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6'/%3E%3C/svg%3E")}
+:root[data-theme^="nexora"] #empapp #ek .kpi:nth-child(2)::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231452F0' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 18.5V20M10 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7'/%3E%3C/svg%3E")}
+:root[data-theme^="nexora"] #empapp #ek .kpi:nth-child(3)::before{background-color:#FFF4E5;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23B45309' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8'/%3E%3C/svg%3E")}
+:root[data-theme^="nexora"] #empapp #ek .kpi:nth-child(4)::before{background-color:#E8F8F1;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23047857' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 8h18v12H3zM8 8V5h8v3'/%3E%3C/svg%3E")}
+:root[data-theme^="nexora"] #empapp .kpi.feat{background:#0A1020;border:0;color:#FFFFFF;box-shadow:0 14px 30px rgba(10,16,32,.18)}
+:root[data-theme^="nexora"] #empapp .kpi.feat .lab{color:#8D9BB8}
+:root[data-theme^="nexora"] #empapp .kpi.feat .val{color:#FFFFFF}
+:root[data-theme^="nexora"] #empapp .card-h{padding:18px 22px}
+:root[data-theme^="nexora"] #empapp .card-h h3{font-size:16px}
+:root[data-theme^="nexora"] #empapp .card-b{padding:20px 22px}
+:root[data-theme^="nexora"] #empapp th{background:var(--surface-2);text-transform:none;letter-spacing:0;font-size:12px;padding:13px 14px}
+:root[data-theme^="nexora"] #empapp td{padding:14px}
+:root[data-theme^="nexora"] #empapp tbody tr:hover td{background:var(--surface-2)}
+:root[data-theme^="nexora"] #empapp .row label{font-weight:600;color:var(--txt-2)}
+:root[data-theme^="nexora"] #empapp .inp{padding:11px 12px}
+:root[data-theme^="nexora"] #empapp .acts button{border-radius:9px}
+@media(max-width:720px){
+  :root[data-theme^="nexora"] #empapp .crm-side{position:static;width:100%;height:auto;padding:14px}
+  :root[data-theme^="nexora"] #empapp .crm-nav{flex-direction:row;overflow-x:auto;gap:6px}
+  :root[data-theme^="nexora"] #empapp .crm-nav a{white-space:nowrap}
+  :root[data-theme^="nexora"] #empapp .crm-main{padding:20px 16px 48px}
+}
+
 </style>
 </head>
 <body>
@@ -1112,22 +1206,45 @@ label.fl{display:block;font-size:12px;color:var(--txt-2);font-weight:500;margin:
 <div id="login" style="display:none">
   <div class="login-art">
     <div class="grid"></div>
-    <div class="q"><h2>Uma plataforma.<br>Cada empresa, sua solução.</h2><p>Entre como NEXORA para configurar, ou como uma empresa para usar o CRM dela — tudo aqui.</p></div>
+    <div class="la-in">
+      <div class="la-brand">
+        <svg class="mark" width="44" height="44" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="10" fill="#1452F0"/><path d="M12 27V13l16 14V13" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="28" cy="13" r="2.6" fill="#7FA6FF"/></svg>
+        <span class="la-name">NEXORA<small>SOLUTIONS</small></span>
+      </div>
+      <div class="q">
+        <span class="la-tag">CRM comercial sob medida</span>
+        <h2>O CRM que se adapta ao <span>seu processo.</span></h2>
+        <p>Entre como NEXORA para configurar, ou como uma empresa para usar o CRM dela — tudo aqui.</p>
+      </div>
+      <div class="la-feats">
+        <div class="la-feat"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4"/></svg></span><div><b>Personalizado</b><small>Só os módulos que cada empresa precisa</small></div></div>
+        <div class="la-feat"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4zM8 12l3 3 5-6"/></svg></span><div><b>Mais produtividade</b><small>O que precisa ser feito hoje, em destaque</small></div></div>
+        <div class="la-feat"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></span><div><b>Resultados reais</b><small>Indicadores comerciais em tempo real</small></div></div>
+      </div>
+      <div class="la-card" aria-hidden="true">
+        <div class="la-card-h">Funil de vendas</div>
+        <div class="la-bar"><span>Novo contato</span><i style="width:100%"></i></div>
+        <div class="la-bar"><span>Proposta</span><i style="width:66%"></i></div>
+        <div class="la-bar"><span>Negociação</span><i style="width:44%"></i></div>
+        <div class="la-bar"><span>Fechamento</span><i style="width:28%;background:#10B981"></i></div>
+      </div>
+    </div>
   </div>
   <div class="login-scroll">
     <div class="login-card">
       <div class="brandrow">
         <svg class="mark" width="34" height="34" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="10" fill="#6D5EF6"/><path d="M12 27V13l16 14V13" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="28" cy="13" r="2.6" fill="#2DD4BF"/></svg>
-        <span style="color:#fff;font-family:Sora;font-weight:700;font-size:19px;letter-spacing:.5px">NEXORA</span>
+        <span class="lb-name">NEXORA</span>
       </div>
       <div id="lcLogin">
-        <h1>Entrar</h1>
+        <h1>Bem-vindo de volta</h1>
         <p class="sub">Acesse com seu login. Cada conta cai na sua própria área.</p>
         <div class="field"><label>E-mail</label><input id="lgEmail" type="email" autocomplete="email" placeholder="voce@email.com" onkeydown="if(event.key==='Enter')doLogin()"></div>
         <div class="field"><label>Senha</label><input id="lgSenha" type="password" autocomplete="current-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
         <button class="btn-login" id="lgBtn" onclick="doLogin()">Entrar</button>
         <div class="forgot-link" onclick="showReset()">Esqueci minha senha</div>
         <div class="lmsg" id="lmsg"></div>
+        <p class="login-safe">Ambiente seguro · cada empresa vê apenas os próprios dados</p>
       </div>
       <div id="lcReset" style="display:none">
         <h1>Recuperar senha</h1>
@@ -1164,7 +1281,6 @@ label.fl{display:block;font-size:12px;color:var(--txt-2);font-weight:500;margin:
       <button class="burger icon-btn" onclick="toggleSide(true)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button>
       <div class="tb-title" id="tbTitle">Painel</div>
       <div class="tb-actions">
-        <button class="icon-btn" onclick="toggleTheme()" title="Tema"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/></svg></button>
         <div class="avatar">NX</div>
         <button class="btn btn-ghost btn-sm" onclick="doLogout()">Sair</button>
       </div>
@@ -1179,7 +1295,6 @@ label.fl{display:block;font-size:12px;color:var(--txt-2);font-weight:500;margin:
     <div class="mark"><svg viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="10" fill="#6D5EF6"/><path d="M12 27V13l16 14V13" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="28" cy="13" r="2.6" fill="#2DD4BF"/></svg><b>NEXORA</b></div>
     <span class="pill" id="empPill"><span class="dot"></span>Empresa</span>
     <div class="sp"></div>
-    <button class="icon-btn" onclick="toggleTheme()" title="Tema" style="width:38px;height:38px;border-radius:10px;display:grid;place-items:center;color:var(--txt-2)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/></svg></button>
     <div class="avatar" id="empAvatar">U</div>
     <button class="btn btn-ghost btn-sm" onclick="doLogout()">Sair</button>
   </header>
@@ -2046,9 +2161,16 @@ async function entrarAmbiente(id,mode){
   empTab='dashboard';await renderEmpresa();
   if(!document.getElementById('prevBanner')){const b=document.createElement('div');b.id='prevBanner';b.className='prev-banner';b.innerHTML='🎬 <b>Modo demonstração</b> — este é o CRM real com dados de exemplo. Cadastre, edite e exclua à vontade. <button class="btn btn-primary btn-sm" onclick="sairAmbiente()">Sair da demonstração</button>';document.body.appendChild(b);}
 }
-function sairAmbiente(){PREVIEW_EID=null;EMP_INFO=null;const b=document.getElementById('prevBanner');if(b)b.remove();document.getElementById('empapp').style.display='none';document.getElementById('app').style.display='block';}
+/* sairAmbiente: definida uma única vez mais abaixo (antes havia duas com o mesmo nome e o botão "Sair da demonstração" não funcionava) */
 function entrarAmbienteFicticio(id,mode){AMB=STORE.atendimentos.find(a=>a.id===id);if(!AMB)return;ambMode=mode||'admin';const menu=previewMenuOrder.filter(k=>AMB.recursos[k]);ambTab=menu.includes('dashboard')?'dashboard':(menu[0]||'dashboard');ambState={cliQ:'',taskF:'todas'};document.getElementById('ambiente').classList.add('open');ambienteRender();}
-function sairAmbiente(){ambChartList.forEach(c=>c.destroy());ambChartList=[];document.getElementById('ambiente').classList.remove('open');}
+function sairAmbiente(){
+  /* 1) ambiente fictício (tela cheia #ambiente) */
+  try{ambChartList.forEach(c=>c.destroy());}catch(e){}ambChartList=[];
+  const amb=document.getElementById('ambiente');if(amb)amb.classList.remove('open');
+  /* 2) demonstração com o CRM real (#empapp + faixa "Modo demonstração") */
+  const b=document.getElementById('prevBanner');
+  if(PREVIEW_EID||b){PREVIEW_EID=null;EMP_INFO=null;if(b)b.remove();document.getElementById('empapp').style.display='none';document.getElementById('app').style.display='block';}
+}
 function sairParaLogin(){ambChartList.forEach(c=>c.destroy());ambChartList=[];document.getElementById('ambiente').classList.remove('open');document.getElementById('app').style.display='none';document.getElementById('login').style.display='flex';}
 function trocarEmpresa(id){AMB=STORE.atendimentos.find(a=>a.id===id);const menu=previewMenuOrder.filter(k=>AMB.recursos[k]);if(!menu.includes(ambTab))ambTab=menu[0]||'dashboard';ambState={cliQ:'',taskF:'todas'};ambienteRender();}
 function ambienteRender(){
@@ -2377,8 +2499,9 @@ function openModal(title,body,cls='',okLabel='',okFn=null){
 function openConfirm(title,msg,fn){openModal(title,`<p style="color:var(--txt-2)">${msg}</p>`,'','Confirmar',fn);}
 function closeModal(){document.getElementById('overlay').classList.remove('open');}
 function toast(m){const t=document.createElement('div');t.className='toast';t.innerHTML=`${svgI(IC.check)}<span>${m}</span>`;document.getElementById('toast').appendChild(t);setTimeout(()=>{t.style.opacity=0;t.style.transform='translateX(30px)';t.style.transition='.3s';setTimeout(()=>t.remove(),300);},2600);}
-function toggleTheme(){const cur=document.documentElement.getAttribute('data-theme');const n=cur==='nexora'?'dark':'nexora';document.documentElement.setAttribute('data-theme',n);try{localStorage.setItem('nexora-theme-v3',n);}catch(e){}}
-try{const st=localStorage.getItem('nexora-theme-v3');document.documentElement.setAttribute('data-theme',st||'nexora');}catch(e){}
+/* Tema único: interface NEXORA clara (modo escuro removido a pedido) */
+function toggleTheme(){document.documentElement.setAttribute('data-theme','nexora');}
+document.documentElement.setAttribute('data-theme','nexora');try{localStorage.removeItem('nexora-theme-v4');localStorage.removeItem('nexora-theme-v3');}catch(e){}
 function toggleSide(o){document.getElementById('sidebar').classList.toggle('open',o);document.getElementById('scrim').classList.toggle('on',o);}
 /* ============================================================
    ===== BACKEND REAL (Supabase): auth, provisionamento, CRM do cliente =====
@@ -2603,16 +2726,16 @@ async function empDash(){
   const {data:ld}=await sb.from('leads').select('origem').eq('empresa_id',EID());
   drawDash(vd||[],ld||[]);
 }
-function chartBase(){return {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#6b7390',font:{size:11}},grid:{display:false}},y:{ticks:{color:'#6b7390',font:{size:11}},grid:{color:'#1a2236'},beginAtZero:true}}};}
+function chartBase(){const dk=false;return {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#7A859D',font:{size:11}},grid:{display:false}},y:{ticks:{color:'#7A859D',font:{size:11}},grid:{color:dk?'#1F2A44':'#EDF0F6'},beginAtZero:true}}};}
 function drawDash(vendas,leads){
   if(typeof Chart==='undefined')return;
   const now=new Date();const meses=[];
   for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);meses.push({key:d.getFullYear()+'-'+(d.getMonth()+1),lbl:d.toLocaleDateString('pt-BR',{month:'short'}).replace('.',''),v:0});}
   vendas.forEach(x=>{const d=new Date(x.criado_em);const k=d.getFullYear()+'-'+(d.getMonth()+1);const m=meses.find(mm=>mm.key===k);if(m)m.v+=Number(x.total||0);});
-  const cv=$('chVendas');if(cv)empCharts.push(new Chart(cv,{type:'bar',data:{labels:meses.map(m=>m.lbl),datasets:[{data:meses.map(m=>m.v),backgroundColor:'#7c6bff',borderRadius:6,maxBarThickness:38}]},options:chartBase()}));
+  const cv=$('chVendas');if(cv)empCharts.push(new Chart(cv,{type:'bar',data:{labels:meses.map(m=>m.lbl),datasets:[{data:meses.map(m=>m.v),backgroundColor:'#1452F0',borderRadius:8,maxBarThickness:38}]},options:chartBase()}));
   const byO={};leads.forEach(l=>{const o=l.origem||'Outros';byO[o]=(byO[o]||0)+1;});
   const labels=Object.keys(byO),vals=Object.values(byO);
-  const cores=['#7c6bff','#2dd4a0','#4e9bff','#f0a23c','#f0666b','#a78bfa','#38bdf8'];
+  const cores=['#1452F0','#10B981','#7FA6FF','#F59E0B','#EF4444','#a78bfa','#38bdf8'];
   const cl=$('chLeads');if(cl)empCharts.push(new Chart(cl,{type:'doughnut',data:{labels:labels.length?labels:['Sem leads ainda'],datasets:[{data:vals.length?vals:[1],backgroundColor:labels.length?cores:['#232b42'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:labels.length>0,position:'bottom',labels:{color:'#9aa2bd',font:{size:11},padding:12,usePointStyle:true}}}}}));
 }
 /* -- Clientes -- */
@@ -2926,9 +3049,9 @@ async function empRelatorios(){
   if(typeof Chart!=='undefined'){
     const now=new Date(),meses=[];for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);meses.push({key:d.getFullYear()+'-'+(d.getMonth()+1),lbl:d.toLocaleDateString('pt-BR',{month:'short'}).replace('.',''),v:0});}
     vendas.forEach(x=>{const d=new Date(x.criado_em),k=d.getFullYear()+'-'+(d.getMonth()+1),m=meses.find(mm=>mm.key===k);if(m)m.v+=Number(x.total||0);});
-    const cv=$('rVendas');if(cv)empCharts.push(new Chart(cv,{type:'bar',data:{labels:meses.map(m=>m.lbl),datasets:[{data:meses.map(m=>m.v),backgroundColor:'#7c6bff',borderRadius:6,maxBarThickness:38}]},options:chartBase()}));
+    const cv=$('rVendas');if(cv)empCharts.push(new Chart(cv,{type:'bar',data:{labels:meses.map(m=>m.lbl),datasets:[{data:meses.map(m=>m.v),backgroundColor:'#1452F0',borderRadius:8,maxBarThickness:38}]},options:chartBase()}));
     const byO={};leads.forEach(l=>{const o=l.origem||'Outros';byO[o]=(byO[o]||0)+1;});
-    const labels=Object.keys(byO),vals=Object.values(byO),cores=['#7c6bff','#2dd4a0','#4e9bff','#f0a23c','#f0666b','#a78bfa'];
+    const labels=Object.keys(byO),vals=Object.values(byO),cores=['#1452F0','#10B981','#7FA6FF','#F59E0B','#EF4444','#a78bfa'];
     const cl=$('rLeads');if(cl)empCharts.push(new Chart(cl,{type:'doughnut',data:{labels:labels.length?labels:['Sem leads'],datasets:[{data:vals.length?vals:[1],backgroundColor:labels.length?cores:['#232b42'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:labels.length>0,position:'bottom',labels:{color:'#9aa2bd',font:{size:11},padding:12,usePointStyle:true}}}}}));
   }
   const top=clientes.slice().sort((a,b)=>Number(b.valor||0)-Number(a.valor||0)).slice(0,5);
