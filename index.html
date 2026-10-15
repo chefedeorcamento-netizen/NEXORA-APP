@@ -2547,7 +2547,13 @@ async function salvarNovaSenha(){
   RECOVERING=false;
   setTimeout(async()=>{const {data:{session}}=await sb.auth.getSession();if(session)entrar(session.user);else showLoginScreen();},1300);
 }
-async function doLogout(){await sb.auth.signOut();location.reload();}
+/* Sair: sempre funciona — encerra a sessão neste aparelho, limpa o login salvo e volta à tela de login,
+   mesmo se o servidor demorar ou devolver erro (antes, um erro deixava o botão sem resposta). */
+async function doLogout(){
+  try{await Promise.race([sb.auth.signOut({scope:'local'}),new Promise(r=>setTimeout(r,2500))]);}catch(e){}
+  try{Object.keys(localStorage).forEach(k=>{if(k.indexOf('sb-')===0&&k.indexOf('auth')>=0)localStorage.removeItem(k);});}catch(e){}
+  location.href=location.pathname;
+}
 
 /* ---- entrar: carrega PERFIL e roteia (superadmin -> demo admin / empresa -> CRM) ---- */
 async function entrar(user){
