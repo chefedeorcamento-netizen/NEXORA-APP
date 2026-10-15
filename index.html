@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=Anton&family=Bodoni+Moda:ital,wght@0,400;0,500;1,400&family=Big+Shoulders+Display:wght@700;900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Manrope:wght@400;500;600;700&family=Archivo:wght@400;500;600;700&family=Jost:wght@400;500;600&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800&family=Cormorant+Garamond:wght@500;600;700&family=Oswald:wght@500;600;700&family=Poppins:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -793,6 +794,313 @@ label.fl{display:block;font-size:12px;color:var(--txt-2);font-weight:500;margin:
 :root[data-theme="nexora"] #empapp .crm-nav a{padding:10px 12px;border-radius:10px}
 :root[data-theme="nexora"] #empapp .crm-nav a.on{background:var(--brand-soft);color:var(--brand);font-weight:600;box-shadow:none}
 :root[data-theme="nexora"] #empapp .avatar{background:#0A1020;border-radius:50%}
+
+/* ============================================================
+   NEXORA v2 — ETAPA 2: TELAS (só visual, mesmo escopo [data-theme="nexora"])
+   ============================================================ */
+/* Cabeçalho das páginas */
+:root[data-theme="nexora"] .page-head .crumb{font-size:13px;font-weight:600;color:var(--txt-2);margin-bottom:6px}
+:root[data-theme="nexora"] .section-sub{color:#2A3550;font-weight:800;letter-spacing:.12em;font-size:12px;display:flex;align-items:center;gap:10px}
+:root[data-theme="nexora"] .section-sub::after{content:"";flex:1;height:1px;background:#DCE2EE}
+:root[data-theme="nexora"] .empty{padding:52px 20px}
+:root[data-theme="nexora"] .empty svg{opacity:.35}
+
+/* Indicadores do Painel: ícone e número com mais destaque */
+:root[data-theme="nexora"] .kpi .ic{width:40px;height:40px;border-radius:12px}
+:root[data-theme="nexora"] .kpi{transition:.15s}
+:root[data-theme="nexora"] .kpi:hover{border-color:#C9D5F2;box-shadow:0 10px 26px rgba(10,16,32,.06)}
+
+/* Tabelas (Atendimentos, Projetos, Painel) */
+:root[data-theme="nexora"] .tbl-wrap{border-radius:16px}
+:root[data-theme="nexora"] thead th{background:#F8FAFD;color:#5A6680}
+:root[data-theme="nexora"] tbody tr:hover{background:#F5F8FF}
+:root[data-theme="nexora"] .card .tbl-wrap{border-radius:0}
+:root[data-theme="nexora"] .pubtag{border-radius:6px;font-weight:800;letter-spacing:.06em;font-size:10.5px}
+:root[data-theme="nexora"] .pubtag.rasc{background:#FFF8DB;color:#7A5B00}
+
+/* Prospecção IA: barra de busca em destaque (azul-marinho) */
+:root[data-theme="nexora"] .card:has(.prosp-form){background:#0A1020;border:0;box-shadow:0 16px 40px rgba(10,16,32,.14)}
+:root[data-theme="nexora"] .card:has(.prosp-form) .card-b{padding:24px}
+:root[data-theme="nexora"] .prosp-form .fl{color:#8D9BB8;font-weight:700;letter-spacing:.06em;font-size:11px;text-transform:uppercase}
+:root[data-theme="nexora"] .prosp-form .inp{background:#121A30;border-color:#23305A;color:#FFFFFF;height:48px;border-radius:12px;font-size:15px;font-weight:600}
+:root[data-theme="nexora"] .prosp-form .inp::placeholder{color:#7D8BA8;font-weight:500}
+:root[data-theme="nexora"] .prosp-form .inp:focus{border-color:#7FA6FF;box-shadow:0 0 0 3px rgba(127,166,255,.2)}
+:root[data-theme="nexora"] .prosp-go{height:48px;padding:0 22px}
+:root[data-theme="nexora"] .prosp-count{font-size:15px;color:#2A3550;margin-bottom:14px}
+:root[data-theme="nexora"] .prosp-card,:root[data-theme="nexora"] #empapp .prosp-card{border-radius:18px;padding:20px;gap:2px}
+:root[data-theme="nexora"] .pc-av,:root[data-theme="nexora"] #empapp .pc-av{background:var(--brand-soft);color:var(--brand);border-radius:12px}
+:root[data-theme="nexora"] .pc-tag.warn,:root[data-theme="nexora"] #empapp .pc-tag.warn{background:#FFF4E5;color:#9A4A06}
+:root[data-theme="nexora"] .pc-tag.serv,:root[data-theme="nexora"] #empapp .pc-tag.serv{background:#EEF3FF;color:#1238A8}
+:root[data-theme="nexora"] .pc-tag{padding:4px 10px}
+:root[data-theme="nexora"] .pc-add{height:44px}
+
+/* Catálogo de recursos: lista vira grade de cards */
+:root[data-theme="nexora"] .card:has(> .card-b > .res-item){background:transparent;border:0;box-shadow:none}
+:root[data-theme="nexora"] .card-b:has(> .res-item){display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;padding:0!important}
+:root[data-theme="nexora"] .card-b > .res-item{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;align-items:flex-start;flex-wrap:wrap;row-gap:8px}
+:root[data-theme="nexora"] .card-b > .res-item:last-child{border-bottom:1px solid var(--line)}
+:root[data-theme="nexora"] .res-item .ri{width:40px;height:40px;border-radius:12px}
+:root[data-theme="nexora"] .res-item .ri svg{width:19px;height:19px}
+:root[data-theme="nexora"] .res-item .rn{font-size:14.5px;flex:1;min-width:0}
+:root[data-theme="nexora"] .res-item .rn small{font-size:12.5px;line-height:1.45;margin-top:3px;color:var(--txt-2)}
+:root[data-theme="nexora"] .card-b > .res-item .rn{flex:1 1 calc(100% - 60px)}
+:root[data-theme="nexora"] .res-item .tipo{font-size:11px;padding:3px 8px;border-radius:6px}
+:root[data-theme="nexora"] .card-b > .res-item .tipo{margin-left:51px}
+/* Coluna de ações das tabelas: alinha a linha (a célula usava flex e desalinhava a borda) */
+:root[data-theme="nexora"] tbody td[style*="display:flex"]{display:table-cell!important;text-align:right;vertical-align:middle}
+:root[data-theme="nexora"] tbody td[style*="display:flex"] > *{margin-left:6px;vertical-align:middle}
+:root[data-theme="nexora"] .t-conf{background:#FFF4E5;color:#9A4A06}
+
+/* Serviços: cabeçalho do serviço em azul-marinho */
+:root[data-theme="nexora"] .of-card{border-radius:20px}
+:root[data-theme="nexora"] .of-head{background:#0A1020;border-bottom:0;padding:26px 26px}
+:root[data-theme="nexora"] .of-ic{background:#16203A;color:#7FA6FF;width:52px;height:52px;border-radius:14px}
+:root[data-theme="nexora"] .of-ht h3{color:#FFFFFF;font-size:22px;font-weight:800;letter-spacing:-.01em}
+:root[data-theme="nexora"] .of-ht .tag{color:#9DBBFF;font-size:13.5px}
+:root[data-theme="nexora"] .of-body{padding:24px 26px}
+:root[data-theme="nexora"] .of-desc{font-size:14.5px}
+:root[data-theme="nexora"] .of-sub{color:#2A3550;font-weight:800;letter-spacing:.1em}
+:root[data-theme="nexora"] .of-incl .it svg{color:#FFFFFF;background:var(--brand);border-radius:50%;padding:3px;width:18px;height:18px;margin-top:1px}
+:root[data-theme="nexora"] .of-prices{border-radius:14px}
+:root[data-theme="nexora"] .of-price{padding:14px 16px}
+:root[data-theme="nexora"] .of-price .pv{font-size:16px;font-weight:800}
+:root[data-theme="nexora"] .of-opt{border-radius:16px;padding:18px;background:#FFFFFF}
+:root[data-theme="nexora"] .of-opt .ov{font-size:22px;font-weight:800;color:var(--txt);letter-spacing:-.01em}
+:root[data-theme="nexora"] .of-note{border-radius:12px}
+:root[data-theme="nexora"] .of-demo-btn{background:#0A1020;border-radius:12px}
+:root[data-theme="nexora"] .of-demo-btn:hover{box-shadow:0 8px 20px rgba(10,16,32,.25)}
+
+/* Galeria de sites modelo (prévia com a cara de cada site) */
+:root[data-theme="nexora"] .seg-grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+:root[data-theme="nexora"] .seg-card{border-radius:18px}
+:root[data-theme="nexora"] .seg-card:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(10,16,32,.12)}
+:root[data-theme="nexora"] .seg-top{height:150px;align-items:flex-end;padding:18px;position:relative;overflow:hidden}
+:root[data-theme="nexora"] .seg-top::after{content:"";position:absolute;right:-36px;top:-36px;width:130px;height:130px;border-radius:50%;background:var(--seg-acc,rgba(255,255,255,.18));opacity:.9}
+:root[data-theme="nexora"] .seg-top .si{position:absolute;left:18px;top:18px;background:rgba(255,255,255,.16)}
+:root[data-theme="nexora"] .seg-top .sn{font-size:22px;position:relative;z-index:1}
+:root[data-theme="nexora"] .seg-bd{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+:root[data-theme="nexora"] .seg-bd .sg{font-size:13px;font-weight:600;color:var(--txt-2)}
+:root[data-theme="nexora"] .seg-bd .sl{margin-top:0;background:var(--brand-soft);padding:7px 11px;border-radius:10px;white-space:nowrap;flex:none}
+:root[data-theme="nexora"] .seg-cafe .seg-top{background:#1F3A2B!important;--seg-acc:#B4532A}
+:root[data-theme="nexora"] .seg-cafe .sn{font-family:'Fraunces',Georgia,serif;font-weight:600}
+:root[data-theme="nexora"] .seg-clinica .seg-top{background:#3B2230!important;--seg-acc:#A84E70}
+:root[data-theme="nexora"] .seg-clinica .sn{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:26px}
+:root[data-theme="nexora"] .seg-barbearia .seg-top{background:#121110!important;--seg-acc:#C9A063}
+:root[data-theme="nexora"] .seg-barbearia .sn{font-family:'Anton',Impact,sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.02em}
+:root[data-theme="nexora"] .seg-loja .seg-top{background:#1D1916!important;--seg-acc:#9A5B3A}
+:root[data-theme="nexora"] .seg-loja .sn{font-family:'Bodoni Moda',Georgia,serif;font-weight:400}
+:root[data-theme="nexora"] .seg-academia .seg-top{background:#0C0E12!important;--seg-acc:#FF5A2C}
+:root[data-theme="nexora"] .seg-academia .sn{font-family:'Big Shoulders Display',Impact,sans-serif;font-weight:900;text-transform:uppercase;font-size:28px}
+:root[data-theme="nexora"] .seg-advocacia .seg-top{background:#12233F!important;--seg-acc:#B08D3F}
+:root[data-theme="nexora"] .seg-advocacia .sn{font-family:'Libre Baskerville',Georgia,serif;font-weight:700;font-size:19px}
+
+/* Modo Reunião: barra superior escura + configurador */
+:root[data-theme="nexora"] .sim-bar{background:#0A1020;border-bottom:0;padding:12px 24px}
+:root[data-theme="nexora"] .sim-bar .emp .n{color:#FFFFFF;font-weight:800}
+:root[data-theme="nexora"] .sim-bar .emp .n span{color:#8D9BB8}
+:root[data-theme="nexora"] .sim-bar .emp .e{border-radius:11px}
+:root[data-theme="nexora"] .sim-bar .btn-ghost{background:transparent;border-color:#23305A;color:#FFFFFF}
+:root[data-theme="nexora"] .sim-bar .btn-ghost:hover{background:#16203A;border-color:#7FA6FF;color:#FFFFFF}
+:root[data-theme="nexora"] .sim-bar .inp{background:#16203A;border-color:#23305A;color:#FFFFFF;font-weight:600}
+:root[data-theme="nexora"] .sim-bar .inp option{color:#0B1220;background:#FFFFFF}
+:root[data-theme="nexora"] .sim-bar .btn-teal{background:#10B981;color:#04241A;font-weight:800}
+:root[data-theme="nexora"] .sim-bar .btn-teal:hover{background:#34D399}
+:root[data-theme="nexora"] .sim-bar .pubtag.rasc{background:#2A2410;color:#F5C451}
+:root[data-theme="nexora"] .sim-bar .pubtag.pub{background:#0F2A22;color:#6EE7B7}
+:root[data-theme="nexora"] .configurator{background:#FFFFFF}
+:root[data-theme="nexora"] .acc-h{padding:16px 20px}
+:root[data-theme="nexora"] .acc-h .ci{width:34px;height:34px;border-radius:10px}
+:root[data-theme="nexora"] .acc-h .tt{font-size:14px;font-weight:700}
+:root[data-theme="nexora"] .acc.open{background:#FAFBFE}
+:root[data-theme="nexora"] .acc.open .acc-h .ci{background:var(--brand);color:#FFFFFF}
+:root[data-theme="nexora"] .acc-b{padding:4px 20px 20px}
+:root[data-theme="nexora"] .inp{border-radius:10px;padding:10px 12px}
+:root[data-theme="nexora"] .sw{width:42px;height:24px}
+:root[data-theme="nexora"] .sw::after{top:3px;left:3px}
+:root[data-theme="nexora"] .sw.on::after{left:21px}
+:root[data-theme="nexora"] .le-item{border-radius:12px;padding:10px 12px}
+:root[data-theme="nexora"] .chip-add{border-radius:10px;padding:8px 13px}
+:root[data-theme="nexora"] .preview-pane{background:#E9EDF5;padding:26px}
+:root[data-theme="nexora"] .pv{border-radius:18px;box-shadow:0 24px 50px rgba(10,16,32,.14)}
+:root[data-theme="nexora"] .pv-side{width:160px}
+:root[data-theme="nexora"] .pv-menu a{border-radius:8px}
+
+/* Janelas (modais), proposta e checklist de projetos */
+:root[data-theme="nexora"] .overlay{background:rgba(10,16,32,.55);backdrop-filter:blur(4px)}
+:root[data-theme="nexora"] .modal{border-radius:22px}
+:root[data-theme="nexora"] .modal-h{padding:20px 24px}
+:root[data-theme="nexora"] .modal-h h3{font-size:18px;font-weight:800}
+:root[data-theme="nexora"] .modal-h .x{border:1px solid var(--line);border-radius:10px}
+:root[data-theme="nexora"] .modal-b{padding:24px}
+:root[data-theme="nexora"] .modal-f{padding:16px 24px;background:#F8FAFD;border-radius:0 0 22px 22px}
+:root[data-theme="nexora"] .prop h4{font-weight:800}
+:root[data-theme="nexora"] .prop .tot{font-weight:800}
+:root[data-theme="nexora"] .checklist .ci{border-radius:12px;padding:13px 16px;font-weight:600}
+:root[data-theme="nexora"] .checklist .ci.done{background:#E8F8F1}
+:root[data-theme="nexora"] .checklist .ci.done .box{background:#10B981;border-color:#10B981}
+:root[data-theme="nexora"] .checklist .box{border-radius:7px;width:22px;height:22px}
+:root[data-theme="nexora"] .det-mini .m{border-radius:14px}
+:root[data-theme="nexora"] .toast{background:#0A1020;border-radius:12px}
+
+/* Ambiente de demonstração (prévia do CRM do cliente em tela cheia) */
+:root[data-theme="nexora"] .amb-side{width:224px;padding:16px 12px}
+:root[data-theme="nexora"] .amb-menu a{border-radius:10px;padding:10px 12px}
+:root[data-theme="nexora"] .amb-menu a.on{font-weight:700}
+:root[data-theme="nexora"] .amb-main{padding:28px}
+:root[data-theme="nexora"] .amb-h{font-weight:800;font-size:24px;letter-spacing:-.02em}
+:root[data-theme="nexora"] .amb-kpi{border-radius:16px;padding:18px}
+:root[data-theme="nexora"] .amb-kpi .v{font-weight:800;font-size:24px}
+:root[data-theme="nexora"] .amb-bars,:root[data-theme="nexora"] .amb-fcol{border-radius:16px}
+:root[data-theme="nexora"] .amb-fcol{background:#EEF1F7;border:0}
+:root[data-theme="nexora"] .amb-fcard{background:#FFFFFF;border-radius:12px;box-shadow:0 1px 2px rgba(10,16,32,.06)}
+
+/* CRM do cliente: barra lateral e funil */
+:root[data-theme="nexora"] #empapp .crm-side{border-radius:18px;padding:16px}
+:root[data-theme="nexora"] #empapp .kpi{border-radius:16px;padding:20px}
+:root[data-theme="nexora"] #empapp .card{border-radius:16px}
+:root[data-theme="nexora"] #empapp .kcol{background:#EEF1F7;border:0;border-radius:16px}
+:root[data-theme="nexora"] #empapp .kcard{border-radius:12px;box-shadow:0 1px 2px rgba(10,16,32,.06)}
+:root[data-theme="nexora"] #empapp .inp{border-radius:10px}
+
+/* ============================================================
+   NEXORA v2 — ETAPA 3: SITES MODELO (só visual)
+   Dados, abas e formulários dos sites continuam os mesmos.
+   ============================================================ */
+/* Base (vale para qualquer tema): a arte do topo só aparece no tema novo; ícone da faixa com tamanho fixo */
+.ds-hero-art{display:none}
+.ds-ribbon svg{width:16px;height:16px;flex:none}
+
+/* Cores e fontes de cada site */
+:root[data-theme="nexora"] .ds-cafe{--ds-bg:#F5EEE4!important;--ds-ink:#2B1B12!important;--ds-muted:#6E5A4B!important;--ds-brand:#B4532A!important;--ds-green:#1F3A2B!important;--ds-surface:#FBF7F1!important;--ds-line:#E6D9C8!important;--ds-gold:#E9A47E!important;--ds-display:'Fraunces',Georgia,serif!important;--ds-body:'DM Sans',system-ui,sans-serif!important;--ds-herograd:#1F3A2B!important}
+:root[data-theme="nexora"] .ds-clinica{--ds-bg:#F7EEEC!important;--ds-ink:#3B2230!important;--ds-muted:#6A5560!important;--ds-brand:#A84E70!important;--ds-green:#3B2230!important;--ds-surface:#FDF9F7!important;--ds-line:#EBDADD!important;--ds-gold:#E9B9C9!important;--ds-display:'Cormorant Garamond',Georgia,serif!important;--ds-body:'Manrope',system-ui,sans-serif!important;--ds-herograd:#3B2230!important}
+:root[data-theme="nexora"] .ds-barbearia{--ds-bg:#F2EEE7!important;--ds-ink:#121110!important;--ds-muted:#5E574D!important;--ds-brand:#8A6A2F!important;--ds-green:#121110!important;--ds-surface:#FFFFFF!important;--ds-line:#DDD5C8!important;--ds-gold:#C9A063!important;--ds-display:'Anton',Impact,sans-serif!important;--ds-body:'Archivo',system-ui,sans-serif!important;--ds-herograd:#121110!important}
+:root[data-theme="nexora"] .ds-loja{--ds-bg:#F4EFE9!important;--ds-ink:#1D1916!important;--ds-muted:#5F564F!important;--ds-brand:#9A5B3A!important;--ds-green:#1D1916!important;--ds-surface:#FFFFFF!important;--ds-line:#DDD2C5!important;--ds-gold:#C9A386!important;--ds-display:'Bodoni Moda',Georgia,serif!important;--ds-body:'Jost',system-ui,sans-serif!important;--ds-herograd:#1D1916!important}
+:root[data-theme="nexora"] .ds-academia{--ds-bg:#F2F4F7!important;--ds-ink:#0C0E12!important;--ds-muted:#4A5260!important;--ds-brand:#D43E12!important;--ds-green:#0C0E12!important;--ds-surface:#FFFFFF!important;--ds-line:#E3E6EC!important;--ds-gold:#FF5A2C!important;--ds-display:'Big Shoulders Display',Impact,sans-serif!important;--ds-body:'Archivo',system-ui,sans-serif!important;--ds-herograd:#0C0E12!important}
+:root[data-theme="nexora"] .ds-advocacia{--ds-bg:#F7F5F0!important;--ds-ink:#12233F!important;--ds-muted:#4A5468!important;--ds-brand:#8A6A26!important;--ds-green:#12233F!important;--ds-surface:#FFFFFF!important;--ds-line:#E4E6EC!important;--ds-gold:#D9BE7E!important;--ds-display:'Libre Baskerville',Georgia,serif!important;--ds-body:'Source Sans 3',system-ui,sans-serif!important;--ds-herograd:#12233F!important}
+:root[data-theme="nexora"] #sitedemo{background:var(--bg)}
+
+/* Faixa de demonstração e menu */
+:root[data-theme="nexora"] .ds-ribbon{background:#0A1020;color:#C9D2E6;font-size:13px}
+:root[data-theme="nexora"] .ds-ribbon button{background:#1452F0;border-radius:8px;padding:6px 14px}
+:root[data-theme="nexora"] .ds-nav{background:color-mix(in srgb,var(--ds-surface) 94%,transparent);padding:16px max(24px,calc((100% - 1180px)/2))}
+:root[data-theme="nexora"] .ds-logo{font-size:24px;font-weight:700}
+:root[data-theme="nexora"] .ds-logo .bean{width:40px;height:40px;background:var(--ds-brand)}
+:root[data-theme="nexora"] .ds-logo .bean svg{width:20px;height:20px}
+:root[data-theme="nexora"] .ds-links a{color:var(--ds-ink);font-weight:500;font-size:15px}
+:root[data-theme="nexora"] .ds-res{border-radius:999px;padding:13px 22px;font-size:14.5px}
+
+/* Topo (hero): texto à esquerda + arte à direita */
+:root[data-theme="nexora"] .ds-hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:56px;align-items:center;text-align:left;padding:88px max(24px,calc((100% - 1180px)/2)) 96px;color:#FFFFFF}
+:root[data-theme="nexora"] .ds-hero::before{opacity:1;background:radial-gradient(700px 420px at 85% 0%,rgba(255,255,255,.07),transparent 60%)}
+:root[data-theme="nexora"] .ds-hero .in{max-width:none;margin:0}
+:root[data-theme="nexora"] .ds-eyebrow{display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);padding:8px 14px;border-radius:999px;letter-spacing:.18em;font-size:12px;margin-bottom:22px}
+:root[data-theme="nexora"] .ds-hero h1{font-size:clamp(40px,5.4vw,72px);line-height:1.02;letter-spacing:-.02em;font-weight:700}
+:root[data-theme="nexora"] .ds-hero p{color:rgba(255,255,255,.78);margin:22px 0 0;font-size:18px;line-height:1.6}
+:root[data-theme="nexora"] .ds-cta{justify-content:flex-start;margin-top:32px}
+:root[data-theme="nexora"] .ds-btn{padding:16px 28px;font-size:15.5px;border-radius:999px}
+:root[data-theme="nexora"] .ds-btn.p{background:var(--ds-gold);color:#14100C}
+:root[data-theme="nexora"] .ds-btn.p:hover{background:var(--ds-gold);filter:brightness(1.07)}
+:root[data-theme="nexora"] .ds-btn.g{color:#FFFFFF;border-color:rgba(255,255,255,.35)}
+:root[data-theme="nexora"] .ds-hours{color:rgba(255,255,255,.88)}
+:root[data-theme="nexora"] .ds-hero-art{display:grid;place-items:center;position:relative;justify-self:center;width:min(100%,420px);aspect-ratio:4/5;border-radius:999px 999px 28px 28px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:var(--ds-gold);overflow:hidden}
+:root[data-theme="nexora"] .ds-hero-art::before{content:"";position:absolute;width:76%;aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,.06)}
+:root[data-theme="nexora"] .ds-hero-art::after{content:"";position:absolute;width:50%;aspect-ratio:1;border-radius:50%;background:var(--ds-gold);opacity:.16}
+:root[data-theme="nexora"] .ds-hero-art svg{position:relative;z-index:1;width:36%;height:auto;stroke-width:1.1}
+@media(max-width:820px){:root[data-theme="nexora"] .ds-hero{grid-template-columns:1fr;padding:64px 24px 72px}:root[data-theme="nexora"] .ds-hero-art{display:none}}
+
+/* Seções */
+:root[data-theme="nexora"] .ds-sec{padding:96px 0}
+:root[data-theme="nexora"] .ds-wrap{max-width:1180px;padding:0 32px}
+:root[data-theme="nexora"] .ds-shead{max-width:680px;margin-bottom:48px}
+:root[data-theme="nexora"] .ds-head .k{letter-spacing:.2em;font-size:12.5px}
+:root[data-theme="nexora"] .ds-head h2{font-size:clamp(32px,4.2vw,52px);line-height:1.05;letter-spacing:-.01em}
+:root[data-theme="nexora"] .ds-feats{gap:20px}
+:root[data-theme="nexora"] .ds-feat{text-align:left;padding:28px;background:var(--ds-surface);border:1px solid var(--ds-line);border-radius:22px}
+:root[data-theme="nexora"] .ds-feat .fi{margin:0 0 18px;width:56px;height:56px;border-radius:16px;background:var(--ds-green);color:#FFFFFF}
+:root[data-theme="nexora"] .ds-feat h3{font-size:21px;margin-bottom:8px}
+:root[data-theme="nexora"] .ds-feat p{font-size:14.5px;line-height:1.6}
+:root[data-theme="nexora"] .ds-tabs{margin-bottom:36px}
+:root[data-theme="nexora"] .ds-tab{border-radius:999px;padding:11px 20px;font-size:14.5px}
+:root[data-theme="nexora"] .ds-menu{max-width:none;gap:4px 56px}
+:root[data-theme="nexora"] .ds-item{padding:18px 0;border-bottom-color:var(--ds-line)}
+:root[data-theme="nexora"] .ds-item .mi{background:color-mix(in srgb,var(--ds-brand) 12%,var(--ds-surface));border-radius:14px;width:48px;height:48px}
+:root[data-theme="nexora"] .ds-item .nm{font-size:20px}
+:root[data-theme="nexora"] .ds-item .pr{font-size:19px}
+:root[data-theme="nexora"] .ds-item .ds-dots{border-bottom-color:var(--ds-line)}
+:root[data-theme="nexora"] .ds-item .de{font-size:14px;margin-top:4px}
+:root[data-theme="nexora"] .ds-about{gap:64px}
+:root[data-theme="nexora"] .ds-about h2{font-size:clamp(30px,4vw,48px);line-height:1.05}
+:root[data-theme="nexora"] .ds-about p{font-size:16.5px;line-height:1.7}
+:root[data-theme="nexora"] .ds-stat .v{font-size:44px;font-weight:700}
+:root[data-theme="nexora"] .ds-stat .l{letter-spacing:.12em}
+:root[data-theme="nexora"] .ds-artwork{background:var(--ds-green);border-radius:28px;box-shadow:none}
+:root[data-theme="nexora"] .ds-artwork::before{content:"";position:absolute;width:64%;aspect-ratio:1;border-radius:50%;background:var(--ds-gold);opacity:.18}
+:root[data-theme="nexora"] .ds-artwork::after{opacity:1;background:radial-gradient(360px 240px at 75% 15%,rgba(255,255,255,.08),transparent 60%)}
+:root[data-theme="nexora"] .ds-artwork .cup{color:var(--ds-gold)}
+:root[data-theme="nexora"] .ds-artwork .cup svg{width:140px;height:140px}
+:root[data-theme="nexora"] .ds-quotes{gap:20px}
+:root[data-theme="nexora"] .ds-quote{background:var(--ds-surface);border-radius:22px;padding:30px}
+:root[data-theme="nexora"] .ds-quote .stars{color:var(--ds-brand);letter-spacing:2px}
+:root[data-theme="nexora"] .ds-quote p{font-family:var(--ds-display);font-size:19px;line-height:1.45}
+:root[data-theme="nexora"] .ds-quote .who .av{background:var(--ds-green)}
+
+/* Contato/reserva em bloco de destaque */
+:root[data-theme="nexora"] .ds-reserve{background:var(--ds-green);color:#FFFFFF;border-radius:32px;padding:56px;gap:48px}
+:root[data-theme="nexora"] .ds-reserve .ds-head .k{color:var(--ds-gold)}
+:root[data-theme="nexora"] .ds-reserve .intro h2{font-size:clamp(30px,4vw,48px);line-height:1.05}
+:root[data-theme="nexora"] .ds-reserve .intro p{color:rgba(255,255,255,.78);font-size:16.5px}
+:root[data-theme="nexora"] .ds-info .row{background:rgba(255,255,255,.07);border-radius:16px;padding:16px}
+:root[data-theme="nexora"] .ds-info .row svg{color:var(--ds-gold)}
+:root[data-theme="nexora"] .ds-form{border:0;border-radius:24px;padding:32px;color:var(--ds-ink);box-shadow:none}
+:root[data-theme="nexora"] .ds-form h3{font-size:26px}
+:root[data-theme="nexora"] .ds-field input,:root[data-theme="nexora"] .ds-field select,:root[data-theme="nexora"] .ds-field textarea{border-radius:12px;padding:13px 14px}
+:root[data-theme="nexora"] .ds-submit{background:var(--ds-brand);border-radius:999px;padding:16px;font-size:16px}
+:root[data-theme="nexora"] .ds-submit:hover{background:var(--ds-ink)}
+@media(max-width:820px){:root[data-theme="nexora"] .ds-reserve{padding:28px;border-radius:24px}}
+@media(max-width:600px){
+  :root[data-theme="nexora"] .ds-nav{padding:12px 16px;gap:12px}
+  :root[data-theme="nexora"] .ds-logo{font-size:18px;white-space:nowrap}
+  :root[data-theme="nexora"] .ds-logo .bean{width:34px;height:34px}
+  :root[data-theme="nexora"] .ds-res{padding:10px 14px;font-size:13px}
+  :root[data-theme="nexora"] .ds-sec{padding:64px 0}
+  :root[data-theme="nexora"] .ds-wrap{padding:0 20px}
+  :root[data-theme="nexora"] .content{padding:20px 16px}
+  :root[data-theme="nexora"] .topbar{padding:0 16px}
+}
+
+/* Rodapé */
+:root[data-theme="nexora"] .ds-foot{background:var(--ds-ink);color:rgba(255,255,255,.72);padding:56px 24px 32px}
+:root[data-theme="nexora"] .ds-foot .fl{font-size:32px}
+:root[data-theme="nexora"] .ds-foot .cr{color:rgba(255,255,255,.45);border-top-color:rgba(255,255,255,.1)}
+
+/* Personalidade de cada segmento */
+:root[data-theme="nexora"] .ds-cafe h1,:root[data-theme="nexora"] .ds-cafe h2,:root[data-theme="nexora"] .ds-cafe h3{font-weight:600}
+:root[data-theme="nexora"] .ds-clinica h1,:root[data-theme="nexora"] .ds-clinica h2,:root[data-theme="nexora"] .ds-clinica h3,:root[data-theme="nexora"] .ds-clinica .ds-logo{font-weight:600}
+:root[data-theme="nexora"] .ds-clinica .ds-hero h1{font-size:clamp(46px,6.4vw,88px);line-height:.95}
+:root[data-theme="nexora"] .ds-clinica .ds-hero-art{border-radius:999px}
+:root[data-theme="nexora"] .ds-barbearia h1,:root[data-theme="nexora"] .ds-barbearia h2,:root[data-theme="nexora"] .ds-barbearia h3,:root[data-theme="nexora"] .ds-barbearia .ds-logo,:root[data-theme="nexora"] .ds-barbearia .nm,:root[data-theme="nexora"] .ds-barbearia .ds-stat .v{font-weight:400;text-transform:uppercase;letter-spacing:.01em}
+:root[data-theme="nexora"] .ds-barbearia .ds-hero h1{font-size:clamp(48px,7vw,104px);line-height:.92}
+:root[data-theme="nexora"] .ds-barbearia :is(.ds-btn,.ds-res,.ds-submit,.ds-tab,.ds-feat,.ds-feat .fi,.ds-quote,.ds-reserve,.ds-form,.ds-artwork,.ds-hero-art,.ds-item .mi,.ds-logo .bean){border-radius:0}
+:root[data-theme="nexora"] .ds-barbearia .ds-sec.alt{background:#1C1A17;color:#EFE8DC;--ds-ink:#EFE8DC;--ds-muted:#A39A8C;--ds-line:#3A3631;--ds-surface:#24211D;--ds-bg:#24211D;--ds-brand:#C9A063}
+:root[data-theme="nexora"] .ds-barbearia .ds-sec.alt .ds-tab.on{color:#121110}
+:root[data-theme="nexora"] .ds-loja h1,:root[data-theme="nexora"] .ds-loja h2,:root[data-theme="nexora"] .ds-loja h3,:root[data-theme="nexora"] .ds-loja .ds-logo,:root[data-theme="nexora"] .ds-loja .nm{font-weight:400}
+:root[data-theme="nexora"] .ds-loja .ds-logo{letter-spacing:.12em;text-transform:uppercase}
+:root[data-theme="nexora"] .ds-loja .ds-hero h1{font-size:clamp(46px,6.2vw,86px);line-height:.98}
+:root[data-theme="nexora"] .ds-loja :is(.ds-btn,.ds-res,.ds-submit,.ds-tab,.ds-feat,.ds-feat .fi,.ds-quote,.ds-reserve,.ds-form,.ds-artwork,.ds-hero-art,.ds-item .mi,.ds-field input,.ds-field select,.ds-field textarea){border-radius:0}
+:root[data-theme="nexora"] .ds-loja :is(.ds-btn,.ds-res,.ds-submit,.ds-tab){letter-spacing:.14em;text-transform:uppercase;font-size:13px}
+:root[data-theme="nexora"] .ds-academia h1,:root[data-theme="nexora"] .ds-academia h2,:root[data-theme="nexora"] .ds-academia h3,:root[data-theme="nexora"] .ds-academia .ds-logo,:root[data-theme="nexora"] .ds-academia .nm,:root[data-theme="nexora"] .ds-academia .pr,:root[data-theme="nexora"] .ds-academia .ds-stat .v{font-weight:900;text-transform:uppercase;letter-spacing:0}
+:root[data-theme="nexora"] .ds-academia .ds-hero h1{font-size:clamp(48px,7vw,104px);line-height:.88}
+:root[data-theme="nexora"] :is(.ds-barbearia,.ds-academia) .ds-foot .fl{text-transform:uppercase;font-weight:400;letter-spacing:.02em}
+:root[data-theme="nexora"] .ds-academia .ds-foot .fl{font-weight:900}
+:root[data-theme="nexora"] .ds-academia .ds-hero-art{border-radius:50%;aspect-ratio:1}
+:root[data-theme="nexora"] .ds-academia :is(.ds-btn,.ds-res,.ds-submit){border-radius:14px}
+:root[data-theme="nexora"] .ds-academia .ds-submit{background:var(--ds-gold);color:#0C0E12}
+:root[data-theme="nexora"] .ds-academia .ds-sec.alt{background:#12161C;color:#F2F4F7;--ds-ink:#F2F4F7;--ds-muted:#A9B0BC;--ds-line:#232935;--ds-surface:#161A21;--ds-bg:#161A21;--ds-brand:#FF5A2C}
+:root[data-theme="nexora"] .ds-academia .ds-sec.alt .ds-tab.on{color:#0C0E12}
+:root[data-theme="nexora"] .ds-advocacia h1,:root[data-theme="nexora"] .ds-advocacia h2{font-weight:400}
+:root[data-theme="nexora"] .ds-advocacia .ds-hero h1{font-size:clamp(38px,4.8vw,64px);line-height:1.1}
+:root[data-theme="nexora"] .ds-advocacia :is(.ds-btn,.ds-res,.ds-submit,.ds-tab,.ds-feat,.ds-feat .fi,.ds-quote,.ds-reserve,.ds-form,.ds-artwork,.ds-item .mi,.ds-logo .bean){border-radius:4px}
+:root[data-theme="nexora"] .ds-advocacia .ds-hero-art{border-radius:4px}
 </style>
 </head>
 <body>
@@ -1996,7 +2304,7 @@ const SEG_SITES=[
 
 let DS_CUR=null, dsCat='';
 function siteGalleryHTML(){
-  return `<div class="seg-grid">${SEG_SITES.map(s=>`<button class="seg-card" onclick="abrirSiteDemo('${s.id}')">
+  return `<div class="seg-grid">${SEG_SITES.map(s=>`<button class="seg-card seg-${s.id}" onclick="abrirSiteDemo('${s.id}')">
     <div class="seg-top" style="background:${s.th.hero}"><div class="si">${dsPath(DS_IC[s.logo])}</div><div class="sn">${s.nome}</div></div>
     <div class="seg-bd"><div class="sg">${s.segmento}</div><div class="sl">Ver site ${dsPath('M5 12h14M13 6l6 6-6 6')}</div></div>
   </button>`).join('')}</div>`;
@@ -2024,7 +2332,7 @@ function dsFormFields(cfg){const f=cfg.contact.fields;
 function siteDemoHTML(c){const t=c.th;
   const rootStyle=`--ds-bg:${t.bg};--ds-ink:${t.ink};--ds-muted:${t.muted};--ds-brand:${t.brand};--ds-green:${t.accent};--ds-surface:${t.surface};--ds-line:${t.line};--ds-gold:${t.gold};--ds-display:${t.display};--ds-body:${t.body};--ds-herograd:${t.hero}`;
   const listInner=c.cats?`<div class="ds-tabs" id="dsTabs">${Object.keys(c.cats).map(k=>`<button class="ds-tab ${k===dsCat?'on':''}" data-c="${k}" onclick="dsTab('${k}')">${k}</button>`).join('')}</div><div class="ds-menu" id="dsMenu">${dsItemsHTML(c.cats[dsCat],false)}</div>`:`<div class="ds-menu">${dsItemsHTML(c.items,c.list.noprice)}</div>`;
-  return `<div class="ds" style="${rootStyle}">
+  return `<div class="ds ds-${c.id}" style="${rootStyle}">
     <div class="ds-ribbon">${dsPath(DS_IC.monitor)} <span>Demonstração <b>NEXORA</b> · exemplo de site para <b>${c.segmento}</b></span> <button onclick="fecharSiteDemo()">Fechar</button></div>
     <nav class="ds-nav">
       <div class="ds-logo"><span class="bean">${dsPath(DS_IC[c.logo])}</span>${c.nome}</div>
@@ -2034,7 +2342,7 @@ function siteDemoHTML(c){const t=c.th;
       <div class="ds-eyebrow">${c.hero.eyebrow}</div><h1>${c.hero.h1}</h1><p>${c.hero.sub}</p>
       <div class="ds-cta"><button class="ds-btn p" onclick="dsScroll('ds-list')">${c.hero.cta1}</button><button class="ds-btn g" onclick="dsScroll('ds-contato')">${c.hero.cta2}</button></div>
       <div class="ds-hours"><i></i> ${c.hero.status}</div>
-    </div></header>
+    </div><div class="ds-hero-art" aria-hidden="true">${dsPath(DS_IC[c.art])}</div></header>
     <section class="ds-sec"><div class="ds-wrap"><div class="ds-feats">${c.feats.map(f=>`<div class="ds-feat"><div class="fi">${dsPath(DS_IC[f[0]])}</div><h3>${f[1]}</h3><p>${f[2]}</p></div>`).join('')}</div></div></section>
     <section class="ds-sec alt" id="ds-list"><div class="ds-wrap"><div class="ds-head ds-shead"><div class="k">${c.list.kicker}</div><h2>${c.list.title}</h2></div>${listInner}</div></section>
     <section class="ds-sec" id="ds-sobre"><div class="ds-wrap"><div class="ds-about">
